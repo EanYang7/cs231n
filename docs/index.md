@@ -1,10 +1,10 @@
-# [CS231n Convolutional Neural Networks for Visual Recognition](https://cs231n.github.io/)
+# CS231n Convolutional Neural Networks for Visual Recognition
 
 [Course Website](http://cs231n.stanford.edu/)
 
 These notes accompany the Stanford CS class [CS231n: Convolutional Neural Networks for Visual Recognition](http://cs231n.stanford.edu/). For questions/concerns/bug reports, please submit a pull request directly to our [git repo](https://github.com/cs231n/cs231n.github.io).
 
-Spring 2023 Assignments
+## Spring 2023 Assignments
 
 [Assignment #1: Image Classification, kNN, SVM, Softmax, Fully Connected Neural Network](https://cs231n.github.io/assignments2023/assignment1/)
 
@@ -12,13 +12,13 @@ Spring 2023 Assignments
 
 (To be released) Assignment #3: Image Captioning with RNNs and Transformers, Network Visualization, Generative Adversarial Networks, Self-Supervised Contrastive Learning
 
-Module 0: Preparation
+## Module 0: Preparation
 
 [Software Setup](https://cs231n.github.io/setup-instructions/)
 
 [Python / Numpy Tutorial (with Jupyter and Colab)](https://cs231n.github.io/python-numpy-tutorial/)
 
-Module 1: Neural Networks
+### Module 1: Neural Networks
 
 [Image Classification: Data-driven Approach, k-Nearest Neighbor, train/val/test splits](https://cs231n.github.io/classification/)
 
