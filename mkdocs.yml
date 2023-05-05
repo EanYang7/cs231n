@@ -67,7 +67,7 @@ plugins:
  - search
 
 
-edit_uri: "edit/main/docs/"
+edit_uri: "edit/dev/docs/"
 
 nav:
   - 首页: 'index.md'
