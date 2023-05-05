@@ -1,8 +1,68 @@
-# CS231n Convolutional Neural Networks for Visual Recognition
+---
+hide:
+  - navigation
+---
+# CS231n 卷积神经网络视觉识别
 
-[Course Website](http://cs231n.stanford.edu/)
+[课程网址](http://cs231n.stanford.edu/)
 
-These notes accompany the Stanford CS class [CS231n: Convolutional Neural Networks for Visual Recognition](http://cs231n.stanford.edu/). For questions/concerns/bug reports, please submit a pull request directly to our [git repo](https://github.com/cs231n/cs231n.github.io).
+这些笔记是与斯坦福大学计算机科学课程[CS231n：卷积神经网络视觉识别](http://cs231n.stanford.edu/)相关的。如有问题/关注/漏洞报告，请直接向我们的[git repo](https://github.com/cs231n/cs231n.github.io)提交pull request。
+
+## 2023年春季作业 
+
+作业#1: 图像分类，kNN，SVM，Softmax，全连接神经网络Fully Connected Neural Network
+
+作业#2: 全连接和卷积网络，批量归一化，dropout，Pytorch和网络可视化 
+
+（即将发布）作业#3：使用RNN和Transformer进行图像字幕Image Captioning生成，网络可视化，生成对抗网络Generative Adversarial Networks，自监督对比学习 Self-Supervised Contrastive Learning
+
+## 模块0：准备 
+
+软件设置 Python / Numpy教程（带Jupyter和Colab） 
+
+## 模块1：神经网络 
+
+图像分类：数据驱动方法，k-最近邻，训练/验证/测试分割
+
+ L1/L2距离，超参数搜索，交叉验证 
+
+线性分类：支持向量机，Softmax 
+
+参数化方法，偏差技巧，铰链损失，交叉熵损失，L2正则化，网络演示 
+
+优化：随机梯度下降 
+
+优化景观，局部搜索，学习率，分析/数值梯度 
+
+反向传播，直觉 
+
+链式法则解释，实值电路，梯度流模式 
+
+神经网络第1部分：设置架构 
+
+生物神经元模型，激活函数，神经网络架构，表示能力 
+
+神经网络第2部分：设置数据和损失 
+
+预处理，权重初始化，批量归一化，正则化（L2 / dropout），损失函数 
+
+神经网络第3部分：学习和评估 
+
+梯度检查，合理性检查，看护学习过程，动量（+ nesterov），二阶方法，Adagrad / RMSprop，超参数优化，模型集成 
+
+将其组合起来：最小神经网络案例研究 
+
+最小2D玩具数据示例 
+
+## 模块2：卷积神经网络 
+
+卷积神经网络：架构，卷积/池化层 层，空间排列，层模式，层大小模式，AlexNet / ZFNet / VGGNet案例研究，计算考虑因素 理解和可视化卷积神经网络 tSNE嵌入，deconvnets，数据梯度，愚弄ConvNets，人类比较 迁移学习和微调卷积神经网络 
+
+## 学生投稿 
+
+将课程项目转化为出版物 
+
+循环神经网络
 
 ## Spring 2023 Assignments
 

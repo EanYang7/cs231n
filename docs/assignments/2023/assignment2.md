@@ -7,7 +7,7 @@ permalink: /assignments2023/assignment2/
 
 <span style="color:red">This assignment is due on **Monday, May 08 2023** at 11:59pm PST.</span>
 
-Starter code containing Colab notebooks can be [downloaded here]({{site.hw_2_colab}}).
+Starter code containing Colab notebooks can be [downloaded here](./assignment2_colab.zip).
 
 - [Setup](#setup)
 - [Goals](#goals)
@@ -20,7 +20,7 @@ Starter code containing Colab notebooks can be [downloaded here]({{site.hw_2_col
 
 ### Setup
 
-Please familiarize yourself with the [recommended workflow]({{site.baseurl}}/setup-instructions/#working-remotely-on-google-colaboratory) before starting the assignment. You should also watch the Colab walkthrough tutorial below.
+Please familiarize yourself with the [recommended workflow](../../../setup/#working-remotely-on-google-colaboratory) before starting the assignment. You should also watch the Colab walkthrough tutorial below.
 
 <iframe style="display: block; margin: auto;" width="560" height="315" src="https://www.youtube.com/embed/DsGd2e9JNH4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 

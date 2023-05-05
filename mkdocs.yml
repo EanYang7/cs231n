@@ -70,26 +70,31 @@ plugins:
 edit_uri: "edit/dev/docs/"
 
 nav:
-  - 首页: 'index.md'
+  - 首页: 
+    - 'index.md'
 
   - 课程: 
-    - 'index.md'
-    - A:  
-      - 'index.md'
-      - 'index.md'
-    - B: 
-      - 'index.md'
-      - 'index.md'
-      - C: 
-        - 'index.md'
-        - 'index.md'
-        - D: 
-          - 'index.md'
-          - 'index.md'
-          - E: 
-            - 'index.md'
-            - 'index.md'
-  - 作业: '01_pytorch_workflow.ipynb'
+    - 准备工作:
+      - 软件设置: 'setup.md'
+      - Python Numpy教程: 'python-numpy-tutorial.md'
+    - 神经网络:  
+        - 图像分类: 'classification.md'
+        - 线性分类: 'linear-classify.md'
+        - 优化 : 
+          - 'optimization-1.md'
+          - 'optimization-2.md'
+        - 神经网络: 
+          - 'neural-networks-1.md'
+          - 'neural-networks-2.md'
+          - 'neural-networks-3.md'
+        - neural-networks-case-study: 'neural-networks-case-study.md'
+    - 卷积神经网络: 
+        - 'convolutional-networks.md'
+        - 'understanding-cnn.md'
+        - 'transfer-learning.md'
+  - 作业: 
+    - 作业1: './assignments/2023/assignment1.md'
+    - 作业2: './assignments/2023/assignment2.md'
 
 
 extra:
