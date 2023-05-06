@@ -4,6 +4,61 @@ hide:
 ---
 # CS231n 卷积神经网络视觉识别
 
+<style type="text/css">
+      .card {
+        cursor: pointer;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        margin-bottom: 10px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        transition: box-shadow 0.3s ease-in-out;
+      }
+      .card:hover {
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        color: green;
+      }
+      .card:active {
+        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+      }
+      .card h2 {
+        font-size: 20px;
+        margin-bottom: 5px;
+      }
+      .card p {
+        font-size: 16px;
+        color: #666;
+      }
+      a {
+        text-decoration: none;
+      }
+</style>
+
+<a href="https://www.example.com">
+<div class="card">
+  <h2>图像分类：数据驱动方法，k-最近邻，训练/验证/测试分割</h2>
+  <p>
+    L1/L2距离，超参数搜索，交叉验证
+  </p>
+</div>
+</a>
+<a href="https://www.example.com">
+
+<div class="card">
+  <h2>线性分类：支持向量机，Softmax</h2>
+  <p>
+   参数化方法，偏差技巧，铰链损失，交叉熵损失，L2正则化，网络演示
+  </p>
+</div>
+</a>
+
+
+
+
+
+
+
+
 [课程网址](http://cs231n.stanford.edu/)
 
 这些笔记是与斯坦福大学计算机科学课程[CS231n：卷积神经网络视觉识别](http://cs231n.stanford.edu/)相关的。如有问题/关注/漏洞报告，请直接向我们的[git repo](https://github.com/cs231n/cs231n.github.io)提交pull request。
