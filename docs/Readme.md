@@ -1,3 +1,2 @@
 
-Notes and assignments for Stanford CS class [CS231n: Convolutional Neural Networks for Visual Recognition](http://vision.stanford.edu/teaching/cs231n/)
-
+可以自己部署在本地，方便随时查看和做笔记
