@@ -104,7 +104,7 @@ extra:
   generator: false  
   alternate:
     - name: 中文
-      link: /cs231n/zh/ 
+      link: /cs231n/zh-CN/ 
       lang: zh
     - name: English
       link: /cs231n/en/

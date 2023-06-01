@@ -2,11 +2,11 @@
 hide:
   - navigation
 ---
-# [CS231n 卷积神经网络视觉识别](https://cs231n.github.io/)
+# [CS231n Convolutional Neural Networks for Visual Recognition](https://cs231n.github.io/)
 
-[课程地址](http://cs231n.stanford.edu/)
+[course address](http://cs231n.stanford.edu/)
 
-这些笔记是与斯坦福大学计算机科学课程\[CS231n：卷积神经网络视觉识别\](http://cs231n.stanford.edu/)相关的。 For questions/concerns/bug reports, please submit a pull request directly to our [git repo](https://github.com/cs231n/cs231n.github.io).
+These notes accompany the Stanford CS class [CS231n: Convolutional Neural Networks for Visual Recognition](http://cs231n.stanford.edu/). For questions/concerns/bug reports, please submit a pull request directly to our [git repo](https://github.com/cs231n/cs231n.github.io).
 
 ---
 
@@ -39,7 +39,6 @@ hide:
         text-decoration: none;
       }
 </style>
-
 ## Spring 2023 Assignments
 
 <a href="./assignments/2023/assignment1">
@@ -66,6 +65,8 @@ hide:
 
 </a>
 
+
+
 ## Module 0: Preparation
 
 <a href="setup">
@@ -86,7 +87,9 @@ hide:
 
 </a>
 
-## Module 1: Neural Networks
+ 
+
+## Module 1: Neural Networks 
 
 <a href="classification">
 
@@ -186,7 +189,7 @@ minimal 2D toy data example
 
 </a>
 
-## Module 2: Convolutional Neural Networks
+## Module 2: Convolutional Neural Networks 
 
 <a href="convolutional-networks">
 
