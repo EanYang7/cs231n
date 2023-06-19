@@ -71,7 +71,7 @@ edit_uri: "edit/dev/docs/"
 
 nav:
   - 首页: 
-    - 'index.md'
+    - '/cs231n/index.md'
 
   - 课程: 
     - 准备工作:
