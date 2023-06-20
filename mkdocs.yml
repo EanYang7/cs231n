@@ -71,7 +71,7 @@ edit_uri: "edit/dev/docs/"
 
 nav:
   - 首页: 
-    - '/cs231n/index.md'
+    - 'index.md'
 
   - 课程: 
     - 准备工作:
@@ -104,9 +104,9 @@ extra:
   generator: false  
   alternate:
     - name: 中文
-      link: /cs231n/zh-CN/ 
+      link: /cs231n/
       lang: zh
-    - name: English
-      link: /cs231n/en/
+    - name: English(源网站)
+      link: https://cs231n.github.io/
       lang: en
    
