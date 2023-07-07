@@ -2,7 +2,7 @@
 hide:
   - navigation
 ---
-# [CS231n 卷积神经网络视觉识别](https://cs231n.github.io/)
+# CS231n 卷积神经网络视觉识别
 
 [课程地址](http://cs231n.stanford.edu/)
 
