@@ -25,9 +25,13 @@ Google Colaboratory总的来说是Jupyter notebook 和Google Drive的结合。�
 
 **工作流程**。每个作业都为您提供了一个下载链接，指向一个包含Colab笔记本和Python入门代码的zip文件。您可以将文件夹上传到云盘，在Colab中打开笔记本并对其进行操作，然后将进度保存回云盘。我们建议您观看下面的教程视频，其中以作业1为例介绍了推荐的工作流程。
 
-<center><video src="./assets/video1.mp4" controls width="560" height="315" ></video></center>
+<embed src="https://eanyang7.github.io/cs231n/setup/assets/video1.mp4" width="500" height="400">
 
+<center><video src="./assets/video1.mp4" controls width="560" height="315" type="video/mp4"></video></center>
 
+<video controls>
+  <source src="./assets/video1.mp4" type="video/mp4">
+</video>
 
  **最佳实践**。在与Colab合作时，您应该注意以下几点。首先要注意的是，资源并没有得到保证（这是免费的价格）。如果您空闲了一定时间，或者您的总连接时间超过了允许的最大时间（约12小时），Colab虚拟机将断开连接。这意味着任何未保存的进度都将丢失<font color="red"><strong>因此，养成在处理作业时经常保存代码的习惯</strong></font>。要了解更多关于Colab中资源限制的信息，请在[此处](https://research.google.com/colaboratory/faq.html)阅读他们的常见问题解答。
 
