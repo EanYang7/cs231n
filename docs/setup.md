@@ -1,16 +1,14 @@
 ---
-layout: page
-title: Software Setup
-permalink: /setup-instructions/
+comments: true
 ---
 
 今年，推荐的作业方式是通过 [Google Colaboratory](https://colab.research.google.com/)。但是，如果您已经拥有GPU支持的硬件，并且更喜欢在本地工作，我们将为您提供设置虚拟环境的说明。
 
-- [在Google Colaboratory平台上远程工作](#working-remotely-on-google-colaboratory)
-- [在您的机器上本地工作](#working-locally-on-your-machine)
-  - [Anaconda虚拟环境](#anaconda-virtual-environment)
+- [在Google Colaboratory平台上远程工作](#在google-colaboratory平台上远程工作)
+- [在您的机器上本地工作](#在您的机器上本地工作)
+  - [Anaconda 虚拟环境](#anaconda-虚拟环境)
   - [Python venv](#python-venv)
-  - [安装软件包](#installing-packages)
+  - [安装软件包](#安装软件包)
 
 ### 在Google Colaboratory平台上远程工作
 

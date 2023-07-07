@@ -7,6 +7,7 @@ repo_name: EanYang7/cs231n
 theme:
   language: zh 
   name: material
+  custom_dir: overrides
   logo: logo.jpg
   favicon: logo.jpg
   features:
@@ -101,7 +102,6 @@ extra:
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/EanYang7/cs231n
-  generator: false  
   alternate:
     - name: 中文
       link: /cs231n/
@@ -109,4 +109,21 @@ extra:
     - name: English(源网站)
       link: https://cs231n.github.io/
       lang: en
+  generator: false  
+  analytics:
+    provider: google
+    property: G-5F8XNH7BCX
+    feedback:
+      title: 对当前页面有任何疑问吗？
+      ratings:
+        - icon: material/thumb-up-outline
+          name: This page was helpful
+          data: 1
+          note: >-
+            感谢您的反馈！
+        - icon: material/thumb-down-outline
+          name: This page could be improved
+          data: 0
+          note: >- 
+            感谢您的反馈！请点击这里<a href="https://github.com/EanYang7/cs231n/issues" target="_blank" rel="noopener">这里</a>提供问题反馈.
    
