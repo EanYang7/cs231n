@@ -80,25 +80,25 @@ nav:
   - 课程: 
     - 准备工作:
       - 软件设置: './courses/preparation/setup.md'
-      - Python Numpy教程: './courses/preparation/python-numpy-tutorial.md'
+      - Python/Numpy教程: './courses/preparation/python-numpy-tutorial.md'
     - 神经网络:  
         - 图像分类: './courses/neural_network/classification.md'
         - 线性分类: './courses/neural_network/linear-classify.md'
-        - 优化 : 
-          - './courses/neural_network/optimization-1.md'
-          - './courses/neural_network/optimization-2.md'
+        - 优化：随机梯度下降 : './courses/neural_network/optimization-1.md'
+        - 反向传播: './courses/neural_network/optimization-2.md'
         - 神经网络: 
-          - './courses/neural_network/neural-networks-1.md'
-          - './courses/neural_network/neural-networks-2.md'
-          - './courses/neural_network/neural-networks-3.md'
-        - neural-networks-case-study: './courses/neural_network/neural-networks-case-study.md'
+          - 创建结构: './courses/neural_network/neural-networks-1.md'
+          - 创建数据和损失: './courses/neural_network/neural-networks-2.md'
+          - 学习和评估: './courses/neural_network/neural-networks-3.md'
+        - 最小神经网络案例研究: './courses/neural_network/neural-networks-case-study.md'
     - 卷积神经网络: 
-        - './courses/CNN/convolutional-networks.md'
-        - './courses/CNN/understanding-cnn.md'
-        - './courses/CNN/transfer-learning.md'
-  - 作业: 
-    - 作业1: './assignments/2023/assignment1.md'
-    - 作业2: './assignments/2023/assignment2.md'
+        - 结构、卷积/池化层: './courses/CNN/convolutional-networks.md'
+        - 理解与可视化: './courses/CNN/understanding-cnn.md'
+        - 迁移学习与微调: './courses/CNN/transfer-learning.md'
+  - 任务: 
+    - 任务1: './assignments/2023/assignment1.md'
+    - 任务2: './assignments/2023/assignment2.md'
+    - 任务2: './assignments/2023/assignment3.md'
 
 
 extra:

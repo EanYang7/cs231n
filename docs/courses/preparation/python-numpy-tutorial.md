@@ -1,92 +1,27 @@
 ---
-layout: page
-title: Python Numpy Tutorial (with Jupyter and Colab)
-permalink: /python-numpy-tutorial/
+comments: true
 ---
 
-<div>
-  <a href="https://colab.research.google.com/github/cs231n/cs231n.github.io/blob/master/python-colab.ipynb" target="_blank">
-    <img class="colab-badge" src="/assets/badges/colab-open.svg" alt="Colab Notebook"/>
-  </a>
-</div>
+[![](./python-numpy-tutorial.assets/colab-open.svg)](https://colab.research.google.com/github/cs231n/cs231n.github.io/blob/master/python-colab.ipynb) 
 
-This tutorial was originally contributed by [Justin Johnson](http://cs.stanford.edu/people/jcjohns/).
+本教程由 [Justin Johnson](http://cs.stanford.edu/people/jcjohns/)原创
 
-We will use the Python programming language for all assignments in this course.
-Python is a great general-purpose programming language on its own, but with the
-help of a few popular libraries (numpy, scipy, matplotlib) it becomes a powerful
-environment for scientific computing.
+我们将在本课程的所有作业中使用Python编程语言。Python本身就是一种很好的通用编程语言，但在一些流行库（numpy、scipy、matplotlib）的帮助下，它成为了科学计算的强大环境。
 
-We expect that many of you will have some experience with Python and numpy;
-for the rest of you, this section will serve as a quick crash course on both
-the Python programming language and its use for scientific
-computing. We'll also introduce notebooks, which are a very convenient way
-of tinkering with Python code. Some of you may have previous knowledge in a
-different language, in which case we also recommend referencing:
-[NumPy for Matlab users](https://numpy.org/doc/stable/user/numpy-for-matlab-users.html),
-[Python for R users](http://www.data-analysis-in-python.org/python_for_r.html), and/or
-[Python for SAS users](https://nbviewer.jupyter.org/github/RandyBetancourt/PythonForSASUsers/tree/master/).
+我们希望你们中的许多人都对Python和numpy有一些经验；对于其他人来说，本节将作为关于Python编程语言及其在科学计算中的使用的速成课程。我们还将介绍notebook，这是修改Python代码的一种非常方便的方式。你们中的一些人可能以前有不同语言的知识，在这种情况下，我们还建议参考：
+[用于Matlab用户的NumPy](https://numpy.org/doc/stable/user/numpy-for-matlab-users.html)，[适用于R用户的Python](http://www.data-analysis-in-python.org/python_for_r.html)，和/或[适用于SAS用户的Python](https://nbviewer.jupyter.org/github/RandyBetancourt/PythonForSASUsers/tree/master/)。
 
+## Jupyter和Colab Notebooks
 
-**Table of Contents**
+在深入研究Python之前，我们想简单地谈谈 *笔记本*。Jupyter笔记本允许您在web浏览器中*本地*编写和执行Python代码。Jupyter 笔记本使得修改代码并零零星星地执行代码变得非常容易；因此，它们被广泛用于科学计算。另一方面，Colab是谷歌风格的Jupyter 笔记本，特别适合机器学习和数据分析，完全在*云*中运行。
+Colab是基于steroids的Jupyter笔记本：它是免费的，无需安装，预装了许多软件包，很容易与世界分享，并受益于免费访问GPU和TPU等硬件加速器（有一些注意事项）。
 
-- [Jupyter and Colab Notebooks](#jupyter-and-colab-notebooks)
-- [Python](#python)
-  - [Python versions](#python-versions)
-  - [Basic data types](#basic-data-types)
-  - [Containers](#containers)
-    - [Lists](#lists)
-    - [Dictionaries](#dictionaries)
-    - [Sets](#sets)
-    - [Tuples](#tuples)
-  - [Functions](#functions)
-  - [Classes](#classes)
-- [Numpy](#numpy)
-  - [Arrays](#arrays)
-  - [Array indexing](#array-indexing)
-  - [Datatypes](#datatypes)
-  - [Array math](#array-math)
-  - [Broadcasting](#broadcasting)
-  - [Numpy Documentation](#numpy-documentation)
-- [SciPy](#scipy)
-  - [Image operations](#image-operations)
-  - [MATLAB files](#matlab-files)
-  - [Distance between points](#distance-between-points)
-- [Matplotlib](#matplotlib)
-  - [Plotting](#plotting)
-  - [Subplots](#subplots)
-  - [Images](#images)
+**在Colab中运行教程（推荐）**。如果您希望完全在Colab中运行本教程，请单击此页面顶部的 `Open in Colab` 图标。
+**在Jupyter笔记本中运行教程**。如果您希望使用Jupyter在本地运行笔记本电脑，请确保您的虚拟环境已正确安装（根据[安装说明](https://eanyang7.github.io/cs231n/courses/preparation/setup/)），激活它，然后运行`pip install notebook`安装Jupyter笔记本电脑。接下来，[打开笔记本](https://raw.githubusercontent.com/cs231n/cs231n.github.io/master/jupyter-notebook-tutorial.ipynb)并通过右键单击页面并选择“将页面另存为”将其下载到您选择的目录中。然后 `cd`到该目录并运行`jupyter notebook`。![file-browser](./python-numpy-tutorial.assets/file-browser.png)
 
-## Jupyter and Colab Notebooks
-
-Before we dive into Python, we'd like to briefly talk about *notebooks*.
-A Jupyter notebook lets you write and execute
-Python code *locally* in your web browser. Jupyter notebooks
-make it very easy to tinker with code and execute it in bits
-and pieces; for this reason they are widely used in scientific
-computing.
-Colab on the other hand is Google's flavor of
-Jupyter notebooks that is particularly suited for machine
-learning and data analysis and that runs entirely in the *cloud*.
-Colab is basically Jupyter notebook on steroids: it's free, requires no setup,
-comes preinstalled with many packages, is easy to share with the world,
-and benefits from free access to hardware accelerators like GPUs and TPUs (with some caveats).
-
-**Run Tutorial in Colab (recommended)**. If you wish to run this tutorial entirely in Colab, click the `Open in Colab` badge at the very top of this page.
-
-**Run Tutorial in Jupyter Notebook**. If you wish to run the notebook locally with Jupyter, make sure your virtual environment is installed correctly (as per the [setup instructions]({{site.baseurl}}/setup-instructions/)), activate it, then run `pip install notebook` to install Jupyter notebook. Next, [open the notebook](https://raw.githubusercontent.com/cs231n/cs231n.github.io/master/jupyter-notebook-tutorial.ipynb) and download it to a directory of your choice by right-clicking on the page and selecting `Save Page As`. Then `cd` to that directory and run `jupyter notebook`.
-
-<div class='fig figcenter'>
-  <img src='/assets/ipython-tutorial/file-browser.png'>
-</div>
-
-This should automatically launch a notebook server at `http://localhost:8888`.
-If everything worked correctly, you should see a screen like this, showing all
-available notebooks in the current directory. Click `jupyter-notebook-tutorial.ipynb`
-and follow the instructions in the notebook. Otherwise, you can continue reading the
-tutorial with code snippets below.
-
-<a name='python'></a>
+这将自动启动`http://localhost:8888`的笔记本服务器。
+如果一切正常，您应该会看到这样的屏幕，显示当前目录中所有可用的笔记本电脑。单击`jupyter-notebook-tutorial.ipynb`
+并按照笔记本上的说明进行操作。否则，您可以继续阅读下面的教程和代码片段。
 
 ## Python
 
