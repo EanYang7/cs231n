@@ -21,6 +21,7 @@ theme:
     - toc.follow
     - content.action.edit
     - content.action.view
+    - content.code.copy
 
   palette:
 
@@ -65,7 +66,9 @@ plugins:
     include_source: True
  - git-revision-date-localized:
     enable_creation_date: true
- - search
+ - search:
+    separator: '[\s\u200b\-]'
+  
 
 
 edit_uri: "edit/dev/docs/"
