@@ -109,7 +109,7 @@ extra:
     - name: English(源网站)
       link: https://cs231n.github.io/
       lang: en
-  generator: false  
+  # generator: false  
   analytics:
     provider: google
     property: G-5F8XNH7BCX
