@@ -845,8 +845,8 @@ imsave('assets/cat_tinted.jpg', img_tinted)
 ```
 
 <div class='fig figcenter fighighlight'>
-  <img src='/courses/preparation/python-numpy-tutorial.assets/cat.jpg'>
-  <img src='/courses/preparation/python-numpy-tutorial.assets/cat_tinted.jpg'>
+  <img src='https://eanyang7.github.io/cs231n/courses/preparation/python-numpy-tutorial.assets/cat.jpg'>
+  <img src='https://eanyang7.github.io/cs231n/courses/preparation/python-numpy-tutorial.assets/cat_tinted.jpg'>
   <div class='figcaption'>
     左：原始图像。
     右：经过着色和调整大小的图像。
@@ -917,7 +917,7 @@ plt.show()  # You must call plt.show() to make graphics appear.
 执行此代码会产生以下图表：
 
 <div class='fig figcenter fighighlight'>
-  <img src='/courses/preparation/python-numpy-tutorial.assets/sine.png'>
+  <img src='https://eanyang7.github.io/cs231n/courses/preparation/python-numpy-tutorial.assets/sine.png'>
 </div>
 
 只需稍微努力，我们就可以轻松地同时绘制多条线，并添加标题、图例和坐标轴标签。
@@ -941,7 +941,7 @@ plt.legend(['Sine', 'Cosine'])
 plt.show()
 ```
 <div class='fig figcenter fighighlight'>
-  <img src='/courses/preparation/python-numpy-tutorial.assets/sine_cosine.png'>
+  <img src='https://eanyang7.github.io/cs231n/courses/preparation/python-numpy-tutorial.assets/sine_cosine.png'>
 </div>
 
 
@@ -980,7 +980,7 @@ plt.show()
 ```
 
 <div class='fig figcenter fighighlight'>
-  <img src='/courses/preparation/python-numpy-tutorial.assets/sine_cosine_subplot.png'>
+  <img src='https://eanyang7.github.io/cs231n/courses/preparation/python-numpy-tutorial.assets/sine_cosine_subplot.png'>
 </div>
 
 你可以在[文档](http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.subplot)中阅读更多有关`subplot`函数的内容。
@@ -1014,5 +1014,5 @@ plt.show()
 ```
 
 <div class='fig figcenter fighighlight'>
-  <img src='/courses/preparation/python-numpy-tutorial.assets/cat_tinted_imshow.png'>
+  <img src='https://eanyang7.github.io/cs231n/courses/preparation/python-numpy-tutorial.assets/cat_tinted_imshow.png'>
 </div>
