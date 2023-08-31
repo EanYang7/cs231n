@@ -6,7 +6,7 @@ hide:
 
 [课程地址](http://cs231n.stanford.edu/)
 
-这些笔记是与斯坦福大学计算机科学课程[CS231n：卷积神经网络视觉识别](http://cs231n.stanford.edu/)相关的。 如有问题/关注/漏洞报告，请直接向我们的[git repo](https://github.com/cs231n/cs231n.github.io)提交pull request。
+这些笔记是与斯坦福大学计算机科学课程[CS231n：卷积神经网络视觉识别](http://cs231n.stanford.edu/)相关的。 如有问题/关注/漏洞报告，请直接向[git repo](https://github.com/cs231n/cs231n.github.io)提交pull request。
 
 ---
 
@@ -68,7 +68,7 @@ hide:
 
 ## 模块0：准备
 
-<a href="setup">
+<a href="./courses/preparation/setup">
 
 <div class="card">
   <h2>软件设置</h2>
@@ -77,7 +77,7 @@ hide:
 
 </a>
 
- <a href="python-numpy-tutorial">
+ <a href="./courses/preparation/python-numpy-tutorial">
 
 <div class="card">
   <h2>Python / Numpy教程(使用Jupyter和Colab)</h2>
