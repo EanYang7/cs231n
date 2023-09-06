@@ -222,7 +222,7 @@ for k in [1, 3, 5, 10, 20, 50, 100]:
 
 ![pixels_embed_cifar10](./classification.assets/pixels_embed_cifar10.jpg) 
 
->使用t-SNE将CIFAR-10图像嵌入到二维空间中。在这个图像中，根据L2像素距离附近显示的图像被认为是接近的。请注意，背景比语义类别差异更具显著性。点击<a href="https://eanyang7.github.io/cs231n/courses/preparation/classification.assets/pixels_embed_cifar10_big.jpg">这里</a>查看更大版本的可视化。
+>使用t-SNE将CIFAR-10图像嵌入到二维空间中。在这个图像中，根据L2像素距离附近显示的图像被认为是接近的。请注意，背景比语义类别差异更具显著性。点击<a href="https://eanyang7.github.io/cs231n/courses/neural_network/classification.assets/pixels_embed_cifar10_big.jpg">这里</a>查看更大版本的可视化。
 
 特别要注意的是，附近的图像更多地取决于图像的一般颜色分布或背景类型，而不是它们的语义身份。例如，一只狗可以被认为与一只青蛙非常接近，因为它们都碰巧在白色背景上。理想情况下，我们希望所有10个类别的图像都形成自己的聚类，这样相同类别的图像可以彼此接近，而不受不相关特征和变化（例如背景）的影响。然而，要实现这一属性，我们需要超越原始像素go beyond raw pixels。
 
