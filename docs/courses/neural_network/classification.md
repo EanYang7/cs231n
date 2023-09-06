@@ -214,14 +214,6 @@ for k in [1, 3, 5, 10, 20, 50, 100]:
 
 最近邻分类器在某些情况下可能是一个不错的选择（特别是如果数据维度较低），但在实际图像分类环境中很少合适。一个问题是图像是高维对象（即它们通常包含许多像素），高维空间中的距离可能非常不直观counter-intuitive。下面的图像说明了基于像素的L2相似性与感知相似性perceptual similarities之间的差异：
 
-**Pros and Cons of Nearest Neighbor classifier.**
-
-It is worth considering some advantages and drawbacks of the Nearest Neighbor classifier. Clearly, one advantage is that it is very simple to implement and understand. Additionally, the classifier takes no time to train, since all that is required is to store and possibly index the training data. However, we pay that computational cost at test time, since classifying a test example requires a comparison to every single training example. This is backwards, since in practice we often care about the test time efficiency much more than the efficiency at training time. In fact, the deep neural networks we will develop later in this class shift this tradeoff to the other extreme: They are very expensive to train, but once the training is finished it is very cheap to classify a new test example. This mode of operation is much more desirable in practice.
-
-As an aside, the computational complexity of the Nearest Neighbor classifier is an active area of research, and several **Approximate Nearest Neighbor** (ANN) algorithms and libraries exist that can accelerate the nearest neighbor lookup in a dataset (e.g. [FLANN](https://github.com/mariusmuja/flann)). These algorithms allow one to trade off the correctness of the nearest neighbor retrieval with its space/time complexity during retrieval, and usually rely on a pre-processing/indexing stage that involves building a kdtree, or running the k-means algorithm.
-
-The Nearest Neighbor Classifier may sometimes be a good choice in some settings (especially if the data is low-dimensional), but it is rarely appropriate for use in practical image classification settings. One problem is that images are high-dimensional objects (i.e. they often contain many pixels), and distances over high-dimensional spaces can be very counter-intuitive. The image below illustrates the point that the pixel-based L2 similarities we developed above are very different from perceptual similarities:
-
 ![samenorm](./classification.assets/samenorm.png) 
 
 >基于像素的距离在高维数据（尤其是图像）上可能非常不直观。左侧是一个原始图像，旁边是另外三个图像，它们在基于像素的L2距离上都与原始图像等距离。显然，像素级的距离与感知perceptual或语义semantic相似性毫无关系。
