@@ -26,13 +26,13 @@ In the previous section we introduced two key components in context of the image
 1. A (parameterized) **score function** mapping the raw image pixels to class scores (e.g. a linear function)
 2. A **loss function** that measured the quality of a particular set of parameters based on how well the induced scores agreed with the ground truth labels in the training data. We saw that there are many ways and versions of this (e.g. Softmax/SVM).
 
-Concretely, recall that the linear function had the form \\( f(x_i, W) =  W x_i \\) and the SVM we developed was formulated as:
+Concretely, recall that the linear function had the form $ f(x_i, W) =  W x_i $ and the SVM we developed was formulated as:
 
 $$
 L = \frac{1}{N} \sum_i \sum_{j\neq y_i} \left[ \max(0, f(x_i; W)_j - f(x_i; W)_{y_i} + 1) \right] + \alpha R(W)
 $$
 
-We saw that a setting of the parameters \\(W\\) that produced predictions for examples \\(x_i\\) consistent with their ground truth labels \\(y_i\\) would also have a very low loss \\(L\\). We are now going to introduce the third and last key component: **optimization**. Optimization is the process of finding the set of parameters \\(W\\) that minimize the loss function.
+We saw that a setting of the parameters $W$ that produced predictions for examples $x_i$ consistent with their ground truth labels $y_i$ would also have a very low loss $L$. We are now going to introduce the third and last key component: **optimization**. Optimization is the process of finding the set of parameters $W$ that minimize the loss function.
 
 **Foreshadowing:** Once we understand how these three core components interact, we will revisit the first component (the parameterized function mapping) and extend it to functions much more complicated than a linear mapping: First entire Neural Networks, and then Convolutional Neural Networks. The loss functions and the optimization process will remain relatively unchanged.
 
@@ -40,7 +40,7 @@ We saw that a setting of the parameters \\(W\\) that produced predictions for ex
 
 ### Visualizing the loss function
 
-The loss functions we'll look at in this class are usually defined over very high-dimensional spaces (e.g. in CIFAR-10 a linear classifier weight matrix is of size [10 x 3073] for a total of 30,730 parameters), making them difficult to visualize. However, we can still gain some intuitions about one by slicing through the high-dimensional space along rays (1 dimension), or along planes (2 dimensions). For example, we can generate a random weight matrix \\(W\\) (which corresponds to a single point in the space), then march along a ray and record the loss function value along the way. That is, we can generate a random direction \\(W_1\\) and compute the loss along this direction by evaluating \\(L(W + a W_1)\\) for different values of \\(a\\). This process generates a simple plot with the value of \\(a\\) as the x-axis and the value of the loss function as the y-axis. We can also carry out the same procedure with two dimensions by evaluating the loss \\( L(W + a W_1 + b W_2) \\) as we vary \\(a, b\\). In a plot, \\(a, b\\) could then correspond to the x-axis and the y-axis, and the value of the loss function can be visualized with a color:
+The loss functions we'll look at in this class are usually defined over very high-dimensional spaces (e.g. in CIFAR-10 a linear classifier weight matrix is of size [10 x 3073] for a total of 30,730 parameters), making them difficult to visualize. However, we can still gain some intuitions about one by slicing through the high-dimensional space along rays (1 dimension), or along planes (2 dimensions). For example, we can generate a random weight matrix $W$ (which corresponds to a single point in the space), then march along a ray and record the loss function value along the way. That is, we can generate a random direction $W_1$ and compute the loss along this direction by evaluating $L(W + a W_1)$ for different values of $a$. This process generates a simple plot with the value of $a$ as the x-axis and the value of the loss function as the y-axis. We can also carry out the same procedure with two dimensions by evaluating the loss $ L(W + a W_1 + b W_2) $ as we vary $a, b$. In a plot, $a, b$ could then correspond to the x-axis and the y-axis, and the value of the loss function can be visualized with a color:
 
 <div class="fig figcenter fighighlight">
   <img src="/assets/svm1d.png">
@@ -57,7 +57,7 @@ $$
 L_i = \sum_{j\neq y_i} \left[ \max(0, w_j^Tx_i - w_{y_i}^Tx_i + 1) \right]
 $$
 
-It is clear from the equation that the data loss for each example is a sum of (zero-thresholded due to the \\(\max(0,-)\\) function) linear functions of \\(W\\). Moreover, each row of \\(W\\) (i.e. \\(w_j\\)) sometimes has a positive sign in front of it (when it corresponds to a wrong class for an example), and sometimes a negative sign (when it corresponds to the correct class for that example). To make this more explicit, consider a simple dataset that contains three 1-dimensional points and three classes. The full SVM loss (without regularization) becomes:
+It is clear from the equation that the data loss for each example is a sum of (zero-thresholded due to the $\max(0,-)$ function) linear functions of $W$. Moreover, each row of $W$ (i.e. $w_j$) sometimes has a positive sign in front of it (when it corresponds to a wrong class for an example), and sometimes a negative sign (when it corresponds to the correct class for that example). To make this more explicit, consider a simple dataset that contains three 1-dimensional points and three classes. The full SVM loss (without regularization) becomes:
 
 $$
 \begin{align}
@@ -68,7 +68,7 @@ L = & (L_0 + L_1 + L_2)/3
 \end{align}
 $$
 
-Since these examples are 1-dimensional, the data \\(x_i\\) and weights \\(w_j\\) are numbers. Looking at, for instance, \\(w_0\\), some terms above are linear functions of \\(w_0\\) and each is clamped at zero. We can visualize this as follows:
+Since these examples are 1-dimensional, the data $x_i$ and weights $w_j$ are numbers. Looking at, for instance, $w_0$, some terms above are linear functions of $w_0$ and each is clamped at zero. We can visualize this as follows:
 
 <div class="fig figcenter fighighlight">
   <img src="/assets/svmbowl.png">
@@ -77,7 +77,7 @@ Since these examples are 1-dimensional, the data \\(x_i\\) and weights \\(w_j\\)
   </div>
 </div>
 
-As an aside, you may have guessed from its bowl-shaped appearance that the SVM cost function is an example of a [convex function](http://en.wikipedia.org/wiki/Convex_function) There is a large amount of literature devoted to efficiently minimizing these types of functions, and you can also take a Stanford class on the topic ( [convex optimization](http://stanford.edu/~boyd/cvxbook/) ). Once we extend our score functions \\(f\\) to Neural Networks our objective functions will become non-convex, and the visualizations above will not feature bowls but complex, bumpy terrains.
+As an aside, you may have guessed from its bowl-shaped appearance that the SVM cost function is an example of a [convex function](http://en.wikipedia.org/wiki/Convex_function) There is a large amount of literature devoted to efficiently minimizing these types of functions, and you can also take a Stanford class on the topic ( [convex optimization](http://stanford.edu/~boyd/cvxbook/) ). Once we extend our score functions $f$ to Neural Networks our objective functions will become non-convex, and the visualizations above will not feature bowls but complex, bumpy terrains.
 
 *Non-differentiable loss functions*. As a technical note, you can also see that the *kinks* in the loss function (due to the max operation) technically make the loss function non-differentiable because at these kinks the gradient is not defined. However, the [subgradient](http://en.wikipedia.org/wiki/Subderivative) still exists and is commonly used instead. In this class will use the terms *subgradient* and *gradient* interchangeably.
 
@@ -142,7 +142,7 @@ With the best **W** this gives an accuracy of about **15.5%**. Given that guessi
 
 #### Strategy #2: Random Local Search
 
-The first strategy you may think of is to try to extend one foot in a random direction and then take a step only if it leads downhill. Concretely, we will start out with a random \\(W\\), generate random perturbations \\( \delta W \\) to it and if the loss at the perturbed \\(W + \delta W\\) is lower, we will perform an update. The code for this procedure is as follows:
+The first strategy you may think of is to try to extend one foot in a random direction and then take a step only if it leads downhill. Concretely, we will start out with a random $W$, generate random perturbations $ \delta W $ to it and if the loss at the perturbed $W + \delta W$ is lower, we will perform an update. The code for this procedure is as follows:
 
 ```python
 W = np.random.randn(10, 3073) * 0.001 # generate random starting W
@@ -217,7 +217,7 @@ def eval_numerical_gradient(f, x):
 
 Following the gradient formula we gave above, the code above iterates over all dimensions one by one, makes a small change `h` along that dimension and calculates the partial derivative of the loss function along that dimension by seeing how much the function changed. The variable `grad` holds the full gradient in the end.
 
-**Practical considerations**. Note that in the mathematical formulation the gradient is defined in the limit as **h** goes towards zero, but in practice it is often sufficient to use a very small value (such as 1e-5 as seen in the example). Ideally, you want to use the smallest step size that does not lead to numerical issues. Additionally, in practice it often works better to compute the numeric gradient using the **centered difference formula**: \\( [f(x+h) - f(x-h)] / 2 h \\) . See [wiki](http://en.wikipedia.org/wiki/Numerical_differentiation) for details.
+**Practical considerations**. Note that in the mathematical formulation the gradient is defined in the limit as **h** goes towards zero, but in practice it is often sufficient to use a very small value (such as 1e-5 as seen in the example). Ideally, you want to use the smallest step size that does not lead to numerical issues. Additionally, in practice it often works better to compute the numeric gradient using the **centered difference formula**: $ [f(x+h) - f(x-h)] / 2 h $ . See [wiki](http://en.wikipedia.org/wiki/Numerical_differentiation) for details.
 
 We can use the function given above to compute the gradient at any point and for any function. Lets compute the gradient for the CIFAR-10 loss function at some random point in the weight space:
 
@@ -285,13 +285,13 @@ $$
 L_i = \sum_{j\neq y_i} \left[ \max(0, w_j^Tx_i - w_{y_i}^Tx_i + \Delta) \right]
 $$
 
-We can differentiate the function with respect to the weights. For example, taking the gradient with respect to \\(w_{y_i}\\) we obtain:
+We can differentiate the function with respect to the weights. For example, taking the gradient with respect to $w_{y_i}$ we obtain:
 
 $$
 \nabla_{w_{y_i}} L_i = - \left( \sum_{j\neq y_i} \mathbb{1}(w_j^Tx_i - w_{y_i}^Tx_i + \Delta > 0) \right) x_i
 $$
 
-where \\(\mathbb{1}\\) is the indicator function that is one if the condition inside is true or zero otherwise. While the expression may look scary when it is written out, when you're implementing this in code you'd simply count the number of classes that didn't meet the desired margin (and hence contributed to the loss function) and then the data vector \\(x_i\\) scaled by this number is the gradient. Notice that this is the gradient only with respect to the row of \\(W\\) that corresponds to the correct class. For the other rows where \\(j \neq y_i \\) the gradient is:
+where $\mathbb{1}$ is the indicator function that is one if the condition inside is true or zero otherwise. While the expression may look scary when it is written out, when you're implementing this in code you'd simply count the number of classes that didn't meet the desired margin (and hence contributed to the loss function) and then the data vector $x_i$ scaled by this number is the gradient. Notice that this is the gradient only with respect to the row of $W$ that corresponds to the correct class. For the other rows where $j \neq y_i $ the gradient is:
 
 $$
 \nabla_{w_j} L_i = \mathbb{1}(w_j^Tx_i - w_{y_i}^Tx_i + \Delta > 0) x_i
