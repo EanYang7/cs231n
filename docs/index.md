@@ -88,7 +88,7 @@ hide:
 
 ## 模块1：神经网络
 
-<a href="classification">
+<a href="./courses/neural_network/classification">
 
 <div class="card">
   <h2>图像分类：数据驱动方法，k-近邻k-Nearest Neighbor，训练/验证/测试分割</h2>
@@ -100,7 +100,7 @@ hide:
 
 </a>
 
-<a href="linear-classify">
+<a href="./courses/neural_network/linear-classify">
 
 <div class="card">
   <h2>线性分类：支持向量机SVM，Softmax</h2>
@@ -114,7 +114,7 @@ hide:
 
 </a>
 
-<a href="optimization-1">
+<a href="./courses/neural_network/optimization-1">
 
 <div class="card">
   <h2>优化：随机梯度下降Stochastic Gradient Descent</h2>
@@ -126,7 +126,7 @@ hide:
 
 </a>
 
-<a href="optimization-2">
+<a href="./courses/neural_network/optimization-2">
 
 <div class="card">
   <h2>反向传播Backpropagation，直觉Intuitions</h2>
@@ -138,7 +138,7 @@ hide:
 
 </a>
 
-<a href="neural-networks-1">
+<a href="./courses/neural_network/neural-networks-1">
 
 <div class="card">
   <h2>神经网络第1部分：设置架构architecture</h2>
@@ -150,7 +150,7 @@ hide:
 
 </a>
 
-<a href="neural-networks-2">
+<a href="./courses/neural_network/neural-networks-2">
 
 <div class="card">
   <h2>神经网络第2部分：设置数据和损失</h2>
@@ -162,7 +162,7 @@ hide:
 
 </a>
 
- <a href="neural-networks-3">
+ <a href="./courses/neural_network/neural-networks-3">
 
 <div class="card">
   <h2>神经网络第3部分：学习和评估</h2>
@@ -174,7 +174,7 @@ hide:
 
 </a>
 
-<a href="neural-networks-case-study">
+<a href="./courses/neural_network/neural-networks-case-study">
 
 <div class="card">
   <h2>将其组合起来：最小神经网络案例研究y</h2>
@@ -188,7 +188,7 @@ hide:
 
 ## 模块2：卷积神经网络
 
-<a href="convolutional-networks">
+<a href="./courses/CNN/convolutional-networks">
 
 <div class="card">
   <h2>卷积神经网络：架构，卷积/池化Pooling层</h2>
@@ -200,7 +200,7 @@ hide:
 
 </a>
 
-<a href="understanding-cnn">
+<a href="./courses/CNN/understanding-cnn">
 
 <div class="card">
   <h2>卷积神经网络的理解和可视化
@@ -213,7 +213,7 @@ tSNE嵌入，deconvnets，数据梯度，fooling ConvNets，人类比较human co
 
 </a>
 
-  <a href="transfer-learning">
+  <a href="./courses/CNN/transfer-learning">
 
 <div class="card">
   <h2>迁移学习Transfer Learning和微调Fine-tuning卷积神经网络</h2>
