@@ -1,63 +1,38 @@
----
-layout: page
-permalink: /optimization-1/
----
+### 引言
 
-Table of Contents:
+在前一节中，我们在图像分类任务的背景下介绍了两个关键组成部分：
 
-- [Introduction](#intro)
-- [Visualizing the loss function](#vis)
-- [Optimization](#optimization)
-  - [Strategy #1: Random Search](#opt1)
-  - [Strategy #2: Random Local Search](#opt2)
-  - [Strategy #3: Following the gradient](#opt3)
-- [Computing the gradient](#gradcompute)
-  - [Numerically with finite differences](#numerical)
-  - [Analytically with calculus](#analytic)
-- [Gradient descent](#gd)
-- [Summary](#summary)
+1. 一个（参数化的）**分数函数**，将原始图像像素映射到类别分数（例如，一个线性函数）。
+2. 一个**损失函数**，根据感知分数induced scores与训练数据中的真实标签的一致性来衡量特定参数集的质量。我们看到有许多方法和版本可以用来实现这个目标（例如Softmax/SVM）。
 
-<a name='intro'></a>
+具体来说，回想一下线性函数的形式为 $ f(x_i, W) =  W x_i $，我们开发的SVM被公式化为：
 
-### Introduction
-
-In the previous section we introduced two key components in context of the image classification task:
-
-1. A (parameterized) **score function** mapping the raw image pixels to class scores (e.g. a linear function)
-2. A **loss function** that measured the quality of a particular set of parameters based on how well the induced scores agreed with the ground truth labels in the training data. We saw that there are many ways and versions of this (e.g. Softmax/SVM).
-
-Concretely, recall that the linear function had the form $ f(x_i, W) =  W x_i $ and the SVM we developed was formulated as:
 
 $$
 L = \frac{1}{N} \sum_i \sum_{j\neq y_i} \left[ \max(0, f(x_i; W)_j - f(x_i; W)_{y_i} + 1) \right] + \alpha R(W)
 $$
 
-We saw that a setting of the parameters $W$ that produced predictions for examples $x_i$ consistent with their ground truth labels $y_i$ would also have a very low loss $L$. We are now going to introduce the third and last key component: **optimization**. Optimization is the process of finding the set of parameters $W$ that minimize the loss function.
+我们看到，产生与示例 $x_i$ 的基础真实标签 $y_i$ 一致的参数 $W$ 的设置也将具有非常低的损失 $L$。现在，我们将介绍第三个和最后一个关键组成部分：**优化**。优化是找到最小化损失函数的参数 $W$ 集合的过程。
 
-**Foreshadowing:** Once we understand how these three core components interact, we will revisit the first component (the parameterized function mapping) and extend it to functions much more complicated than a linear mapping: First entire Neural Networks, and then Convolutional Neural Networks. The loss functions and the optimization process will remain relatively unchanged.
+**铺垫：**一旦我们了解了这三个核心组件是如何相互作用的，我们将重新审视第一个组件（参数化函数映射），并将其扩展到比线性映射复杂得多的函数：首先是整个神经网络，然后是卷积神经网络。损失函数和优化过程将保持相对不变。
 
-<a name='vis'></a>
+### 可视化损失函数
 
-### Visualizing the loss function
+在本课程中，我们将研究的损失函数通常定义在非常高维的空间中（例如，在CIFAR-10中，线性分类器的权重矩阵的大小为[10 x 3073]，总共有30,730个参数），使得它们很难可视化。然而，我们仍然可以通过沿着光线rays（1维）或平面（2维）切割高维空间来获得一些关于它们的直观感受。例如，我们可以生成一个随机的权重矩阵$W$（对应于空间中的一个点），然后沿着一条光线前进并记录沿途的损失函数值。也就是说，我们可以生成一个随机方向$W_1$，并通过评估不同$a$值的$L(W + a W_1)$来沿着这个方向计算损失。这个过程生成一个简单的绘图，其中$a$值作为x轴，损失函数值作为y轴。我们还可以通过在二维空间中评估损失 $ L(W + a W_1 + b W_2) $ 来以相同的方式执行两个维度的过程，当我们改变 $a, b$ 时，$a, b$ 可以对应于x轴和y轴，并且可以使用颜色来可视化损失函数的值：
 
-The loss functions we'll look at in this class are usually defined over very high-dimensional spaces (e.g. in CIFAR-10 a linear classifier weight matrix is of size [10 x 3073] for a total of 30,730 parameters), making them difficult to visualize. However, we can still gain some intuitions about one by slicing through the high-dimensional space along rays (1 dimension), or along planes (2 dimensions). For example, we can generate a random weight matrix $W$ (which corresponds to a single point in the space), then march along a ray and record the loss function value along the way. That is, we can generate a random direction $W_1$ and compute the loss along this direction by evaluating $L(W + a W_1)$ for different values of $a$. This process generates a simple plot with the value of $a$ as the x-axis and the value of the loss function as the y-axis. We can also carry out the same procedure with two dimensions by evaluating the loss $ L(W + a W_1 + b W_2) $ as we vary $a, b$. In a plot, $a, b$ could then correspond to the x-axis and the y-axis, and the value of the loss function can be visualized with a color:
+![image-20230911125437924](./optimization-1.assets/image-20230911125437924.png) 
 
-<div class="fig figcenter fighighlight">
-  <img src="/assets/svm1d.png">
-  <img src="/assets/svm_one.jpg">
-  <img src="/assets/svm_all.jpg">
-  <div class="figcaption">
-    Loss function landscape for the Multiclass SVM (without regularization) for one single example (left,middle) and for a hundred examples (right) in CIFAR-10. Left: one-dimensional loss by only varying <b>a</b>. Middle, Right: two-dimensional loss slice, Blue = low loss, Red = high loss. Notice the piecewise-linear structure of the loss function. The losses for multiple examples are combined with average, so the bowl shape on the right is the average of many piece-wise linear bowls (such as the one in the middle).
-  </div>
-</div>
+> 这是一个多类别SVM（无正则化）的损失函数图景，其中包括CIFAR-10中的一个单一示例（左、中）和一百个示例（右）。左图：仅通过变化 <b>a</b> 来获得的一维损失。中、右图：损失的二维切片，蓝色=低损失，红色=高损失。请注意损失函数的分段线性结构。多个示例的损失是通过平均组合的，因此右图的碗形是许多分段线性碗（例如中间的碗）的平均值。
 
-We can explain the piecewise-linear structure of the loss function by examining the math. For a single example we have:
+我们可以通过检查数学公式来解释损失函数的分段线性结构。对于单个示例，我们有：
+
 
 $$
 L_i = \sum_{j\neq y_i} \left[ \max(0, w_j^Tx_i - w_{y_i}^Tx_i + 1) \right]
 $$
 
-It is clear from the equation that the data loss for each example is a sum of (zero-thresholded due to the $\max(0,-)$ function) linear functions of $W$. Moreover, each row of $W$ (i.e. $w_j$) sometimes has a positive sign in front of it (when it corresponds to a wrong class for an example), and sometimes a negative sign (when it corresponds to the correct class for that example). To make this more explicit, consider a simple dataset that contains three 1-dimensional points and three classes. The full SVM loss (without regularization) becomes:
+从方程式中可以清楚地看出，每个示例的数据损失是 $W$ 的线性函数之和（由于 $\max(0,-)$ 函数的零阈值）。此外，$W$ 的每一行（即 $w_j$）有时候在其前面有正号（当它对应于示例的错误类别时），有时候有负号（当它对应于该示例的正确类别时）。为了更加明确这一点，考虑一个包含三个一维点和三个类别的简单数据集。不带正则化的完整SVM损失变成了：
+
 
 $$
 \begin{align}
@@ -68,30 +43,23 @@ L = & (L_0 + L_1 + L_2)/3
 \end{align}
 $$
 
-Since these examples are 1-dimensional, the data $x_i$ and weights $w_j$ are numbers. Looking at, for instance, $w_0$, some terms above are linear functions of $w_0$ and each is clamped at zero. We can visualize this as follows:
+由于这些示例是一维的，数据 $x_i$ 和权重 $w_j$ 都是数字。以 $w_0$ 为例，上述某些项是 $w_0$ 的线性函数，每个项都在零处被截断。我们可以将其可视化如下：
 
-<div class="fig figcenter fighighlight">
-  <img src="/assets/svmbowl.png">
-  <div class="figcaption">
-    1-dimensional illustration of the data loss. The x-axis is a single weight and the y-axis is the loss. The data loss is a sum of multiple terms, each of which is either independent of a particular weight, or a linear function of it that is thresholded at zero. The full SVM data loss is a 30,730-dimensional version of this shape.
-  </div>
-</div>
+![svmbowl](./optimization-1.assets/svmbowl.png) 
 
-As an aside, you may have guessed from its bowl-shaped appearance that the SVM cost function is an example of a [convex function](http://en.wikipedia.org/wiki/Convex_function) There is a large amount of literature devoted to efficiently minimizing these types of functions, and you can also take a Stanford class on the topic ( [convex optimization](http://stanford.edu/~boyd/cvxbook/) ). Once we extend our score functions $f$ to Neural Networks our objective functions will become non-convex, and the visualizations above will not feature bowls but complex, bumpy terrains.
+>1维图示数据损失。x轴是单个权重，y轴是损失。数据损失是多个项的总和，每个项要么与特定权重无关，要么是它的线性函数，被截断为零。完整的SVM数据损失是这个形状的30,730维版本。
 
-*Non-differentiable loss functions*. As a technical note, you can also see that the *kinks* in the loss function (due to the max operation) technically make the loss function non-differentiable because at these kinks the gradient is not defined. However, the [subgradient](http://en.wikipedia.org/wiki/Subderivative) still exists and is commonly used instead. In this class will use the terms *subgradient* and *gradient* interchangeably.
+作为一个旁注，你可能已经从它的碗状外观猜到了SVM成本函数是[凸函数convex function](http://en.wikipedia.org/wiki/Convex_function)的一个例子。有大量的文献致力于高效地最小化这类函数，你还可以参加斯坦福的一门课程（[凸优化convex optimization](http://stanford.edu/~boyd/cvxbook/)）。一旦我们将得分函数$f$扩展到神经网络，我们的目标函数将变成非凸函数，上面的可视化将不再呈现碗状，而是复杂而崎岖的地形。
 
-<a name='optimization'></a>
+*不可微Non-differentiable损失函数*。作为一个技术说明，你还可以看到损失函数中的*拐点kinks*（由于max操作）在技术上使得损失函数不可微，因为在这些拐点处梯度未被定义。然而，[次梯度subgradient](http://en.wikipedia.org/wiki/Subderivative)仍然存在并且通常被使用。在这门课程中，我们将互换使用*次梯度*和*梯度*这两个术语。
 
-### Optimization
+### 优化
 
-To reiterate, the loss function lets us quantify the quality of any particular set of weights **W**. The goal of optimization is to find **W** that minimizes the loss function. We will now motivate and slowly develop an approach to optimizing the loss function. For those of you coming to this class with previous experience, this section might seem odd since the working example we'll use (the SVM loss) is a convex problem, but keep in mind that our goal is to eventually optimize Neural Networks where we can't easily use any of the tools developed in the Convex Optimization literature.
+再次强调，损失函数允许我们量化任何特定权重**W**的质量。优化的目标是找到最小化损失函数的**W**。我们现在将激励并慢慢开发一种优化损失函数的方法。对于那些具有以前经验的人来说，这部分可能看起来有些奇怪，因为我们将使用的工作示例（SVM损失）是一个凸问题，但请记住我们的目标是最终优化神经网络，在那里我们不能轻松使用凸优化文献中开发的任何工具。
 
-<a name='opt1'></a>
+#### 策略＃1：一个非常糟糕的解决方案：随机搜索
 
-#### Strategy #1: A first very bad idea solution: Random search
-
-Since it is so simple to check how good a given set of parameters **W** is, the first (very bad) idea that may come to mind is to simply try out many different random weights and keep track of what works best. This procedure might look as follows:
+由于检查给定的权重**W**如此简单，可能会首先（非常糟糕）想到的一个想法是尝试许多不同的随机权重，然后跟踪哪个效果最好。该过程可能如下所示：
 
 ```python
 # assume X_train is the data where each column is an example (e.g. 3073 x 50,000)
@@ -118,7 +86,7 @@ for num in range(1000):
 # ... (trunctated: continues for 1000 lines)
 ```
 
-In the code above, we see that we tried out several random weight vectors **W**, and some of them work better than others. We can take the best weights **W** found by this search and try it out on the test set:
+在上面的代码中，我们可以看到我们尝试了几个随机的权重向量**W**，其中一些比其他的效果好。我们可以取在这次搜索中找到的最佳权重**W**，然后在测试集上尝试它：
 
 ```python
 # Assume X_test is [3073 x 10000], Y_test [10000 x 1]
@@ -130,19 +98,17 @@ np.mean(Yte_predict == Yte)
 # returns 0.1555
 ```
 
-With the best **W** this gives an accuracy of about **15.5%**. Given that guessing classes completely at random achieves only 10%, that's not a very bad outcome for a such a brain-dead random search solution!
+最佳的**W**可以获得约**15.5%**的准确率。考虑到完全随机猜测类别只能达到10%，对于这种毫无头绪的随机搜索解决方案来说，这并不是一个非常糟糕的结果！
 
-**Core idea: iterative refinement**. Of course, it turns out that we can do much better. The core idea is that finding the best set of weights **W** is a very difficult or even impossible problem (especially once **W** contains weights for entire complex neural networks), but the problem of refining a specific set of weights **W** to be slightly better is significantly less difficult. In other words, our approach will be to start with a random **W** and then iteratively refine it, making it slightly better each time.
+**核心思想：迭代优化**。当然，事实证明我们可以做得更好。核心思想是找到最佳权重**W**是一个非常困难甚至不可能的问题（特别是一旦**W**包含了整个复杂神经网络的权重），但将特定的权重**W**进行微调以使其略微改善的问题要容易得多。换句话说，我们的方法将是从随机的**W**开始，然后迭代地对其进行改进，使其每次都略微改善。
 
-> Our strategy will be to start with random weights and iteratively refine them over time to get lower loss
+> 我们的策略是从随机权重开始，然后随着时间的推移迭代地对其进行改进，以获得更低的损失
 
-**Blindfolded hiker analogy.** One analogy that you may find helpful going forward is to think of yourself as hiking on a hilly terrain with a blindfold on, and trying to reach the bottom. In the example of CIFAR-10, the hills are 30,730-dimensional, since the dimensions of **W** are 10 x 3073. At every point on the hill we achieve a particular loss (the height of the terrain).
+**盲目的徒步旅行者比喻**。一个有用的类比是将自己看作是在一个多山的地形上徒步，而且双眼被蒙住，试图到达底部。在CIFAR-10的例子中，这些山是30,730维的，因为**W**的维度是10 x 3073。在山上的每一点，我们都会达到特定的损失（地形的高度）。
 
-<a name='opt2'></a>
+#### 策略#2：随机本地搜索
 
-#### Strategy #2: Random Local Search
-
-The first strategy you may think of is to try to extend one foot in a random direction and then take a step only if it leads downhill. Concretely, we will start out with a random $W$, generate random perturbations $ \delta W $ to it and if the loss at the perturbed $W + \delta W$ is lower, we will perform an update. The code for this procedure is as follows:
+你可能会想到的第一种策略是尝试沿着随机方向延伸一只脚，然后只有当它向下倾斜时才迈出一步。具体来说，我们将从随机的$W$开始，生成对其的随机扰动$\delta W$，如果扰动后的$W + \delta W$处的损失更低，我们将执行更新。这个过程的代码如下：
 
 ```python
 W = np.random.randn(10, 3073) * 0.001 # generate random starting W
@@ -157,33 +123,28 @@ for i in range(1000):
   print 'iter %d loss is %f' % (i, bestloss)
 ```
 
-Using the same number of loss function evaluations as before (1000), this approach achieves test set classification accuracy of **21.4%**. This is better, but still wasteful and computationally expensive.
+使用与之前相同数量的损失函数评估（1000次），这种方法实现了**21.4%**的测试集分类准确率。这比之前好一些，但仍然浪费和计算昂贵。
 
-<a name='opt3'></a>
+#### 策略 #3：跟随梯度
 
-#### Strategy #3: Following the Gradient
+在前一节中，我们试图找到一个在权重空间中可以改进我们的权重向量的方向（并为我们提供更低的损失）的方向。事实证明，没有必要随机搜索一个好的方向：我们可以计算出一个最佳方向，我们应该改变我们的权重向量，这个方向在数学上被保证是最陡下降的方向（至少在步长趋向于零时）。这个方向与损失函数的**梯度gradient**有关。在我们的徒步旅行类比中，这种方法大致对应于感觉到脚下的山坡，并朝着感觉最陡的方向前进。
 
-In the previous section we tried to find a direction in the weight-space that would improve our weight vector (and give us a lower loss). It turns out that there is no need to randomly search for a good direction: we can compute the *best* direction along which we should change our weight vector that is mathematically guaranteed to be the direction of the steepest descent (at least in the limit as the step size goes towards zero). This direction will be related to the **gradient** of the loss function. In our hiking analogy, this approach roughly corresponds to feeling the slope of the hill below our feet and stepping down the direction that feels steepest.
+在一维函数中，斜率是你可能感兴趣的任何点的函数的瞬时变化率。梯度是对不仅接受单个数字而且接受一组数字的函数的斜率的一种概括。此外，梯度只是输入空间中每个维度的斜率的向量（更常被称为**导数derivatives**）。关于其输入的1-D函数的导数的数学表达式如下：
 
-In one-dimensional functions, the slope is the instantaneous rate of change of the function at any point you might be interested in. The gradient is a generalization of slope for functions that don't take a single number but a vector of numbers. Additionally, the gradient is just a vector of slopes (more commonly referred to as **derivatives**) for each dimension in the input space. The mathematical expression for the derivative of a 1-D function with respect its input is:
 
 $$
 \frac{df(x)}{dx} = \lim_{h\ \to 0} \frac{f(x + h) - f(x)}{h}
 $$
 
-When the functions of interest take a vector of numbers instead of a single number, we call the derivatives **partial derivatives**, and the gradient is simply the vector of partial derivatives in each dimension.
+当我们感兴趣的函数接受一组数字而不是单个数字时，我们将导数称为**偏导数partial derivatives**，梯度只是每个维度中的偏导数的向量。
 
-<a name='gradcompute'></a>
+### 计算梯度
 
-### Computing the gradient
+有两种计算梯度的方法：一种是慢速、近似但容易的方法（**数值梯度numerical gradient**），另一种是快速、精确但更容易出错的方法，需要微积分（**解析梯度analytic gradient**）。我们现在将介绍这两种方法。
 
-There are two ways to compute the gradient: A slow, approximate but easy way (**numerical gradient**), and a fast, exact but more error-prone way that requires calculus (**analytic gradient**). We will now present both.
+#### 使用有限差分finite differences数值计算梯度
 
-<a name='numerical'></a>
-
-#### Computing the gradient numerically with finite differences
-
-The formula given above allows us to compute the gradient numerically. Here is a generic function that takes a function `f`, a vector `x` to evaluate the gradient on, and returns the gradient of `f` at `x`:
+上面给出的公式允许我们通过数值方法计算梯度。这是一个通用函数，它接受一个函数`f`、要在其上评估梯度的向量`x`，并返回在`x`处`f`的梯度：
 
 ```python
 def eval_numerical_gradient(f, x):
@@ -215,11 +176,11 @@ def eval_numerical_gradient(f, x):
   return grad
 ```
 
-Following the gradient formula we gave above, the code above iterates over all dimensions one by one, makes a small change `h` along that dimension and calculates the partial derivative of the loss function along that dimension by seeing how much the function changed. The variable `grad` holds the full gradient in the end.
+按照我们上面给出的梯度公式，上面的代码逐个维度迭代，沿着该维度进行小的变化`h`，并通过查看函数变化了多少来计算该维度上损失函数的偏导数。最终，变量`grad`保存了完整的梯度。
 
-**Practical considerations**. Note that in the mathematical formulation the gradient is defined in the limit as **h** goes towards zero, but in practice it is often sufficient to use a very small value (such as 1e-5 as seen in the example). Ideally, you want to use the smallest step size that does not lead to numerical issues. Additionally, in practice it often works better to compute the numeric gradient using the **centered difference formula**: $ [f(x+h) - f(x-h)] / 2 h $ . See [wiki](http://en.wikipedia.org/wiki/Numerical_differentiation) for details.
+**实际考虑**。请注意，在数学公式中，梯度的定义是在**h**趋近于零的极限情况下，但在实际应用中，通常可以使用非常小的值（例如示例中的1e-5）。理想情况下，您希望使用不会导致数值问题的最小步长。此外，在实践中，使用**中心差分公式centered difference formula**计算数值梯度通常效果更好：$ [f(x+h) - f(x-h)] / 2 h $ 。详细信息请参阅[维基](http://en.wikipedia.org/wiki/Numerical_differentiation)。
 
-We can use the function given above to compute the gradient at any point and for any function. Lets compute the gradient for the CIFAR-10 loss function at some random point in the weight space:
+我们可以使用上面提供的函数来计算任何点和任何函数的梯度。让我们计算CIFAR-10损失函数在权重空间中的某个随机点的梯度：
 
 ```python
 
@@ -232,7 +193,7 @@ W = np.random.rand(10, 3073) * 0.001 # random weight vector
 df = eval_numerical_gradient(CIFAR10_loss_fun, W) # get the gradient
 ```
 
-The gradient tells us the slope of the loss function along every dimension, which we can use to make an update:
+梯度告诉我们损失函数沿每个维度的斜率，我们可以使用它进行更新：
 
 ```python
 loss_original = CIFAR10_loss_fun(W) # the original loss
@@ -259,51 +220,46 @@ for step_size_log in [-10, -9, -8, -7, -6, -5,-4,-3,-2,-1]:
 # for step size 1.000000e-01 new loss: 25392.214036
 ```
 
-**Update in negative gradient direction**. In the code above, notice that to compute `W_new` we are making an update in the negative direction of the gradient `df` since we wish our loss function to decrease, not increase.
+**朝着负梯度方向更新**。请注意，在上面的代码中，为了计算`W_new`，我们是在梯度`df`的负方向上进行更新的，因为我们希望我们的损失函数减小，而不是增加。
 
-**Effect of step size**. The gradient tells us the direction in which the function has the steepest rate of increase, but it does not tell us how far along this direction we should step. As we will see later in the course, choosing the step size (also called the *learning rate*) will become one of the most important (and most headache-inducing) hyperparameter settings in training a neural network. In our blindfolded hill-descent analogy, we feel the hill below our feet sloping in some direction, but the step length we should take is uncertain. If we shuffle our feet carefully we can expect to make consistent but very small progress (this corresponds to having a small step size). Conversely, we can choose to make a large, confident step in an attempt to descend faster, but this may not pay off. As you can see in the code example above, at some point taking a bigger step gives a higher loss as we "overstep".
+**步长step的影响**。梯度告诉我们函数具有最快增加速率的方向，但它不告诉我们沿着这个方向应该迈多远的一步。正如我们将在本课程的后期看到的那样，选择步长（也称为*学习率learning rate*）将成为训练神经网络中最重要（也是最头疼的）的超参数设置之一。在我们的盲目下坡下降比喻中，我们感觉到脚下的山坡朝某个方向倾斜，但我们应该迈多远的一步是不确定的。如果我们小心翼翼地挪动脚步，我们可以期望取得一致但非常小的进展（这对应于采用小步长）。相反，我们可以选择迈出大步，以更快地下降，但这可能得不偿失。正如您在上面的代码示例中看到的那样，有一些时候采取更大的步骤会导致更高的损失，因为我们“越过了目标”。
 
-<div class="fig figleft fighighlight">
-  <img src="/assets/stepsize.jpg">
-  <div class="figcaption">
-    Visualizing the effect of step size. We start at some particular spot W and evaluate the gradient (or rather its negative - the white arrow) which tells us the direction of the steepest decrease in the loss function. Small steps are likely to lead to consistent but slow progress. Large steps can lead to better progress but are more risky. Note that eventually, for a large step size we will overshoot and make the loss worse. The step size (or as we will later call it - the <b>learning rate</b>) will become one of the most important hyperparameters that we will have to carefully tune.
-  </div>
-  <div style="clear:both;"></div>
-</div>
+![stepsize](./optimization-1.assets/stepsize.jpg) 
 
-**A problem of efficiency**. You may have noticed that evaluating the numerical gradient has complexity linear in the number of parameters. In our example we had 30730 parameters in total and therefore had to perform 30,731 evaluations of the loss function to evaluate the gradient and to perform only a single parameter update. This problem only gets worse, since modern Neural Networks can easily have tens of millions of parameters. Clearly, this strategy is not scalable and we need something better.
+>可视化步长的影响。我们从某个特定的位置W开始，并计算梯度（或更确切地说，它的负值 - 白色箭头），它告诉我们损失函数中最陡峭的减小方向。小步骤可能会导致稳定但缓慢的进展。大步骤可以导致更好的进展，但更加冒险。请注意，最终，对于大步长，我们会越过目标，使损失变得更糟。步长（或者我们以后将称之为**学习率**）将成为我们必须仔细调整的最重要的超参数之一。
 
-<a name='analytic'></a>
+**效率问题**。您可能已经注意到，计算数值梯度的复杂度与参数数量呈线性关系。在我们的示例中，总共有30730个参数，因此我们需要对损失函数进行30731次评估，以计算梯度并执行单个参数更新。这个问题只会变得更糟，因为现代神经网络很容易有数千万个参数。显然，这种策略不具备可扩展性，我们需要更好的方法。
 
-#### Computing the gradient analytically with Calculus
+#### 使用微积分Calculus解析计算梯度
 
-The numerical gradient is very simple to compute using the finite difference approximation, but the downside is that it is approximate (since we have to pick a small value of *h*, while the true gradient is defined as the limit as *h* goes to zero), and that it is very computationally expensive to compute. The second way to compute the gradient is analytically using Calculus, which allows us to derive a direct formula for the gradient (no approximations) that is also very fast to compute. However, unlike the numerical gradient it can be more error prone to implement, which is why in practice it is very common to compute the analytic gradient and compare it to the numerical gradient to check the correctness of your implementation. This is called a **gradient check**.
+数值梯度使用有限差分逼近非常简单，但缺点是它是近似的（因为我们必须选择一个较小的*h*值，而真正的梯度定义为*h*趋近于零的极限），并且计算起来非常昂贵。第二种计算梯度的方法是使用微积分进行分析，它允许我们导出梯度的直接公式（没有近似），而且计算速度也非常快。然而，与数值梯度不同，它在实现时更容易出错，这就是为什么在实践中非常常见的是计算分析梯度并将其与数值梯度进行比较以检查实现的正确性。这被称为**梯度检查gradient check**。
 
-Lets use the example of the SVM loss function for a single datapoint:
+让我们以单个数据点的SVM损失函数为例：
+
 
 $$
 L_i = \sum_{j\neq y_i} \left[ \max(0, w_j^Tx_i - w_{y_i}^Tx_i + \Delta) \right]
 $$
 
-We can differentiate the function with respect to the weights. For example, taking the gradient with respect to $w_{y_i}$ we obtain:
+我们可以针对权重计算梯度。例如，针对$w_{y_i}$计算梯度，我们得到
 
+：
 $$
 \nabla_{w_{y_i}} L_i = - \left( \sum_{j\neq y_i} \mathbb{1}(w_j^Tx_i - w_{y_i}^Tx_i + \Delta > 0) \right) x_i
 $$
 
-where $\mathbb{1}$ is the indicator function that is one if the condition inside is true or zero otherwise. While the expression may look scary when it is written out, when you're implementing this in code you'd simply count the number of classes that didn't meet the desired margin (and hence contributed to the loss function) and then the data vector $x_i$ scaled by this number is the gradient. Notice that this is the gradient only with respect to the row of $W$ that corresponds to the correct class. For the other rows where $j \neq y_i $ the gradient is:
+其中$\mathbb{1}$是指示函数，如果内部条件为真，则为1，否则为零。虽然在书写时这个表达式可能看起来吓人，但在代码中实现时，您只需计算未满足所需间隔的类别数量（从而有利于损失函数），然后数据向量$x_i$乘以此数字即为梯度。请注意，这只是与正确类别对应的$W$行的梯度。对于其他行，其中$j \neq y_i $，梯度是：
+
 
 $$
 \nabla_{w_j} L_i = \mathbb{1}(w_j^Tx_i - w_{y_i}^Tx_i + \Delta > 0) x_i
 $$
 
-Once you derive the expression for the gradient it is straight-forward to implement the expressions and use them to perform the gradient update.
+一旦您导出了梯度的表达式，实现这些表达式并使用它们执行梯度更新就很简单了。
 
-<a name='gd'></a>
+### 梯度下降
 
-### Gradient Descent
-
-Now that we can compute the gradient of the loss function, the procedure of repeatedly evaluating the gradient and then performing a parameter update is called *Gradient Descent*. Its **vanilla** version looks as follows:
+现在我们可以计算损失函数的梯度了，反复评估梯度然后执行参数更新的过程被称为*梯度下降Gradient Descent*。其**普通vanilla**版本如下所示：
 
 ```python
 # Vanilla Gradient Descent
@@ -313,9 +269,9 @@ while True:
   weights += - step_size * weights_grad # perform parameter update
 ```
 
-This simple loop is at the core of all Neural Network libraries. There are other ways of performing the optimization (e.g. LBFGS), but Gradient Descent is currently by far the most common and established way of optimizing Neural Network loss functions. Throughout the class we will put some bells and whistles on the details of this loop (e.g. the exact details of the update equation), but the core idea of following the gradient until we're happy with the results will remain the same.
+这个简单的循环是所有神经网络库的核心。有其他方法可以执行优化（例如LBFGS），但梯度下降目前是迄今为止**最常见和最成熟**的优化神经网络损失函数的方法。在整个课程中，我们将对这个循环的细节进行一些改进（例如更新方程的详细细节），但跟随梯度直到我们满意结果的核心思想将保持不变。
 
-**Mini-batch gradient descent.** In large-scale applications (such as the ILSVRC challenge), the training data can have on order of millions of examples. Hence, it seems wasteful to compute the full loss function over the entire training set in order to perform only a single parameter update. A very common approach to addressing this challenge is to compute the gradient over **batches** of the training data. For example, in current state of the art ConvNets, a typical batch contains 256 examples from the entire training set of 1.2 million. This batch is then used to perform a parameter update:
+**小批量梯度下降**。在大规模应用中（例如ILSVRC挑战赛），训练数据可能有数百万个示例。因此，为了执行单个参数更新，计算整个训练集上的完整损失函数似乎是一种浪费。解决这个问题的一个非常常见的方法是计算**批量batches**训练数据的梯度。例如，在当前最先进的卷积神经网络ConvNets中，一个典型的批量包含来自整个120万个训练集的256个示例。然后使用这个批量来执行参数更新：
 
 ```python
 # Vanilla Minibatch Gradient Descent
@@ -326,31 +282,24 @@ while True:
   weights += - step_size * weights_grad # perform parameter update
 ```
 
-The reason this works well is that the examples in the training data are correlated. To see this, consider the extreme case where all 1.2 million images in ILSVRC are in fact made up of exact duplicates of only 1000 unique images (one for each class, or in other words 1200 identical copies of each image). Then it is clear that the gradients we would compute for all 1200 identical copies would all be the same, and when we average the data loss over all 1.2 million images we would get the exact same loss as if we only evaluated on a small subset of 1000. In practice of course, the dataset would not contain duplicate images, the gradient from a mini-batch is a good approximation of the gradient of the full objective. Therefore, much faster convergence can be achieved in practice by evaluating the mini-batch gradients to perform more frequent parameter updates.
+这个方法之所以有效，是因为训练数据中的示例是**相关的**。要理解这一点，考虑一个极端情况，即ILSVRC中的所有120万幅图像实际上都由1000幅唯一图像的精确副本组成（每个类别一个，换句话说，每幅图像有1200个相同的副本）。那么很明显，我们为所有1200个相同副本计算的梯度都是相同的，当我们将所有120万幅图像上的数据损失平均时，得到的损失与仅在1000个小子集上评估时得到的损失完全相同。当然，在实践中，数据集不会包含重复的图像，小批量的梯度很好地近似于整个目标函数objective的梯度。因此，在实践中，通过评估小批量梯度以执行更频繁的参数更新，可以实现更快的收敛。
 
-The extreme case of this is a setting where the mini-batch contains only a single example. This process is called **Stochastic Gradient Descent (SGD)** (or also sometimes **on-line** gradient descent). This is relatively less common to see because in practice due to vectorized code optimizations it can be computationally much more efficient to evaluate the gradient for 100 examples, than the gradient for one example 100 times. Even though SGD technically refers to using a single example at a time to evaluate the gradient, you will hear people use the term SGD even when referring to mini-batch gradient descent (i.e. mentions of MGD for "Minibatch Gradient Descent", or BGD for "Batch gradient descent" are rare to see), where it is usually assumed that mini-batches are used. The size of the mini-batch is a hyperparameter but it is not very common to cross-validate it. It is usually based on memory constraints (if any), or set to some value, e.g. 32, 64 or 128. We use powers of 2 in practice because many vectorized operation implementations work faster when their inputs are sized in powers of 2.
+这个过程的极端情况是小批量只包含一个示例。这个过程被称为**随机梯度下降Stochastic Gradient Descent（SGD）**（有时也称为**在线on-line**梯度下降）。这种情况相对不太常见，因为在实践中，由于矢量化代码优化，评估100个示例的梯度通常比100次评估一个示例的梯度计算效率更高。尽管SGD在技术上是指一次使用一个示例来计算梯度，但人们在提到小批量梯度下降时（通常假设使用小批量）也会使用SGD这个术语。小批量的大小是一个超参数，但交叉验证并不常见。通常，它基于内存限制（如果有的话），或设置为某个值，例如32、64或128。在实践中，我们使用**2的幂次方**，因为许多矢量化操作的实现在输入大小为2的幂次方时运行得更快。
 
-<a name='summary'></a>
+### 总结
 
-### Summary
+![dataflow](./optimization-1.assets/dataflow.jpeg) 
 
-<div class="fig figcenter fighighlight">
-  <img src="/assets/dataflow.jpeg">
-  <div class="figcaption">
-    Summary of the information flow. The dataset of pairs of <b>(x,y)</b> is given and fixed. The weights start out as random numbers and can change. During the forward pass the score function computes class scores, stored in vector <b>f</b>. The loss function contains two components: The data loss computes the compatibility between the scores <b>f</b> and the labels <b>y</b>. The regularization loss is only a function of the weights. During Gradient Descent, we compute the gradient on the weights (and optionally on data if we wish) and use them to perform a parameter update during Gradient Descent.
-  </div>
-</div>
+>信息流的总结。成对的数据集(x,y)是固定的。权重开始是随机数，可以改变。在前向传递期间，分数函数计算类别分数，存储在向量f中。损失函数包含两个组件：数据损失计算分数f与标签y之间的兼容性。正则化损失仅与权重有关。在梯度下降期间，我们计算权重上的梯度（可选地在数据上计算梯度，如果需要的话），并使用它们在梯度下降期间执行参数更新。
 
+在本节中，
 
-In this section,
+- 我们把损失函数看做是一个 **高维优化空间high-dimensional optimization landscape**，在其中我们试图到达底部。我们开发的工作类比是一位希望到达底部的被蒙住眼睛的徒步者。特别是，我们看到SVM损失函数是分段线性和碗状的。
+- 我们阐述了通过**迭代改进**来优化损失函数的想法，其中我们从一组随机权重开始，逐步细化它们，直到损失最小化。
+- 我们看到了函数的**梯度**提供了最陡升方向，并讨论了一种简单但低效的方法，即使用有限差分近似（有限差分是计算数值梯度时使用的*h*的值）来数值计算梯度。
+- 我们看到参数更新需要一个棘手的**步长**（或**学习率**）设置，必须设置得恰到好处：如果太低，进展稳定但缓慢。如果太高，进展可以更快，但更有风险。我们将在未来的章节中更详细地探讨这个权衡。
+- 我们讨论了计算**数值**和**解析**梯度之间的权衡。数值梯度简单，但是是近似的，计算代价高。解析梯度精确，计算速度快，但更容易出错，因为它需要数学推导梯度。因此，在实践中，我们总是使用解析梯度，然后执行**梯度检查**，其中将其实现与数值梯度进行比较。
+- 我们介绍了**梯度下降**算法，该算法循环迭代地计算梯度并执行参数更新。
 
-- We developed the intuition of the loss function as a **high-dimensional optimization landscape** in which we are trying to reach the bottom. The working analogy we developed was that of a blindfolded hiker who wishes to reach the bottom. In particular, we saw that the SVM cost function is piece-wise linear and bowl-shaped.
-- We motivated the idea of optimizing the loss function with
-**iterative refinement**, where we start with a random set of weights and refine them step by step until the loss is minimized.
-- We saw that the **gradient** of a function gives the steepest ascent direction and we discussed a simple but inefficient way of computing it numerically using the finite difference approximation (the finite difference being the value of *h* used in computing the numerical gradient).
-- We saw that the parameter update requires a tricky setting of the **step size** (or the **learning rate**) that must be set just right: if it is too low the progress is steady but slow. If it is too high the progress can be faster, but more risky. We will explore this tradeoff in much more detail in future sections.
-- We discussed the tradeoffs between computing the **numerical** and **analytic** gradient. The numerical gradient is simple but it is approximate and expensive to compute. The analytic gradient is exact, fast to compute but more error-prone since it requires the derivation of the gradient with math. Hence, in practice we always use the analytic gradient and then perform a **gradient check**, in which its implementation is compared to the numerical gradient.
-- We introduced the **Gradient Descent** algorithm which iteratively computes the gradient and performs a parameter update in loop.
-
-**Coming up:** The core takeaway from this section is that the ability to compute the gradient of a loss function with respect to its weights (and have some intuitive understanding of it) is the most important skill needed to design, train and understand neural networks. In the next section we will develop proficiency in computing the gradient analytically using the chain rule, otherwise also referred to as **backpropagation**. This will allow us to efficiently optimize relatively arbitrary loss functions that express all kinds of Neural Networks, including Convolutional Neural Networks.
+**接下来：**本节的核心要点是，能够计算损失函数相对于其权重的梯度（并对其有直观的理解）是设计、训练和理解神经网络所需的最重要技能。在下一节中，我们将熟练地使用链式法则chain rule分析计算梯度，也称为**反向传播**。这将使我们能够高效地优化相对任意的损失函数，这些函数表达了各种类型的神经网络，包括卷积神经网络。
 

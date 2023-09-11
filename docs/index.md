@@ -119,7 +119,7 @@ hide:
 <div class="card">
   <h2>优化：随机梯度下降Stochastic Gradient Descent</h2>
   <p>
-优化景观landscapes，局部搜索，学习率，分析/数值梯度
+优化空间optimize landscapes，局部搜索，学习率，分析/数值梯度
   </p>
 </div>
 
