@@ -1,44 +1,24 @@
----
-layout: page
-permalink: /neural-networks-1/
----
 
-Table of Contents:
 
-- [Quick intro without brain analogies](#quick)
-- [Modeling one neuron](#intro)
-  - [Biological motivation and connections](#bio)
-  - [Single neuron as a linear classifier](#classifier)
-  - [Commonly used activation functions](#actfun)
-- [Neural Network architectures](#nn)
-  - [Layer-wise organization](#layers)
-  - [Example feed-forward computation](#feedforward)
-  - [Representational power](#power)
-  - [Setting number of layers and their sizes](#arch)
-- [Summary](#summary)
-- [Additional references](#add)
+## 快速介绍
 
-<a name='quick'></a>
+我们可以在不借助脑部类比的情况下介绍神经网络。在关于线性分类的部分，我们使用公式 $s = W x$ 根据图像计算不同视觉类别的得分，其中 $W$ 是一个矩阵，$x$ 是一个输入列向量，包含图像的所有像素数据。在CIFAR-10的情况下，$x$ 是一个 [3072x1] 的列向量，$W$ 是一个 [10x3072] 的矩阵，因此输出得分是10个类得分的向量。
 
-## Quick intro
+一个示例的神经网络会计算 $s = W_2 \max(0, W_1 x)$。这里，$W_1$ 可以是，例如，一个 [100x3072] 的矩阵，将图像转化为一个100维的中间向量。函数 $max(0,-) $ 是逐元素应用的非线性。我们可以为非线性选择几种方法（我们将在下面研究），但这是一个常见的选择，简单地将所有低于零的激活阈值设为零。最后，矩阵 $W_2$ 的大小将是 [10x100]，这样我们再次得到10个我们解释为类得分的数字。请注意，非线性在计算上是关键的——如果我们省略它，这两个矩阵可以合并为一个矩阵，因此预测的类得分将再次是输入的线性函数。非线性就是我们得到的*波动wiggle*。参数 $W_2, W_1$ 使用随机梯度下降进行学习，它们的梯度使用链式规则推导（并使用反向传播计算）。
 
-It is possible to introduce neural networks without appealing to brain analogies. In the section on linear classification we computed scores for different visual categories given the image using the formula $ s = W x $, where $W$ was a matrix and $x$ was an input column vector containing all pixel data of the image. In the case of CIFAR-10, $x$ is a [3072x1] column vector, and $W$ is a [10x3072] matrix, so that the output scores is a vector of 10 class scores. 
+一个三层神经网络可以类似地看起来像 $s = W_3 \max(0, W_2 \max(0, W_1 x))$，其中所有的 $W_3, W_2, W_1$ 都是要学习的参数。中间隐藏向量的大小是网络的超参数，我们将在后面看到如何设置它们。现在让我们看看如何从神经元/网络的角度解释这些计算。
 
-An example neural network would instead compute $ s = W_2 \max(0, W_1 x) $. Here, $W_1$ could be, for example, a [100x3072] matrix transforming the image into a 100-dimensional intermediate vector. The function $max(0,-) $ is a non-linearity that is applied elementwise. There are several choices we could make for the non-linearity (which we'll study below), but this one is a common choice and simply thresholds all activations that are below zero to zero. Finally, the matrix $W_2$ would then be of size [10x100], so that we again get 10 numbers out that we interpret as the class scores. Notice that the non-linearity is critical computationally - if we left it out, the two matrices could be collapsed to a single matrix, and therefore the predicted class scores would again be a linear function of the input. The non-linearity is where we get the *wiggle*. The parameters $W_2, W_1$ are learned with stochastic gradient descent, and their gradients are derived with chain rule (and computed with backpropagation).
+## 建模一个神经元
 
-A three-layer neural network could analogously look like $ s = W_3 \max(0, W_2 \max(0, W_1 x)) $, where all of $W_3, W_2, W_1$ are parameters to be learned. The sizes of the intermediate hidden vectors are hyperparameters of the network and we'll see how we can set them later. Lets now look into how we can interpret these computations from the neuron/network perspective.
+神经网络领域最初的主要灵感来源于模拟生物神经系统的目标，但后来出现了分歧，成为了一个工程问题，并在机器学习任务中取得了良好的结果。尽管如此，我们还是以对生物系统的非常简短和高水平的描述开始讨论，这一领域的大部分受到了其启发。
 
-<a name='intro'></a>
+### 生物动机和联系
 
-## Modeling one neuron
+大脑的基本计算单元是**神经元neuron**。在人类神经系统中可以找到大约860亿个神经元，它们与大约$10^{14} - 10^{15}$ **突触synapses**相连接。下面的图表显示了一个生物神经元的卡通图（左）和一个常见的数学模型（右）。每个神经元都从其**树突dendrites**接收输入信号，并沿其（单一）**轴突axon**产生输出信号。轴突最终分叉，并通过突触连接到其他神经元的树突。在神经元的计算模型中，沿轴突传播的信号（例如 $x_0$）与基于该突触的突触强度（例如 $w_0$）的其他神经元的树突乘性地交互（例如 $w_0 x_0$）。其思想是突触的强度（权重 $w$）是可以学习的，并控制一个神经元对另一个神经元的影响的强度（及其方向：兴奋（正权重）或抑制（负权重））。在基本模型中，树突将信号传送到细胞体，它们都会被求和。如果最终的总和超过某个阈值，神经元可以*放电fire*，沿其轴突发送一个脉冲。在计算模型中，我们假设脉冲的精确时机并不重要，只有放电的频率传递信息。根据*速率代码rate code*的解释，我们使用一个**激活函数activation functio** $f$ 来建模神经元的*放电速率firing rate*，该函数代表沿轴突的脉冲频率。历史上，激活函数的常见选择是**sigmoid函数** $\sigma$，因为它接受一个实值输入（求和后的信号强度）并将其压缩到0和1之间。我们将在这一部分后面看到这些激活函数的细节。
 
-The area of Neural Networks has originally been primarily inspired by the goal of modeling biological neural systems, but has since diverged and become a matter of engineering and achieving good results in Machine Learning tasks. Nonetheless, we begin our discussion with a very brief and high-level description of the biological system that a large portion of this area has been inspired by.
+<img src="./neural-networks-1.assets/neuron.png" alt="neuron" style="zoom:50%;" /> <img src="./neural-networks-1.assets/neuron_model.jpeg" alt="neuron_model" style="zoom:50%;" /> 
 
-<a name='bio'></a>
-
-### Biological motivation and connections
-
-The basic computational unit of the brain is a **neuron**. Approximately 86 billion neurons can be found in the human nervous system and they are connected with approximately 10^14 - 10^15 **synapses**. The diagram below shows a cartoon drawing of a biological neuron (left) and a common mathematical model (right). Each neuron receives input signals from its **dendrites** and produces output signals along its (single) **axon**. The axon eventually branches out and connects via synapses to dendrites of other neurons. In the computational model of a neuron, the signals that travel along the axons (e.g. $x_0$) interact multiplicatively (e.g. $w_0 x_0$) with the dendrites of the other neuron based on the synaptic strength at that synapse (e.g. $w_0$). The idea is that the synaptic strengths (the weights $w$) are learnable and control the strength of influence (and its direction: excitory (positive weight) or inhibitory (negative weight)) of one neuron on another. In the basic model, the dendrites carry the signal to the cell body where they all get summed. If the final sum is above a certain threshold, the neuron can *fire*, sending a spike along its axon. In the computational model, we assume that the precise timings of the spikes do not matter, and that only the frequency of the firing communicates information. Based on this *rate code* interpretation, we model the *firing rate* of the neuron with an **activation function** $f$, which represents the frequency of the spikes along the axon. Historically, a common choice of activation function is the **sigmoid function** $\sigma$, since it takes a real-valued input (the signal strength after the sum) and squashes it to range between 0 and 1. We will see details of these activation functions later in this section.
+> 生物神经元的卡通画（左）及其数学模型（右）
 
 <div class="fig figcenter fighighlight">
   <img src="/assets/nn1/neuron.png" width="49%">
