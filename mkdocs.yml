@@ -41,8 +41,7 @@ theme:
   # 设置右上角图标
   icon:
     repo: fontawesome/brands/github
-    edit: material/pen
-    cil 
+    edit: material/pencil 
     view: material/eye
 
 markdown_extensions:

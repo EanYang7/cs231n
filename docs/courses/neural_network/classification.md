@@ -118,6 +118,8 @@ class NearestNeighbor(object):
 如果运行此代码，您将看到该分类器在CIFAR-10上只能达到**38.6%**的准确率。这比随机猜测要好得多（随机猜测将提供10%的准确率，因为有10个类别），但远远不及人类表现（估计约为94%）[参考链接](https://karpathy.github.io/2011/04/27/manually-classifying-cifar10/)，也远远不及最先进的卷积神经网络，它们达到了约95%的准确率，与人类准确率相匹配（请参阅CIFAR-10的[Kaggle竞赛排行榜](https://www.kaggle.com/c/cifar-10/leaderboard)）。
 
 **距离的选择。**计算向量之间的距离有许多其他方法。另一个常见的选择可能是使用**L2距离**，它具有计算两个向量之间的欧几里德距离的几何解释。该距离的形式如下：
+
+
 $$
 d_2 (I_1, I_2) = \sqrt{\sum_{p} \left( I^p_1 - I^p_2 \right)^2}
 $$
