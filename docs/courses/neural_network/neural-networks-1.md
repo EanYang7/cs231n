@@ -16,17 +16,14 @@
 
 大脑的基本计算单元是**神经元neuron**。在人类神经系统中可以找到大约860亿个神经元，它们与大约$10^{14} - 10^{15}$ **突触synapses**相连接。下面的图表显示了一个生物神经元的卡通图（左）和一个常见的数学模型（右）。每个神经元都从其**树突dendrites**接收输入信号，并沿其（单一）**轴突axon**产生输出信号。轴突最终分叉，并通过突触连接到其他神经元的树突。在神经元的计算模型中，沿轴突传播的信号（例如 $x_0$）与基于该突触的突触强度（例如 $w_0$）的其他神经元的树突乘性地交互（例如 $w_0 x_0$）。其思想是突触的强度（权重 $w$）是可以学习的，并控制一个神经元对另一个神经元的影响的强度（及其方向：兴奋（正权重）或抑制（负权重））。在基本模型中，树突将信号传送到细胞体，它们都会被求和。如果最终的总和超过某个阈值，神经元可以*放电fire*，沿其轴突发送一个脉冲。在计算模型中，我们假设脉冲的精确时机并不重要，只有放电的频率传递信息。根据*速率代码rate code*的解释，我们使用一个**激活函数activation functio** $f$ 来建模神经元的*放电速率firing rate*，该函数代表沿轴突的脉冲频率。历史上，激活函数的常见选择是**sigmoid函数** $\sigma$，因为它接受一个实值输入（求和后的信号强度）并将其压缩到0和1之间。我们将在这一部分后面看到这些激活函数的细节。
 
-<img src="./neural-networks-1.assets/neuron.png" alt="neuron" style="zoom:50%;" /> <img src="./neural-networks-1.assets/neuron_model.jpeg" alt="neuron_model" style="zoom:50%;" /> 
+![image-20230914095345138](./neural-networks-1.assets/image-20230914095345138.png) 
+
+  
 
 > 生物神经元的卡通画（左）及其数学模型（右）
 
-<div class="fig figcenter fighighlight">
-  <img src="/assets/nn1/neuron.png" width="49%">
-  <img src="/assets/nn1/neuron_model.jpeg" width="49%" style="border-left: 1px solid black;">
-  <div class="figcaption">A cartoon drawing of a biological neuron (left) and its mathematical model (right).</div>
-</div>
 
-An example code for forward-propagating a single neuron might look as follows:
+用于正向传播单个神经元的示例代码可能如下所示：
 
 ```python
 class Neuron(object):
@@ -38,96 +35,79 @@ class Neuron(object):
     return firing_rate
 ```
 
-In other words, each neuron performs a dot product with the input and its weights, adds the bias and applies the non-linearity (or activation function), in this case the sigmoid $\sigma(x) = 1/(1+e^{-x})$. We will go into more details about different activation functions at the end of this section.
+换句话说，每个神经元与输入和它的权重进行点积运算，添加偏差并应用非线性（或激活函数），在这种情况下是sigmoid函数 $\sigma(x) = \frac{1}{1+e^{-x}}$。我们将在本节结束时更详细地讨论不同的激活函数。
 
+**粗略模型**。需要强调的是，这种生物学神经元模型非常粗略：例如，存在许多不同类型的神经元，每种都有不同的性质。生物学神经元中的树突执行复杂的非线性计算。突触不仅仅是一个单一的权重，它们是一个复杂的非线性动态系统。许多系统中输出脉冲的确切时间已知是很重要的，这表明速率编码近似可能不成立。由于所有这些和许多其他的简化，如果你在神经网络和真实大脑之间进行类比，任何具有神经科学背景的人可能会发出抱怨。如果你感兴趣的话，可以查看这篇[综述](https://physics.ucsd.edu/neurophysics/courses/physics_171/annurev.neuro.28.061604.135703.pdf)（pdf），或者最近这篇[综述](http://www.sciencedirect.com/science/article/pii/S0959438814000130)
 
-**Coarse model.** It's important to stress that this model of a biological neuron is very coarse: For example, there are many different types of neurons, each with different properties. The dendrites in biological neurons perform complex nonlinear computations. The synapses are not just a single weight, they're a complex non-linear dynamical system. The exact timing of the output spikes in many systems is known to be important, suggesting that the rate code approximation may not hold. Due to all these and many other simplifications, be prepared to hear groaning sounds from anyone with some neuroscience background if you draw analogies between Neural Networks and real brains. See this [review](https://physics.ucsd.edu/neurophysics/courses/physics_171/annurev.neuro.28.061604.135703.pdf) (pdf), or more recently this [review](http://www.sciencedirect.com/science/article/pii/S0959438814000130) if you are interested.
+### 单个神经元作为线性分类器
 
-<a name='classifier'></a>
+模型神经元的前向计算的数学形式可能对你来说很熟悉。正如我们在线性分类器中看到的，一个神经元有能力“喜欢”（激活接近1）或“不喜欢”（激活接近0）其输入空间的某些线性区域。因此，通过在神经元的输出上使用适当的损失函数，我们可以将单个神经元转化为线性分类器：
 
-### Single neuron as a linear classifier
+**二元Softmax分类器**。例如，我们可以解释$\sigma(\sum_iw_ix_i + b)$为其中一个类的概率$P(y_i = 1 \mid x_i; w)$。另一个类的概率为$P(y_i = 0 \mid x_i; w) = 1 - P(y_i = 1 \mid x_i; w)$，因为它们的总和必须为1。有了这种解释，我们可以像在线性分类部分中看到的那样制定交叉熵损失，优化它将导致一个二元Softmax分类器（也称为*逻辑回归logistic regression*）。由于Sigmoid函数被限制在0-1之间，这个分类器的预测基于神经元的输出是否大于0.5。
 
-The mathematical form of the model Neuron's forward computation might look familiar to you. As we saw with linear classifiers, a neuron has the capacity to "like" (activation near one) or "dislike" (activation near zero) certain linear regions of its input space. Hence, with an appropriate loss function on the neuron's output, we can turn a single neuron into a linear classifier:
+**二元SVM分类器**。或者，我们可以将最大边缘铰链损失附加到神经元的输出上，并训练它成为一个二元支持向量机。
 
-**Binary Softmax classifier**. For example, we can interpret $\sigma(\sum_iw_ix_i + b)$ to be the probability of one of the classes $P(y_i = 1 \mid x_i; w) $. The probability of the other class would be $P(y_i = 0 \mid x_i; w) = 1 - P(y_i = 1 \mid x_i; w) $, since they must sum to one. With this interpretation, we can formulate the cross-entropy loss as we have seen in the Linear Classification section, and optimizing it would lead to a binary Softmax classifier (also known as *logistic regression*). Since the sigmoid function is restricted to be between 0-1, the predictions of this classifier are based on whether the output of the neuron is greater than 0.5. 
+**正则化解释**。在SVM/Softmax的情况下，正则化损失在这种生物观点下可以被解释为*逐渐遗忘gradual forgetting*，因为它会在每次参数更新后使所有突触权重$w$趋向于零。
 
-**Binary SVM classifier**. Alternatively, we could attach a max-margin hinge loss to the output of the neuron and train it to become a binary Support Vector Machine.
+> 单个神经元可以用来实现一个二元分类器（例如，二元Softmax或二元SVM分类器）
 
-**Regularization interpretation**. The regularization loss in both SVM/Softmax cases could in this biological view be interpreted as *gradual forgetting*, since it would have the effect of driving all synaptic weights $w$ towards zero after every parameter update.
+### 常用的激活函数
 
-> A single neuron can be used to implement a binary classifier (e.g. binary Softmax or binary SVM classifiers)
+每个激活函数（或*非线性函数*）接受一个数字并对其执行某种固定的数学操作。在实践中，你可能会遇到几种激活函数：
 
-<a name='actfun'></a>
+![image-20230914101951684](./neural-networks-1.assets/image-20230914101951684.png) 
 
-### Commonly used activation functions
+><b>左：</b> Sigmoid 非线性函数将实数压缩到 [0,1] 范围内 <b>右：</b> tanh 非线性函数将实数压缩到 [-1,1] 范围内。
 
-Every activation function (or *non-linearity*) takes a single number and performs a certain fixed mathematical operation on it. There are several activation functions you may encounter in practice:
+**Sigmoid。** Sigmoid 非线性函数的数学形式为 $\sigma(x) = 1 / (1 + e^{-x})$，如上图左侧所示。正如前一节所提到的，它接受一个实值数字并将其“压缩”到0和1之间的范围。特别地，大的负数变为0，大的正数变为1。由于Sigmoid函数在历史上经常被使用，因为它可以很好地解释为神经元的发射率：从完全不发射（0）到完全饱和的最大频率发射（1）。然而在实践中，Sigmoid非线性函数近期已经不再受欢迎，很少被使用。它有两个主要的缺点：
 
-<div class="fig figcenter fighighlight">
-  <img src="/assets/nn1/sigmoid.jpeg" width="40%">
-  <img src="/assets/nn1/tanh.jpeg" width="40%" style="border-left: 1px solid black;">
-  <div class="figcaption"><b>Left:</b> Sigmoid non-linearity squashes real numbers to range between [0,1] <b>Right:</b> The tanh non-linearity squashes real numbers to range between [-1,1].</div>
-</div>
+  - *Sigmoids 饱和并杀死梯度*。Sigmoid神经元的一个非常不受欢迎的属性是，当神经元的激活在0或1的两端饱和时，这些区域的梯度几乎为零。回想一下，在反向传播过程中，这个（局部）梯度将乘以整个目标的这个门的输出的梯度。因此，如果局部梯度非常小，它将有效地“杀死”梯度，几乎没有信号会流经神经元到其权重，递归地到其数据。此外，初始化Sigmoid神经元的权重时必须特别小心，以防止饱和。例如，如果初始权重过大，那么大多数神经元将变得饱和，网络几乎不会学习。
+  - *Sigmoid 输出不是零中心的*。这是不受欢迎的，因为在神经网络的后续处理层中的神经元（很快就会讲到）将接收到的数据不是零中心的。这对梯度下降的动态性有影响，因为如果进入神经元的数据总是正的（例如，在 $f = w^Tx + b$ 中 $x > 0$ 逐元素），那么在反向传播过程中权重 $w$ 上的梯度将变得全部为正或全部为负（取决于整个表达式 $f$ 的梯度）。这可能会在权重的梯度更新中引入不受欢迎的锯齿状动态。但是，注意，一旦这些梯度在一批数据上加起来，权重的最终更新可以有可变的符号，这在一定程度上缓解了这个问题。因此，这是一个不便，但与上面的饱和激活问题相比，它的后果较为轻微。
 
-**Sigmoid.** The sigmoid non-linearity has the mathematical form $\sigma(x) = 1 / (1 + e^{-x})$ and is shown in the image above on the left. As alluded to in the previous section, it takes a real-valued number and "squashes" it into range between 0 and 1. In particular, large negative numbers become 0 and large positive numbers become 1. The sigmoid function has seen frequent use historically since it has a nice interpretation as the firing rate of a neuron: from not firing at all (0) to fully-saturated firing at an assumed maximum frequency (1). In practice, the sigmoid non-linearity has recently fallen out of favor and it is rarely ever used. It has two major drawbacks: 
+**Tanh。** Tanh 非线性函数如上图右侧所示。它将实值数字压缩到[-1, 1]范围。像Sigmoid神经元一样，它的激活会饱和，但与Sigmoid神经元不同，它的输出是零中心的。因此，在实践中，*tanh 非线性函数总是优于 Sigmoid 非线性函数*。还要注意，tanh 神经元只是一个缩放的Sigmoid神经元，特别地，以下关系成立：$\tanh(x) = 2 \sigma(2x) -1$。
 
-  - *Sigmoids saturate and kill gradients*. A very undesirable property of the sigmoid neuron is that when the neuron's activation saturates at either tail of 0 or 1, the gradient at these regions is almost zero. Recall that during backpropagation, this (local) gradient will be multiplied to the gradient of this gate's output for the whole objective. Therefore, if the local gradient is very small, it will effectively "kill" the gradient and almost no signal will flow through the neuron to its weights and recursively to its data. Additionally, one must pay extra caution when initializing the weights of sigmoid neurons to prevent saturation. For example, if the initial weights are too large then most neurons would become saturated and the network will barely learn.
-  - *Sigmoid outputs are not zero-centered*. This is undesirable since neurons in later layers of processing in a Neural Network (more on this soon) would be receiving data that is not zero-centered. This has implications on the dynamics during gradient descent, because if the data coming into a neuron is always positive (e.g. $x > 0$ elementwise in $f = w^Tx + b$)), then the gradient on the weights $w$ will during backpropagation become either all be positive, or all negative (depending on the gradient of the whole expression $f$). This could introduce undesirable zig-zagging dynamics in the gradient updates for the weights. However, notice that once these gradients are added up across a batch of data the final update for the weights can have variable signs, somewhat mitigating this issue. Therefore, this is an inconvenience but it has less severe consequences compared to the saturated activation problem above.
+![image-20230914102822946](./neural-networks-1.assets/image-20230914102822946.png) 
 
-**Tanh.** The tanh non-linearity is shown on the image above on the right. It squashes a real-valued number to the range [-1, 1]. Like the sigmoid neuron, its activations saturate, but unlike the sigmoid neuron its output is zero-centered. Therefore, in practice the *tanh non-linearity is always preferred to the sigmoid nonlinearity.* Also note that the tanh neuron is simply a scaled sigmoid neuron, in particular the following holds: $ \tanh(x) = 2 \sigma(2x) -1  $.
+><b>左：</b> 修正线性单元（ReLU）激活函数，当 x < 0 时为零，当 x > 0 时与斜率为1的线性函数相同。 <b>右：</b> 来自 <a href="http://www.cs.toronto.edu/~fritz/absps/imagenet.pdf">Krizhevsky 等人</a>（pdf）的论文中的一个图表，显示与 tanh 单元相比，ReLU 单元在收敛上有6倍的改进。
 
-<div class="fig figcenter fighighlight">
-  <img src="/assets/nn1/relu.jpeg" width="40%">
-  <img src="/assets/nn1/alexplot.jpeg" width="40%" style="border-left: 1px solid black;">
-  <div class="figcaption"><b>Left:</b> Rectified Linear Unit (ReLU) activation function, which is zero when x &lt; 0 and then linear with slope 1 when x &gt; 0. <b>Right:</b> A plot from <a href="http://www.cs.toronto.edu/~fritz/absps/imagenet.pdf">Krizhevsky et al.</a> (pdf) paper indicating the 6x improvement in convergence with the ReLU unit compared to the tanh unit.</div>
-</div>
+**ReLU。** 在过去的几年中，修正线性单元（ReLU）变得非常受欢迎。它计算的函数为 $f(x) = \max(0, x)$。换句话说，激活简单地在零处阈值化（如上图左侧所示）。使用ReLU有以下优缺点：
 
-**ReLU.** The Rectified Linear Unit has become very popular in the last few years. It computes the function $f(x) = \max(0, x)$. In other words, the activation is simply thresholded at zero (see image above on the left). There are several pros and cons to using the ReLUs: 
+- (+) 与sigmoid/tanh函数相比，发现ReLU大大加速了随机梯度下降的收敛（例如，[Krizhevsky等人](http://www.cs.toronto.edu/~fritz/absps/imagenet.pdf)中的6倍因子）。人们认为这是由于其线性、非饱和形式。
+- (+) 与涉及昂贵操作的tanh/sigmoid神经元（指数等）相比，ReLU可以通过简单地在零处阈值化激活矩阵来实现。
+- (-) 不幸的是，ReLU单元在训练过程中可能会变得脆弱并且可能“死亡”。例如，流经ReLU神经元的大梯度可能导致权重更新，使得神经元永远不会在任何数据点上激活。如果发生这种情况，那么从那时起，流经该单元的梯度将永远为零。也就是说，ReLU单元可以在训练过程中不可逆地死亡，因为它们可能会被从数据流中移除。例如，如果学习率设置得过高，你可能会发现你的网络中多达40%的部分可能是“死的”（即，在整个训练数据集中从未激活的神经元）。但是，通过适当地设置学习率，这个问题就不那么频繁了。
 
-- (+) It was found to greatly accelerate (e.g. a factor of 6 in [Krizhevsky et al.](http://www.cs.toronto.edu/~fritz/absps/imagenet.pdf)) the convergence of stochastic gradient descent compared to the sigmoid/tanh functions. It is argued that this is due to its linear, non-saturating form.
-- (+) Compared to tanh/sigmoid neurons that involve expensive operations (exponentials, etc.), the ReLU can be implemented by simply thresholding a matrix of activations at zero.
-- (-) Unfortunately, ReLU units can be fragile during training and can "die". For example, a large gradient flowing through a ReLU neuron could cause the weights to update in such a way that the neuron will never activate on any datapoint again. If this happens, then the gradient flowing through the unit will forever be zero from that point on. That is, the ReLU units can irreversibly die during training since they can get knocked off the data manifold. For example, you may find that as much as 40% of your network can be "dead" (i.e. neurons that never activate across the entire training dataset) if the learning rate is set too high. With a proper setting of the learning rate this is less frequently an issue.
+**Leaky ReLU。** Leaky ReLU是修复“死亡ReLU”问题的一种尝试。当x < 0时，函数不为零，而是有一个小的正斜率（如0.01）。也就是说，该函数计算 $f(x) = \mathbb{1}(x < 0) (\alpha x) + \mathbb{1}(x>=0) (x)$，其中$\alpha$是一个小常数。有些人报告说这种激活函数很成功，但结果并不总是一致的。在2015年由Kaiming He等人介绍的[深入研究整流器](http://arxiv.org/abs/1502.01852)中，可以看到负区域的斜率也可以作为每个神经元的参数，如PReLU神经元。然而，这种好处在不同任务中的一致性目前尚不清楚。
 
-**Leaky ReLU.** Leaky ReLUs are one attempt to fix the "dying ReLU" problem. Instead of the function being zero when x < 0, a leaky ReLU will instead have a small positive slope (of 0.01, or so). That is, the function computes $f(x) = \mathbb{1}(x < 0) (\alpha x) + \mathbb{1}(x>=0) (x) $ where $\alpha$ is a small constant. Some people report success with this form of activation function, but the results are not always consistent. The slope in the negative region can also be made into a parameter of each neuron, as seen in PReLU neurons, introduced in [Delving Deep into Rectifiers](http://arxiv.org/abs/1502.01852), by Kaiming He et al., 2015. However, the consistency of the benefit across tasks is presently unclear.
+**Maxout**。已经提出了其他类型的单元，它们没有函数形式 $f(w^Tx + b)$，其中在权重和数据之间的点积上应用非线性。一个相对受欢迎的选择是Maxout神经元（最近由[Goodfellow等人](https://arxiv.org/abs/1302.4389)引入），它概括了ReLU及其leaky版本。Maxout神经元计算函数$\max(w_1^Tx+b_1, w_2^Tx + b_2)$。注意，ReLU和Leaky ReLU都是这种形式的特例（例如，对于ReLU，我们有$w_1, b_1 = 0$）。因此，Maxout神经元享有ReLU单元的所有好处（操作的线性区域，没有饱和）并且没有其缺点（死亡ReLU）。然而，与ReLU神经元不同，它使每个单一神经元的参数数量翻倍，导致参数总数很高。
 
-**Maxout**. Other types of units have been proposed that do not have the functional form $f(w^Tx + b)$ where a non-linearity is applied on the dot product between the weights and the data. One relatively popular choice is the Maxout neuron (introduced recently by [Goodfellow et al.](https://arxiv.org/abs/1302.4389)) that generalizes the ReLU and its leaky version. The Maxout neuron computes the function $\max(w_1^Tx+b_1, w_2^Tx + b_2)$. Notice that both ReLU and Leaky ReLU are a special case of this form (for example, for ReLU we have $w_1, b_1 = 0$). The Maxout neuron therefore enjoys all the benefits of a ReLU unit (linear regime of operation, no saturation) and does not have its drawbacks (dying ReLU). However, unlike the ReLU neurons it doubles the number of parameters for every single neuron, leading to a high total number of parameters.
+这结束了我们对最常见的神经元及其激活函数的讨论。最后一点，很少在同一个网络中混合使用不同类型的神经元，尽管这样做没有根本问题。
 
-This concludes our discussion of the most common types of neurons and their activation functions. As a last comment, it is very rare to mix and match different types of neurons in the same network, even though there is no fundamental problem with doing so.
+**简而言之**：“*我应该使用哪种神经元类型？*” 使用ReLU非线性函数，小心你的学习率，并可能监控网络中“死亡”单元的比例。如果这让你担忧，尝试使用Leaky ReLU或Maxout。永远不要使用sigmoid。尝试tanh，但期望它的工作效果比ReLU/Maxout差。
 
-**TLDR**: "*What neuron type should I use?*" Use the ReLU non-linearity, be careful with your learning rates and possibly monitor the fraction of "dead" units in a network. If this concerns you, give Leaky ReLU or Maxout a try. Never use sigmoid. Try tanh, but expect it to work worse than ReLU/Maxout.
+## 神经网络架构
 
-<a name='nn'></a>
+### 分层组织
 
-## Neural Network architectures
+**神经网络作为图中的神经元**。神经网络被模型化为以非循环图形式连接的神经元的集合。换句话说，某些神经元的输出可以成为其他神经元的输入。不允许有循环，因为这将意味着网络前向传播中的无限循环。神经网络模型通常被组织成不同层的神经元。对于常规神经网络，最常见的层类型是**全连接层fully-connected layer**，其中两个相邻层之间的神经元是完全成对连接的，但单个层内的神经元没有共享连接。以下是使用一堆全连接层的两个示例神经网络拓扑结构：
 
-<a name='layers'></a>
+![image-20230914103958829](./neural-networks-1.assets/image-20230914103958829.png)
 
-### Layer-wise organization
+><b>左：</b> 一个2层神经网络（一个包含4个神经元（或单元）的隐藏层和一个包含2个神经元的输出层），以及三个输入。 <b>右：</b> 一个3层神经网络，有三个输入，两个每层有4个神经元的隐藏层和一个输出层。请注意，在这两种情况下，层与层之间的神经元都有连接（突触），但层内部没有连接。
 
-**Neural Networks as neurons in graphs**. Neural Networks are modeled as collections of neurons that are connected in an acyclic graph. In other words, the outputs of some neurons can become inputs to other neurons. Cycles are not allowed since that would imply an infinite loop in the forward pass of a network. Instead of an amorphous blobs of connected neurons, Neural Network models are often organized into distinct layers of neurons. For regular neural networks, the most common layer type is the **fully-connected layer** in which  neurons between two adjacent layers are fully pairwise connected, but neurons within a single layer share no connections. Below are two example Neural Network topologies that use a stack of fully-connected layers:
+**命名约定。** 请注意，当我们说N层神经网络时，我们不计算输入层。因此，单层神经网络描述的是一个没有隐藏层的网络（输入直接映射到输出）。从这个意义上说，你有时会听到人们说逻辑回归或SVMs只是单层神经网络的一个特例。你也可能听到这些网络被交替地称为*"人工神经网络Artificial Neural Networks"*（ANN）或*"多层感知机Multi-Layer Perceptrons"*（MLP）。许多人不喜欢神经网络和真实大脑之间的类比，并更喜欢将神经元称为*单元*。
 
-<div class="fig figcenter fighighlight">
-  <img src="/assets/nn1/neural_net.jpeg" width="40%">
-  <img src="/assets/nn1/neural_net2.jpeg" width="55%" style="border-left: 1px solid black;">
-  <div class="figcaption"><b>Left:</b> A 2-layer Neural Network (one hidden layer of 4 neurons (or units) and one output layer with 2 neurons), and three inputs. <b>Right:</b> A 3-layer neural network with three inputs, two hidden layers of 4 neurons each and one output layer. Notice that in both cases there are connections (synapses) between neurons across layers, but not within a layer.</div>
-</div>
+**输出层。** 与神经网络中的所有层不同，输出层神经元通常没有激活函数（或者你可以认为它们有一个线性身份激活函数）。这是因为最后的输出层通常被用来表示类得分（例如，在分类中），这些是任意的实值数字，或某种实值目标（例如，在回归中）。
 
-**Naming conventions.** Notice that when we say N-layer neural network, we do not count the input layer. Therefore, a single-layer neural network describes a network with no hidden layers (input directly mapped to output). In that sense, you can sometimes hear people say that logistic regression or SVMs are simply a special case of single-layer Neural Networks. You may also hear these networks interchangeably referred to as *"Artificial Neural Networks"* (ANN) or *"Multi-Layer Perceptrons"* (MLP). Many people do not like the analogies between Neural Networks and real brains and prefer to refer to neurons as *units*.
+**神经网络的大小**。人们常用来衡量神经网络大小的两个指标是神经元的数量，或更常见的是参数的数量。使用上图中的两个示例网络：
 
-**Output layer.** Unlike all layers in a Neural Network, the output layer neurons most commonly do not have an activation function (or you can think of them as having a linear identity activation function). This is because the last output layer is usually taken to represent the class scores (e.g. in classification), which are arbitrary real-valued numbers, or some kind of real-valued target (e.g. in regression). 
+- 第一个网络（左）有4 + 2 = 6个神经元（不计算输入），[3 x 4] + [4 x 2] = 20个权重和4 + 2 = 6个偏置，总共有26个可学习的参数。
+- 第二个网络（右）有4 + 4 + 1 = 9个神经元，[3 x 4] + [4 x 4] + [4 x 1] = 12 + 16 + 4 = 32个权重和4 + 4 + 1 = 9个偏差，总共有41个可学习的参数。
 
-**Sizing neural networks**. The two metrics that people commonly use to measure the size of neural networks are the number of neurons, or more commonly the number of parameters. Working with the two example networks in the above picture:
+给你一些背景，现代卷积网络包含大约1亿个参数，通常由大约10-20层组成（因此叫*深度学习*）。然而，由于参数共享，我们将看到*有效effective*连接的数量显著增加。在卷积神经网络模块中会有更多内容。
 
-- The first network (left) has 4 + 2 = 6 neurons (not counting the inputs), [3 x 4] + [4 x 2] = 20 weights and 4 + 2 = 6 biases, for a total of 26 learnable parameters. 
-- The second network (right) has 4 + 4 + 1 = 9 neurons, [3 x 4] + [4 x 4] + [4 x 1] = 12 + 16 + 4 = 32 weights and 4 + 4 + 1 = 9 biases, for a total of 41 learnable parameters.
+### 前向计算例子
 
-To give you some context, modern Convolutional Networks contain on orders of 100 million parameters and are usually made up of approximately 10-20 layers (hence *deep learning*). However, as we will see the number of *effective* connections is significantly greater due to parameter sharing. More on this in the Convolutional Neural Networks module.
-
-<a name='feedforward'></a>
-
-### Example feed-forward computation
-
-*Repeated matrix multiplications interwoven with activation function*. One of the primary reasons that Neural Networks are organized into layers is that this structure makes it very simple and efficient to evaluate Neural Networks using matrix vector operations. Working with the example three-layer neural network in the diagram above, the input would be a [3x1] vector. All connection strengths for a layer can be stored in a single matrix. For example, the first hidden layer's weights `W1` would be of size [4x3], and the biases for all units would be in the vector `b1`, of size [4x1]. Here, every single neuron has its weights in a row of `W1`, so the matrix vector multiplication `np.dot(W1,x)` evaluates the activations of all neurons in that layer. Similarly, `W2` would be a [4x4] matrix that stores the connections of the second hidden layer, and `W3` a [1x4] matrix for the last (output) layer. The full forward pass of this 3-layer neural network is then simply three matrix multiplications, interwoven with the application of the activation function:
+*交织激活函数的重复矩阵乘法Repeated matrix multiplications interwoven with activation function*。神经网络被组织成层的主要原因之一是，这种结构使得使用矩阵向量操作评估神经网络变得非常简单和高效。使用上图中的示例三层神经网络，输入将是一个[3x1]向量。一个层的所有连接强度都可以存储在一个单独的矩阵中。例如，第一个隐藏层的权重`W1`将是[4x3]的大小，所有单元的偏差将在向量`b1`中，大小为[4x1]。在这里，每个单一神经元都在`W1`的一行中有其权重，所以矩阵向量乘法`np.dot(W1,x)`评估该层所有神经元的激活。同样，`W2`将是一个[4x4]的矩阵，存储第二个隐藏层的连接，`W3`是最后一个（输出）层的[1x4]矩阵。然后，这个3层神经网络的完整前向传递只是三个矩阵乘法，交织着激活函数的应用：
 
 ```python
 # forward-pass of a 3-layer neural network:
@@ -138,73 +118,62 @@ h2 = f(np.dot(W2, h1) + b2) # calculate second hidden layer activations (4x1)
 out = np.dot(W3, h2) + b3 # output neuron (1x1)
 ```
 
-In the above code, `W1,W2,W3,b1,b2,b3` are the learnable parameters of the network. Notice also that instead of having a single input column vector, the variable `x` could hold an entire batch of training data (where each input example would be a column of `x`) and then all examples would be efficiently evaluated in parallel. Notice that the final Neural Network layer usually doesn't have an activation function (e.g. it represents a (real-valued) class score in a classification setting).
+在上述代码中，`W1，W2，W3，b1，b2，b3` 是网络的可学习参数。还要注意，与其拥有单个输入列向量不同，变量 `x` 可以容纳整个批次的训练数据（其中每个输入示例都将是 `x` 的一列），然后所有示例将以并行方式进行高效评估。请注意，最后的神经网络层通常没有激活函数（例如，在分类设置中它代表一个（实值）类别分数）。
 
-> The forward pass of a fully-connected layer corresponds to one matrix multiplication followed by a bias offset and an activation function.
+> 全连接层的前向传播对应于矩阵乘法，后跟偏置偏移和激活函数。
 
-<a name='power'></a>
+### 表示能力
 
-### Representational power
+观察具有完全连接层的神经网络的一种方式是，它们定义了一组由网络的权重参数化的函数。一个自然而然的问题是：这组函数的表示能力如何？特别是，是否存在不能用神经网络建模的函数？
 
-One way to look at Neural Networks with fully-connected layers is that they define a family of functions that are parameterized by the weights of the network. A natural question that arises is: What is the representational power of this family of functions? In particular, are there functions that cannot be modeled with a Neural Network? 
+事实证明，至少具有一个隐藏层的神经网络是*通用逼近器universal approximators*。也就是说，可以证明（例如，参见 1989 年的[*Sigmoidal Function的叠加逼近*](http://www.dartmouth.edu/~gvc/Cybenko_MCSS.pdf)（pdf），或者是 Michael Nielsen 的这个[直观解释](http://neuralnetworksanddeeplearning.com/chap4.html)），对于任何连续函数 $f(x)$ 和一些 $\epsilon > 0$，都存在一个具有一个隐藏层的神经网络 $g(x)$（具有合理选择的非线性，例如 sigmoid 函数），使得 $ \forall x, \mid f(x) - g(x) \mid < \epsilon $。换句话说，神经网络可以逼近任何连续函数。
 
-It turns out that Neural Networks with at least one hidden layer are *universal approximators*. That is, it can be shown (e.g. see [*Approximation by Superpositions of Sigmoidal Function*](http://www.dartmouth.edu/~gvc/Cybenko_MCSS.pdf) from 1989 (pdf), or this [intuitive explanation](http://neuralnetworksanddeeplearning.com/chap4.html) from Michael Nielsen) that given any continuous function $f(x)$ and some $\epsilon > 0$, there exists a Neural Network $g(x)$ with one hidden layer (with a reasonable choice of non-linearity, e.g. sigmoid) such that $ \forall x, \mid f(x) - g(x) \mid < \epsilon $. In other words, the neural network can approximate any continuous function. 
+如果一个隐藏层足以逼近任何函数，为什么要使用更多层并加深网络呢？答案是，尽管数学上可爱，但两层神经网络是通用逼近器，实际上在实践中是一个相对弱而无用的说法。在一维情况下，“指示器突起的总和sum of indicator bumps”函数 $g(x) = \sum_i c_i \mathbb{1}(a_i < x < b_i)$，其中 $a,b,c$ 是参数向量，也是通用逼近器，但没有人会建议在机器学习中使用这种函数形式。神经网络在实践中表现良好，因为它们紧凑地表示与我们在实践中遇到的数据的统计属性相符合的漂亮、平滑函数，并且还容易使用我们的优化算法（例如梯度下降）进行学习。同样，深层网络（具有多个隐藏层）可以比单隐藏层网络效果更好，尽管它们的表示能力相等。
 
-If one hidden layer suffices to approximate any function, why use more layers and go deeper? The answer is that the fact that a two-layer Neural Network is a universal approximator is, while mathematically cute, a relatively weak and useless statement in practice. In one dimension, the "sum of indicator bumps" function $g(x) = \sum_i c_i \mathbb{1}(a_i < x < b_i)$ where $a,b,c$ are parameter vectors is also a universal approximator, but noone would suggest that we use this functional form in Machine Learning. Neural Networks work well in practice because they compactly express nice, smooth functions that fit well with the statistical properties of data we encounter in practice, and are also easy to learn using our optimization algorithms (e.g. gradient descent). Similarly, the fact that deeper networks (with multiple hidden layers) can work better than a single-hidden-layer networks is an empirical observation, despite the fact that their representational power is equal.
+值得一提的是，实际上，通常情况下，3层神经网络会优于2层网络，但更深层次（4、5、6层）很少有更大的帮助。这与卷积网络形成了鲜明对比，深度在其中被发现是一个极其重要的组成部分，用于构建出色的识别系统（例如，约有10个可学习层次）。对于这一观察的一个论点是，图像包含层次结构（例如，脸由眼睛组成，眼睛由边缘组成等），因此对于这个数据领域，**多层次处理**是直观的。
 
-As an aside, in practice it is often the case that 3-layer neural networks will outperform 2-layer nets, but going even deeper (4,5,6-layer) rarely helps much more. This is in stark contrast to Convolutional Networks, where depth has been found to be an extremely important component for a good recognition system (e.g. on order of 10 learnable layers). One argument for this observation is that images contain hierarchical structure (e.g. faces are made up of eyes, which are made up of edges, etc.), so several layers of processing make intuitive sense for this data domain.
+当然，完整的故事远比这复杂得多，也是最近研究的一个重要主题。如果您对这些话题感兴趣，我们建议进一步阅读：
 
-The full story is, of course, much more involved and a topic of much recent research. If you are interested in these topics we recommend for further reading:
+- Bengio、Goodfellow、Courville 编写的[Deep Learning](http://www.deeplearningbook.org/)书，特别是[第6.4章](http://www.deeplearningbook.org/contents/mlp.html)。
+- [深度网络真的需要深吗？](http://arxiv.org/abs/1312.6184)
+- [FitNets: Thin Deep Nets的提示](http://arxiv.org/abs/1412.6550)
 
-- [Deep Learning](http://www.deeplearningbook.org/) book in press by Bengio, Goodfellow, Courville, in particular [Chapter 6.4](http://www.deeplearningbook.org/contents/mlp.html).
-- [Do Deep Nets Really Need to be Deep?](http://arxiv.org/abs/1312.6184)
-- [FitNets: Hints for Thin Deep Nets](http://arxiv.org/abs/1412.6550)
+### 设置层数和它们的大小
 
-<a name='arch'></a>
+当面临实际问题时，我们如何决定使用什么样的体系结构？我们应该不使用隐藏层吗？使用一个隐藏层？两个隐藏层？每个层应该有多大？首先，请注意，随着神经网络中层的大小和数量的增加，网络的**容量capacity**也会增加。也就是说，可表示函数的空间会增大，因为神经元可以协作来表示许多不同的函数。例如，假设我们在二维上有一个二元分类问题。我们可以训练三个单独的神经网络，每个都有一个隐藏层的某个大小，并得到以下分类器：
 
-### Setting number of layers and their sizes
+![layer_sizes](./neural-networks-1.assets/layer_sizes.jpeg)
 
-How do we decide on what architecture to use when faced with a practical problem? Should we use no hidden layers? One hidden layer? Two hidden layers? How large should each layer be? First, note that as we increase the size and number of layers in a Neural Network, the **capacity** of the network increases. That is, the space of representable functions grows since the neurons can collaborate to express many different functions. For example, suppose we had a binary classification problem in two dimensions. We could train three separate neural networks, each with one hidden layer of some size and obtain the following classifiers:
+> 更大的神经网络可以表示更复杂的函数。数据显示为按其类别着色的圆圈，而经过训练的神经网络的决策区域显示在下方。您可以在这个[ConvNetsJS演示链接](http://cs.stanford.edu/people/karpathy/convnetjs/demo/classify2d.html)中对这些示例进行互动。
 
-<div class="fig figcenter fighighlight">
-  <img src="/assets/nn1/layer_sizes.jpeg">
-  <div class="figcaption">Larger Neural Networks can represent more complicated functions. The data are shown as circles colored by their class, and the decision regions by a trained neural network are shown underneath. You can play with these examples in this <a href="http://cs.stanford.edu/people/karpathy/convnetjs/demo/classify2d.html">ConvNetsJS demo</a>.</div>
-</div>
+在上面的图表中，我们可以看到具有更多神经元的神经网络可以表示更复杂的函数。然而，这既是一种好处（因为我们可以学会分类更复杂的数据），也是一种诅咒（因为更容易过拟合训练数据）。**过拟合Overfitting**发生在高容量模型拟合数据中的噪声而不是（假定的）潜在关系时。例如，具有20个隐藏神经元的模型拟合了所有训练数据，但以将空间分割成许多不相交的红色和绿色决策区域为代价。具有3个隐藏神经元的模型只有在宏观上具有分类数据的表现能力。它将数据建模为两个斑点，并将绿色集群内的少数红点解释为**异常值outliers**（噪声）。在实践中，这可能导致在测试集上更好的**泛化generalization**。
 
-In the diagram above, we can see that Neural Networks with more neurons can express more complicated functions. However, this is both a blessing (since we can learn to classify more complicated data) and a curse (since it is easier to overfit the training data). **Overfitting** occurs when a model with high capacity fits the noise in the data instead of the (assumed) underlying relationship. For example, the model with 20 hidden neurons fits all the training data but at the cost of segmenting the space into many disjoint red and green decision regions. The model with 3 hidden neurons only has the representational power to classify the data in broad strokes. It models the data as two blobs and interprets the few red points inside the green cluster as **outliers** (noise). In practice, this could lead to better **generalization** on the test set.
+根据我们上面的讨论，似乎如果数据不够复杂以防止过拟合，那么可以首选较小的神经网络。然而，这是不正确的 ——在神经网络中，有许多其他首选方法可以防止过拟合，我们将在后面讨论（例如L2正则化、丢弃dropout、输入噪声等）。实际上，始终<font color="red">最好使用这些方法来控制过拟合，而不是调整神经元的数量</font>。
 
-Based on our discussion above, it seems that smaller neural networks can be preferred if the data is not complex enough to prevent overfitting. However, this is incorrect - there are many other preferred ways to prevent overfitting in Neural Networks that we will discuss later (such as L2 regularization, dropout, input noise). In practice, it is always better to use these methods to control overfitting instead of the number of neurons. 
+这背后的微妙原因是，较小的网络更难使用诸如梯度下降之类的局部方法进行训练：很明显，它们的损失函数具有相对较少的局部最小值，但事实证明，其中许多最小值更容易收敛，并且它们是糟糕的（即具有较高的损失）。相反，更大的神经网络包含明显更多的局部最小值，但这些最小值在实际损失方面要好得多。由于神经网络是非凸的，因此在数学上研究这些属性很困难，但一些尝试理解这些目标函数的工作已经进行，例如最近的一篇论文[多层网络的损失曲面The Loss Surfaces of Multilayer Networks](http://arxiv.org/abs/1412.0233)。在实践中，您会发现，如果训练一个小型网络，最终的损失可能会显示出相当大的方差——在某些情况下，您会幸运地收敛到一个好的位置，但在某些情况下，您会陷入其中一个不好的局部最小值。另一方面，如果训练一个大型网络，您将开始找到许多不同的解决方案，但最终实现的损失方差会小得多。换句话说，所有解决方案都差不多一样好，而不太依赖于随机初始化的运气。
 
-The subtle reason behind this is that smaller networks are harder to train with local methods such as Gradient Descent: It's clear that their loss functions have relatively few local minima, but it turns out that many of these minima are easier to converge to, and that they are bad (i.e. with high loss). Conversely, bigger neural networks contain significantly more local minima, but these minima turn out to be much better in terms of their actual loss. Since Neural Networks are non-convex, it is hard to study these properties mathematically, but some attempts to understand these objective functions have been made, e.g. in a recent paper [The Loss Surfaces of Multilayer Networks](http://arxiv.org/abs/1412.0233). In practice, what you find is that if you train a small network the final loss can display a good amount of variance - in some cases you get lucky and converge to a good place but in some cases you get trapped in one of the bad minima. On the other hand, if you train a large network you'll start to find many different solutions, but the variance in the final achieved loss will be much smaller. In other words, all solutions are about equally as good, and rely less on the luck of random initialization.
+再次强调，<font color="red">正则化强度regularization strength是控制神经网络过拟合的首选方法</font>。我们可以查看三种不同设置所达到的结果：
 
-To reiterate, the regularization strength is the preferred way to control the overfitting of a neural network. We can look at the results achieved by three different settings:
+![reg_strengths](./neural-networks-1.assets/reg_strengths.jpeg) 
 
-<div class="fig figcenter fighighlight">
-  <img src="/assets/nn1/reg_strengths.jpeg">
-  <div class="figcaption">
-    The effects of regularization strength: Each neural network above has 20 hidden neurons, but changing the regularization strength makes its final decision regions smoother with a higher regularization. You can play with these examples in this <a href="http://cs.stanford.edu/people/karpathy/convnetjs/demo/classify2d.html">ConvNetsJS demo</a>.
-  </div>
-</div>
+>正则化强度的影响：上面的每个神经网络都有20个隐藏神经元，但改变正则化强度会使其最终的决策区域更加平滑。您可以在这个[ConvNetsJS演示链接](http://cs.stanford.edu/people/karpathy/convnetjs/demo/classify2d.html)中对这些示例进行互动。
 
-The takeaway is that you should not be using smaller networks because you are afraid of overfitting. Instead, you should use as big of a neural network as your computational budget allows, and use other regularization techniques to control overfitting.
+**结论是，您不应该因为担心过拟合而使用较小的神经网络。相反，您应该尽可能使用较大的神经网络，只要您的计算预算允许，并使用其他正则化技术来控制过拟合。**
 
-<a name='summary'></a>
+## 总结
 
-## Summary
+总结一下，
 
-In summary, 
+- 我们引入了生物**神经元**的一个非常粗略的模型。
+- 我们讨论了实践中使用的几种**激活函数**，其中ReLU是最常见的选择。
+- 我们引入了**神经网络**，其中神经元通过**全连接层**相连，相邻层的神经元具有全对全的连接，但同一层的神经元之间没有连接。
+- 我们看到这种分层体系结构使得基于矩阵乘法与激活函数的应用之间的神经网络非常高效。
+- 我们看到神经网络是**通用函数逼近器**，但我们也讨论了这一属性与它们的广泛使用之间的关系较小。它们之所以使用，是因为它们对实践中出现的函数的功能形式做出了某些“正确”的假设。
+- 我们讨论了较大的网络将始终比较小的网络效果更好，但必须适当地采用更强的正则化（例如更高的权重衰减），否则可能会过拟合。在后面的部分中，我们将看到更多形式的正则化（特别是dropout）。
 
-- We introduced a very coarse model of a biological **neuron**.
-- We discussed several types of **activation functions** that are used in practice, with ReLU being the most common choice.
-- We introduced **Neural Networks** where neurons are connected with **Fully-Connected layers** where neurons in adjacent layers have full pair-wise connections, but neurons within a layer are not connected.
-- We saw that this layered architecture enables very efficient evaluation of Neural Networks based on matrix multiplications interwoven with the application of the activation function.
-- We saw that that Neural Networks are **universal function approximators**, but we also discussed the fact that this property has little to do with their ubiquitous use. They are used because they make certain "right" assumptions about the functional forms of functions that come up in practice.
-- We discussed the fact that larger networks will always work better than smaller networks, but their higher model capacity must be appropriately addressed with stronger regularization (such as higher weight decay), or they might overfit. We will see more forms of regularization (especially dropout) in later sections.
+## 其他参考资料
 
-<a name='add'></a>
+- [deeplearning.net教程](http://www.deeplearning.net/tutorial/mlp.html)（使用Theano）
+- 用于直观理解的[ConvNetJS](http://cs.stanford.edu/people/karpathy/convnetjs/)演示
+- [Michael Nielsen的教程](http://neuralnetworksanddeeplearning.com/chap1.html)
 
-## Additional References
-
-- [deeplearning.net tutorial](http://www.deeplearning.net/tutorial/mlp.html) with Theano
-- [ConvNetJS](http://cs.stanford.edu/people/karpathy/convnetjs/) demos for intuitions
-- [Michael Nielsen's](http://neuralnetworksanddeeplearning.com/chap1.html) tutorials
