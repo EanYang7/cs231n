@@ -1,0 +1,1463 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="CS231n: Deep Learning for Computer Vision">
+      
+      
+      
+        <link rel="canonical" href="https://eanyang7.github.io/cs231n/adversary-attacks/">
+      
+      
+      
+      
+      <link rel="icon" href="../logo.jpg">
+      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.3.1">
+    
+    
+      
+        <title>Adversary attacks - CS231n</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.046329b4.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.85d0ee34.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function n(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],n("js",new Date),n("config","G-5F8XNH7BCX"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){this.value&&n("event","search",{search_term:this.value})}),document$.subscribe(function(){var a=document.forms.feedback;if(void 0!==a)for(var e of a.querySelectorAll("[type=submit]"))e.addEventListener("click",function(e){e.preventDefault();var t=document.location.pathname,e=this.getAttribute("data-md-value");n("event","feedback",{page:t,data:e}),a.firstElementChild.disabled=!0;e=a.querySelector(".md-feedback__note [data-md-value='"+e+"']");e&&(e.hidden=!1)}),a.hidden=!1}),location$.subscribe(function(e){n("config","G-5F8XNH7BCX",{page_path:e.pathname})})});var e=document.createElement("script");e.async=!0,e.src="https://www.googletagmanager.com/gtag/js?id=G-5F8XNH7BCX",document.getElementById("__analytics").insertAdjacentElement("afterEnd",e)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#adversarial-attacks" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href=".." title="CS231n" class="md-header__button md-logo" aria-label="CS231n" data-md-component="logo">
+      
+  <img src="../logo.jpg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CS231n
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Adversary attacks
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换为暗黑模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换为暗黑模式" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换为浅色模式"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="切换为浅色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="选择当前语言">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04M18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12m-2.62 7 1.62-4.33L19.12 17h-3.24Z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="/cs231n/" hreflang="zh" class="md-select__link">
+              中文
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="https://cs231n.github.io/" hreflang="en" class="md-select__link">
+              English(源网站)
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/EanYang7/cs231n" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    EanYang7/cs231n
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href=".." class="md-tabs__link">
+          
+  
+  首页
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../courses/preparation/setup/" class="md-tabs__link">
+          
+  
+  课程
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../assignments/2023/assignment1/" class="md-tabs__link">
+          
+  
+  任务
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="CS231n" class="md-nav__button md-logo" aria-label="CS231n" data-md-component="logo">
+      
+  <img src="../logo.jpg" alt="logo">
+
+    </a>
+    CS231n
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/EanYang7/cs231n" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    EanYang7/cs231n
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    首页
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            首页
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CS231n 卷积神经网络视觉识别
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    课程
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            课程
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" >
+        
+          <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    准备工作
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            准备工作
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/preparation/setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    软件设置
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/preparation/python-numpy-tutorial/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Python/Numpy教程
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+        
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    神经网络
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            神经网络
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/classification/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    图像分类
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/linear-classify/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    线性分类
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/optimization-1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    优化：随机梯度下降
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/optimization-2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    反向传播
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2_5" >
+        
+          <label class="md-nav__link" for="__nav_2_2_5" id="__nav_2_2_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    神经网络
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            神经网络
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/neural-networks-1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    创建结构
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/neural-networks-2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    创建数据和损失
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/neural-networks-3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    学习和评估
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/neural-networks-case-study/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    最小神经网络案例研究
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    卷积神经网络
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            卷积神经网络
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/CNN/convolutional-networks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    结构、卷积/池化层
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/CNN/understanding-cnn/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    理解与可视化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/CNN/transfer-learning/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    迁移学习与微调
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    任务
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            任务
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../assignments/2023/assignment1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    任务1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../assignments/2023/assignment2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    任务2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../assignments/2023/assignment3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    任务2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#adversarial-attacks" class="md-nav__link">
+    Adversarial Attacks
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adversarial-examples" class="md-nav__link">
+    Adversarial Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#defense-strategies-against-adversarial-examples" class="md-nav__link">
+    Defense Strategies against Adversarial Examples
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adversarial-attacks_1" class="md-nav__link">
+    Adversarial Attacks
+  </a>
+  
+    <nav class="md-nav" aria-label="Adversarial Attacks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#poisoning-attack-vs-evasion-attack" class="md-nav__link">
+    Poisoning Attack vs. Evasion Attack
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#white-box-vs-black-box-attacks" class="md-nav__link">
+    White-box vs. Black-box Attacks
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adversarial-goals" class="md-nav__link">
+    Adversarial Goals
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adversarial-examples_1" class="md-nav__link">
+    Adversarial Examples
+  </a>
+  
+    <nav class="md-nav" aria-label="Adversarial Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fast-gradient-sign-method-fgsm" class="md-nav__link">
+    Fast Gradient Sign Method (FGSM)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#one-pixel-attack" class="md-nav__link">
+    One-Pixel Attack
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#defense-strategies-against-adversarial-examples_1" class="md-nav__link">
+    Defense Strategies against Adversarial Examples
+  </a>
+  
+    <nav class="md-nav" aria-label="Defense Strategies against Adversarial Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#adversarial-training" class="md-nav__link">
+    Adversarial Training
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defensive-distillation" class="md-nav__link">
+    Defensive Distillation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#denoising" class="md-nav__link">
+    Denoising
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    References
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additional-resources" class="md-nav__link">
+    Additional Resources
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+    <a href="https://github.com/EanYang7/cs231n/edit/dev/docs/adversary-attacks.md" title="编辑此页" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/EanYang7/cs231n/raw/dev/docs/adversary-attacks.md" title="查看本页的源代码" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5Z"/></svg>
+    </a>
+  
+
+
+  <h1>Adversary attacks</h1>
+
+<p>Table of contents:</p>
+<h5 id="adversarial-attacks">Adversarial Attacks<a class="headerlink" href="#adversarial-attacks" title="Permanent link">⚓︎</a></h5>
+<ul>
+<li>Poisoning Attack vs. Evasion Attack</li>
+<li>White-box Attack vs. Black-box Attack</li>
+<li>Adversarial Goals</li>
+</ul>
+<h5 id="adversarial-examples">Adversarial Examples<a class="headerlink" href="#adversarial-examples" title="Permanent link">⚓︎</a></h5>
+<ul>
+<li>Fast Gradient Sign Method (FGSM)</li>
+<li>One-Pixel Attack</li>
+</ul>
+<h5 id="defense-strategies-against-adversarial-examples">Defense Strategies against Adversarial Examples<a class="headerlink" href="#defense-strategies-against-adversarial-examples" title="Permanent link">⚓︎</a></h5>
+<ul>
+<li>Adversarial Training</li>
+<li>Defensive Distillation</li>
+<li>Denoising</li>
+</ul>
+<h2 id="adversarial-attacks_1">Adversarial Attacks<a class="headerlink" href="#adversarial-attacks_1" title="Permanent link">⚓︎</a></h2>
+<p>In class, we have seen examples where image classification models can be fooled with adversarial examples. By adding small and often imperceptible perturbations to images, these adversarial attacks can deceive a deep learning model to label the modified image as a completely different class. In this note, we will give an overview of the various types of adversarial attacks on machine learning models, discuss several representative methods for generating adversarial examples, as well as some possible defense methods and mitigation strategies against such adversarial attacks.</p>
+<p><strong>Adversary</strong>. In computer security, the term “adversary” refers to people or machines that attempt to penetrate or corrupt a computer network or system. In the context of machine learning and deep learning, adversaries can use a variety of attack methods to disrupt a machine learning model, and cause it to behave erratically (e.g. to misclassify a dog image as a cat image). In general, attacks can happen either during model training (known as a “poisoning” attack) or after the model has finished training (an “evasion” attack).</p>
+<h3 id="poisoning-attack-vs-evasion-attack">Poisoning Attack vs. Evasion Attack<a class="headerlink" href="#poisoning-attack-vs-evasion-attack" title="Permanent link">⚓︎</a></h3>
+<p><strong>Poisoning attack</strong>. A poisoning attack involves polluting a machine learning model's training data. Such attacks take place during the training time of the machine learning model, when an adversary presents data that is intentionally mislabeled to the model, therefore instilling misleading knowledge, and will eventually cause the model to make inaccurate predictions at test time. Poisoning attacks require that an adversary has access to the model’s training data, and is able to inject misleading data into the training set. To make the attacks less noticeable, the adversary may decide to slowly introduce ill-intentioned samples over an extended period of time.</p>
+<p>An example of a poisoning attack took place in 2016, when Microsoft launched a Twitter chatbot, Tay. Tay was designed to mimic the language patterns of a 18- to 24- year-old in the U.S. for entertainment purposes, to engage people through “casual and playful conversation”, and to learn from its conversations with human users on Twitter. However, soon after its launch, a vulnerability in Tay was exploited by some adversaries, who interacted with Tay using profane and offensive language. The attack caused the chatbot to learn and internalize inappropriate language. The more Tay engaged with adversarial users, the more offensive Tay’s tweets became. As a result, Tay was quickly shut down by Microsoft, only 16 hours after its launch.</p>
+<p><strong>Evasion attack</strong>. In evasion attacks, the adversary tries to evade or fool the system by adjusting malicious samples during the testing phase. Compared with poisoning attacks, evasion attacks are more common, and easier to conduct. One main reason is that with evasion attacks, adversaries don’t necessarily need to access the training data, nor inject bad data into the training process of the model.</p>
+<h3 id="white-box-vs-black-box-attacks">White-box vs. Black-box Attacks<a class="headerlink" href="#white-box-vs-black-box-attacks" title="Permanent link">⚓︎</a></h3>
+<p>The evasion attacks discussed above occur during the testing phase of the model. The effectiveness of such attacks depends on the amount of information available to the adversary about the model. Before we dive into the various methods for generating adversarial examples, let’s first briefly discuss the differences between white-box attacks and black-box attacks, and understand the various adversarial goals.</p>
+<p><strong>White-box attack</strong>. In a white-box attack, the adversary is assumed to have total knowledge about the model, such as the model architecture, number of layers, the weights of the final trained model, etc. The adversary also has knowledge on the model’s training process, such as the optimization algorithm (e.g. Adam, RMSProp etc.) that is used, the data that the model is trained on, the distribution of the training data, and the model’s performance on the training data. It can be very dangerous if the adversary is able to identify the feature space where the model has a high error rate, and use that information to construct adversarial examples and exploit the model. The more the adversary knows, the more severe the attacks can be, and so are the consequences.</p>
+<p><strong>Black-box attack</strong>. On the contrary, in black-box attacks, the adversary assumes no knowledge about the model. Instead of constructing adversarial examples based on prior knowledge, the adversary exploits a model by providing a series of carefully crafted inputs and observing outputs. Through trial and error, the attacks may eventually be successful in misleading the model to make the wrong predictions.</p>
+<h3 id="adversarial-goals">Adversarial Goals<a class="headerlink" href="#adversarial-goals" title="Permanent link">⚓︎</a></h3>
+<p>The goals of the adversarial attacks can be broadly categorized as follows:
+- <strong>Confidence Reduction</strong>. The adversary aims to reduce the model’s confidence in its predictions, which does not necessarily lead to the wrong class output. For example, due to the adversarial attack, a model which originally classifies an image of a cat with high probability ends up outputting a lower probability for the same image and class pair.
+- <strong>Untargeted Misclassification</strong>. The adversary tries to misguide the model to predict any of the incorrect classes. For example, when presented with an image of a cat, the model outputs any class that is non-cat (e.g. dog, airplane, computer, etc.).
+- <strong>Targeted Misclassification</strong>. The adversary tries to misguide the model to output a particular class other than the true class. For example, when presented with an image of a cat, the model is forced to classify it as a dog image, where the output class of dog is specified by the adversary.</p>
+<p>Generally speaking, targeted attacks are more sophisticated than untargeted attacks, which are in turn more difficult than confidence reduction.</p>
+<h2 id="adversarial-examples_1">Adversarial Examples<a class="headerlink" href="#adversarial-examples_1" title="Permanent link">⚓︎</a></h2>
+<p>In CS231n, we mainly focus on examples of adversarial images in the context of image classification. In an adversarial attack, the adversary attempts to modify the original input image by adding some carefully crafted perturbations, which can cause the image classification model to yield mispredictions. Oftentimes, the generated perturbations are either too small to be visually identified by human eyes, or small enough that humans consider them to be harmless, random noise. And yet, these perturbations can be “meaningful” and misleading to the image classification model. Below, we discuss two methods to generate adversarial examples.</p>
+<p align="center">
+  <img src="/assets/adversary-1.png" width="450">
+  <div class="figcaption">An example of adversarial attack, in which a tiny amount of carefully crafted perturbations leads to misclassification. Here the perturbations are so small that they only become visible to humans after being magnified for about 30 times.</div>
+</p>
+
+<h3 id="fast-gradient-sign-method-fgsm">Fast Gradient Sign Method (FGSM)<a class="headerlink" href="#fast-gradient-sign-method-fgsm" title="Permanent link">⚓︎</a></h3>
+<p>The simplest yet highly efficient algorithm for generating adversarial examples is known as the Fast Gradient Sign Method (FGSM), which is a single step attack on images. Proposed by Goodfellow et al. in 2014, FGSM combines a white box approach with a misclassification goal. Using FGSM, a small perturbation is first generated in the direction of the sign of the gradients with respect to the input image. Next, the generated perturbations are added to the original image, resulting in an adversarial image. The equation for untargeted attack using FGSM is given by:</p>
+<div class="arithmatex">\[ adv\_x = x + \epsilon*\text{sign}(\nabla_xJ(\theta, x, y)) \]</div>
+<p>Here, $$ J $$ is the cost function (e.g. cross-entropy cost) of the trained model, $$ \nabla_x $$ denotes the gradient of the model’s loss function with respect to the original image $$ x $$. The thing to note here is we are calculating the gradient with respect to the pixels of the image. From the gradient of the model’s loss function, we take the sign of each term in the gradient, reducing it to a matrix of 1s, 0s and -1s. The intuition here is that we nudge the pixels of the image in the direction that maximizes the loss. In other words, we perform <strong>gradient ascent</strong> instead of gradient descent, since the goal is to increase the error and let the model output the incorrect results.</p>
+<p>Having obtained the sign of the gradient, we then multiply the result with a tiny value, ϵ, which controls the amount of perturbations (i.e. the perturbation’s amplitude) to be added. The larger the value of epsilon, the more noticeable the perturbations are to humans. Recall that from the adversary’s perspective, the goal is to ensure the corruption to the original image is imperceptible, while being able to fool the classification model. ϵ is a hyper-parameter to be chosen.</p>
+<p>FGSM can also be used for targeted misclassification attacks. In this case, the adversary aims to maximize the probability of some specific target class, which is unlikely to be the true class of the original image $$ x $$:</p>
+<div class="arithmatex">\[ adv\_x = x - \epsilon*\text{sign}(\nabla_xJ(\theta, x, y_{target})) \]</div>
+<p>The difference is in case of targeted attacks, we minimize the loss between the model’s predicted class and the target class, whereas in case of untargeted attack we maximize the loss instead of minimize it.</p>
+<p>In addition to only applying the FGSM equation once, a straightforward extension is to develop an iterative procedure, and run FGSM multiple times. Here is what the iterative procedure might look like for untargeted attacks using FGSM, when implemented with TensorFlow:</p>
+<div class="highlight"><pre><span></span><code>import tensorflow as tf
+import keras.backend as K
+
+# Get the true label of the iamge
+correct_label = get_correct_label()
+total_class_count = N
+
+# Initialize adversarial example with original input image
+x_adv = original_img
+x_adv = tf.convert_to_tensor(x_adv, dtype=tf.float32)
+
+# Initialize the perturbations
+noise = np.zeros_like(original_img)
+
+# Epsilon is a hyper-parameter
+epsilon = 0.01
+epochs = 100
+
+for i in range(epochs):
+    target = K.one_hot(correct_label, total_class_count)
+
+    with tf.GradientTape() as tape:
+        tape.watch(x_adv)
+        prediction = model(x_adv)
+        loss = K.categorical_crossentropy(target, prediction[0])
+
+    # Calculate the gradient
+    grads = tape.gradient(loss, x_adv)
+
+    # Get the sign of the gradient
+    delta = K.sign(grads[0])
+    noise = noise + delta
+
+    # Generate an adversarial example with FGSM
+    x_adv = x_adv + epsilon*delta
+
+    # Get the latest model output
+    preds = model.predict(x_adv, steps=1).squeeze()
+    pred = np.argmax(preds, axis=-1)
+
+    # Exit the procedure if model is fooled
+    if pred != correct_label:
+      break
+</code></pre></div>
+<p>In the example implementation above, we also employ early-stopping and exit the iterative procedure once the model is fooled. This helps minimize the amount of perturbations added, and may also improve the efficiency by reducing the time needed to fool the model. With the iterative approach, we can also obtain additional adversarial examples when the procedure is run for more iterations.</p>
+<p align="center">
+  <img src="/assets/adversary-2.png" width="550">
+  <div class="figcaption">An example of a “successful” adversarial attack in which the image classifier recognized a watermelon as a tomato. In this case, although the goal of misclassification is achieved, the unmagnified perturbations are large enough to be perceived by human eyes.</div>
+</p>
+
+<p>In practice, FGSM attacks work particularly well for network architectures that favor linearity, such as logistic regression, maxout networks, LSTMs, networks that use the ReLU activation function, etc. While ReLU is non-linear, when ϵ is sufficiently small, the ReLU activation does not change the sign of the gradient with respect to the original image, and thus will not prevent the pixels of the image to be nudged in the direction that maximizes the loss. The authors of FGSM stated that changing to nonlinear model families such as RBF networks confer a significant reduction in a model’s vulnerability to adversarial examples.</p>
+<h3 id="one-pixel-attack">One-Pixel Attack<a class="headerlink" href="#one-pixel-attack" title="Permanent link">⚓︎</a></h3>
+<p>In order to fool a machine learning model, the Fast Gradient Sign Method discussed above requires many pixels of the original image to be changed, if only by a little. As shown in the example image above, sometimes the modifications might be excessive (i.e. the amount of modified pixels are fairly large) such that they become visually identifiable to human eyes. One may then wonder if it’s possible to modify fewer pixels, while still keeping the model fooled? The answer is yes. In 2019, a method for generating one-pixel adversarial perturbations was proposed, in which an adversarial example can be generated by modifying just one pixel.</p>
+<p>The One-pixel attack uses differential evolution to find out which pixel is to be changed, and how. Differential evolution (DE) is a type of evolutionary algorithm (EA). It is a population based optimization algorithm for solving complex optimization problems. In specific, during each iteration, a set of candidate solutions (children) is generated according to the current population (parents). The candidate solutions are then compared with their corresponding parents, surviving if they are better candidate solutions according to some criterion. The process repeats until some stopping criterion are met.</p>
+<p>In one-pixel attack, each candidate solution encodes a pixel modification and is represented by a vector of five elements: the x and y coordinates, and the red, green and blue (RGB) values of the pixel. The search starts with 400 initial candidate solutions. In each iteration, another 400 candidate solutions (children) are generated using the following formula:</p>
+<div class="arithmatex">\[ x_{i}(g+1) = x_{r1}(g) + F(x_{r2}(g) - x_{r3}(g)), \]</div>
+<div class="arithmatex">\[ r1 \neq r2 \neq r3 \]</div>
+<p>where $$ x_{i} $$ is an element of the candidate solution, $$ g $$ is the current generation, $$ F $$ is the scale parameter set to be 0.5, and $$ r1 $$, $$ r2 $$, $$ r3 $$ are different random numbers. The search stops when one of the candidate solutions is an adversarial example that fools the model successfully, or if the maximum number of iterations specified has been reached.</p>
+<p>By using differential evolution, one-pixel attack has several advantages. Since DE doesn’t use gradient information for optimization, it’s not required for the objective function to be differentiable, as is the case with classical optimization methods such as gradient descent. Calculating the gradient requires much more information about the model to be exploited, therefore not needing gradient information makes conducting the attack more feasible. Finally, it’s worth noting that one-pixel attack is a type of black-box attack, which assumes no information about the classification model; it is sufficient to just observe the model’s output probabilities.</p>
+<h2 id="defense-strategies-against-adversarial-examples_1">Defense Strategies against Adversarial Examples<a class="headerlink" href="#defense-strategies-against-adversarial-examples_1" title="Permanent link">⚓︎</a></h2>
+<p>Having discussed some techniques for generating adversarial examples, we now turn our attention to possible defense strategies against such adversarial attacks. While we go through each of the countermeasures, it’s worth keeping in mind that none of them can act as a panacea for all challenges. Moreover, implementing such defense strategies may incur extra performance costs.</p>
+<h3 id="adversarial-training">Adversarial Training<a class="headerlink" href="#adversarial-training" title="Permanent link">⚓︎</a></h3>
+<p>One of the most intuitive and effective defenses against adversarial attacks is adversarial training. The idea of adversarial training is to incorporate adversarial samples into the model training stage, and thus increase model robustness. In other words, since we know that the original training process leads to models that are vulnerable to adversarial examples, we just also train on adversarial examples so that the models have some “immunity” over the adversarial examples.</p>
+<p>To perform adversarial training, the defender simply generates a lot of adversarial examples and include them in the training data. At training time, the model is trained to assign the same label to the adversarial example as to the original example. For example, upon seeing an adversarially perturbed training image, whose original label is cat, the model should learn the correct label for the perturbed image is still cat.</p>
+<p>The problem with adversarial training is that it is only effective in defending the models against the same attacks used to craft the examples originally included in the training pool. In black-box attacks, adversaries only need to find one crack in a system’s defenses for an attack to go through. It can be likely that the attack method employed by the adversary is not anticipated by the defender at the time of model training, therefore leaving the adversarially trained model vulnerable to the unseen attacks.</p>
+<h3 id="defensive-distillation">Defensive Distillation<a class="headerlink" href="#defensive-distillation" title="Permanent link">⚓︎</a></h3>
+<p>Introduced in 2015 by Papernot et al., defensive distillation uses the idea of distillation and knowledge transfer to reduce the effectiveness of adversarial samples on deep neural networks. The term distillation was originally proposed as a way to transfer knowledge from a large neural network to a smaller one. Doing so can help reduce the computational complexity of deep neural networks, and facilitate the deployment of deep learning models in resource constrained devices. In defensive distillation, instead of transferring knowledge between models of different architectures, the knowledge is extracted from a model to then improve its own resilience to adversarial examples.</p>
+<p>Let's assume we are training a neural network for image classification tasks, and the network is designed with a softmax layer as the output layer. The key point in distillation is the addition of a <strong>temperature parameter T</strong> to the softmax operation:</p>
+<div class="arithmatex">\[ F(X) = \left[ \frac{e^{z_i(x)/T}}{\sum_{l=0}^{N-1} e^{z_l(x)/T}} \right]_{i \in 0 ... N-1} \]</div>
+<p>The authors showed that experimentally, a high empirical value of T gives a better distillation performance. During test time, T is set to 1, making the above equation equivalent to standard softmax operation.</p>
+<p>Defensive distillation is a two-step process. First, we train an initial network <span class="arithmatex">\(<span class="arithmatex">\(F\)</span>\)</span> on data <span class="arithmatex">\(<span class="arithmatex">\(X\)</span>\)</span>. In this step, instead of letting the network output hard class labels, we take the probability vectors produced by the softmax layer. The benefit of using class probabilities (i.e. soft labels) instead of hard labels is that in addition to merely providing a sample’s correct class, probabilities also encode the relative differences between classes. Next, we then use the probability vectors from the initial network as the labels to train another distilled network <span class="arithmatex">\(<span class="arithmatex">\(F’\)</span>\)</span> with the same architecture on the same training data <span class="arithmatex">\(<span class="arithmatex">\(X\)</span>\)</span>. During training, it is important to set the temperature parameter <span class="arithmatex">\(<span class="arithmatex">\(T\)</span>\)</span> for both networks to a value larger than 1. After training is completed, we will use the distilled network <span class="arithmatex">\(<span class="arithmatex">\(F’\)</span>\)</span> with <span class="arithmatex">\(<span class="arithmatex">\(T\)</span>\)</span> set to 1 to make predictions at test time.</p>
+<p align="center">
+  <img src="/assets/defensive-distillation.png" width="600">
+  <div class="figcaption">Defense mechanism based on a transfer of knowledge contained in probability vectors through distillation.</div>
+</p>
+
+<p>Why is defensive distillation a good idea? First, a large value of <span class="arithmatex">\(<span class="arithmatex">\(T\)</span>\)</span> has the effect of pushing the resulting probability distribution closer to uniform. This helps improve the model’s ability to generalize outside of its training dataset, by avoiding situations where the model is forced to make an overly confident prediction in one class when a sample includes characteristics of two or more classes. The authors also argue that distillation at high temperatures reduces a model’s sensitivity to small input variations, which are often found in adversarial examples. The model’s sensitivity to input variation is quantified by its Jacobian:</p>
+<div class="arithmatex">\[ \frac{\partial F_i(X)}{\partial X_j} = \frac{\partial}{\partial X_j}  \left( \frac{e^{z_i/T}}{\sum_{l=0}^{N-1} e^{z_l/T}} \right) \\
+= \frac{1}{T} \frac{e^{z_i/T}}{g^2(X)} \left( \sum_{l=0}^{N-1} \left(\frac{\partial z_i}{\partial X_j} - \frac{\partial z_l}{\partial X_j} \right) e^{z_l/T} \right) \]</div>
+<p>where</p>
+<div class="arithmatex">\[ g(X) = \sum_{l=0}^{N-1} e^{z_l(X)/T} \]</div>
+<p>From the above expression, it can be observed that the amplitude of the Jacobian is inversely proportional to the temperature value. During test time, although <span class="arithmatex">\(<span class="arithmatex">\(T\)</span>\)</span> is set to a relatively small value of 1, the model’s sensitivity to small variations and perturbations will not be affected, since the weights learned at training time remain unchanged, and decreasing temperature only makes the class probability vector more discrete without changing the relative ordering of the classes.</p>
+<h3 id="denoising">Denoising<a class="headerlink" href="#denoising" title="Permanent link">⚓︎</a></h3>
+<p>Since adversarial examples are images with added perturbations (i.e. noise), one straightforward defense strategy is to have some mechanisms to denoise the adversarial samples. There can be two approaches to denoising: input denoising and feature denoising. Input denoising attempts to partially or fully remove the adversarial perturbations from the input images, whereas feature denoising aims to alleviate the effects of adversarial perturbations on high-level features.</p>
+<p>In their study, Chow et al. proposed a method for input denoising with ensembles of denoisers. The intuition of using ensembles for denoising is that there are various ways for adversaries to generate and add perturbations to images, and no single denoiser is guaranteed to be effective across all data corruption methods - a denoiser that excels at removing some types of noise may perform poorly on others. Therefore, it is often helpful to employ an ensemble of diverse denoisers, instead of relying only on a single denoiser.</p>
+<p>Autoencoders are used for training the denoisers. First, the denoising autoencoder takes a clean input image and transforms it into an adversarial example by adding some perturbations. Next, the noisy image is fed into the auto encoder, with a goal of reconstructing the original clean, uncorrupted image. Given N training examples, the denoising autoencoder is trained by backpropagation to minimize the reconstruction loss:</p>
+<div class="arithmatex">\[ Loss = \frac{1}{N}\sum_{i=1}^{N}d(x_i, g_{\theta'}(f_{\theta}(x'_i))) + \frac{\lambda}{2}(\|\theta \|_\text{F}^2 + \|\theta' \|_\text{F}^2) \]</div>
+<p>where d is a distance function and λ is a regularization hyperparameter penalizing the Frobenius norm of θ and θ’. $$ g^i $$ is the operation at the i-th decoding layer with weights $$ \theta_i^' $$.</p>
+<p>For feature denoising as a defense strategy, one study was conducted by Xie et al, in which the authors incorporated denoising blocks at intermediate layers of a convolutional neural network. The authors argued that the adversarial perturbation of the features gradually increases as an image is propagated through the network, causing the model to eventually make the wrong predictions. Therefore, it can be helpful to add denoising blocks at intermediate layers of the network to combat feature noise.</p>
+<p align="center">
+  <img src="/assets/denoising-block.png" width="300">
+  <div class="figcaption">Defense mechanism based on a transfer of knowledge contained in probability vectors through distillation.</div>
+</p>
+
+<p>The input to a denoising block can be any feature layer in the convolutional neural network. In the study, each denoising blocks performs one type of the following denoising operations: nonlocal means, bilateral filter, mean filter, and median filter. These are the techniques commonly used in computer vision tasks such as image processing and denoising. The denoising blocks are trained jointly with all layers of the network in an end-to-end manner using adversarial training. In their experiments, denoising blocks were added to the variants of ResNet models. The results showed that the proposed denoising method achieved 55.7 percent accuracy under white-box attacks on ImageNet, whereas previous state of the art was only 27.9 percent accuracy.</p>
+<h2 id="references">References<a class="headerlink" href="#references" title="Permanent link">⚓︎</a></h2>
+<p><a href="https://arxiv.org/abs/1412.6572">Explaining and harnessing adversarial examples</a><br />
+<a href="https://arxiv.org/abs/1710.08864">One pixel attack for fooling deep neural networks</a><br />
+<a href="https://arxiv.org/abs/1511.04508">Distillation as a Defense to Adversarial Perturbations against Deep Neural Networks</a><br />
+<a href="https://arxiv.org/abs/1908.07667">Denoising and Verification Cross-Layer Ensemble Against Black-box Adversarial Attacks</a><br />
+<a href="https://arxiv.org/abs/1812.03411">Feature Denoising for Improving Adversarial Robustness</a><br />
+<a href="https://arxiv.org/abs/1810.00069">Adversarial Attacks and Defences: A Survey</a></p>
+<h2 id="additional-resources">Additional Resources<a class="headerlink" href="#additional-resources" title="Permanent link">⚓︎</a></h2>
+<p><a href="https://adversarial-ml-tutorial.org/">Adversarial Robustness - Theory and Practice (NeurIPS 2018 tutorial)</a><br />
+<a href="https://github.com/cleverhans-lab/cleverhans">CleverHans - An Python Library on Adversarial Example</a></p>
+
+  <hr>
+<div class="md-source-file">
+  <small>
+    
+      最后更新:
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 16, 2023</span>
+      
+        <br>
+        创建日期:
+        <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 16, 2023</span>
+      
+    
+  </small>
+</div>
+
+
+  
+
+
+
+  <form class="md-feedback" name="feedback" hidden>
+    <fieldset>
+      <legend class="md-feedback__title">
+        对当前页面有任何疑问吗？
+      </legend>
+      <div class="md-feedback__inner">
+        <div class="md-feedback__list">
+          
+            <button class="md-feedback__icon md-icon" type="submit" title="This page was helpful" data-md-value="1">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 9v12H1V9h4m4 12a2 2 0 0 1-2-2V9c0-.55.22-1.05.59-1.41L14.17 1l1.06 1.06c.27.27.44.64.44 1.05l-.03.32L14.69 8H21a2 2 0 0 1 2 2v2c0 .26-.05.5-.14.73l-3.02 7.05C19.54 20.5 18.83 21 18 21H9m0-2h9.03L21 12v-2h-8.79l1.13-5.32L9 9.03V19Z"/></svg>
+            </button>
+          
+            <button class="md-feedback__icon md-icon" type="submit" title="This page could be improved" data-md-value="0">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 15V3h4v12h-4M15 3a2 2 0 0 1 2 2v10c0 .55-.22 1.05-.59 1.41L9.83 23l-1.06-1.06c-.27-.27-.44-.64-.44-1.06l.03-.31.95-4.57H3a2 2 0 0 1-2-2v-2c0-.26.05-.5.14-.73l3.02-7.05C4.46 3.5 5.17 3 6 3h9m0 2H5.97L3 12v2h8.78l-1.13 5.32L15 14.97V5Z"/></svg>
+            </button>
+          
+        </div>
+        <div class="md-feedback__note">
+          
+            <div data-md-value="1" hidden>
+              
+              
+                
+              
+              感谢您的反馈！
+            </div>
+          
+            <div data-md-value="0" hidden>
+              
+              
+                
+              
+              感谢您的反馈！请点击这里<a href="https://github.com/EanYang7/cs231n/issues" target="_blank" rel="noopener">这里</a>提供问题反馈.
+            </div>
+          
+        </div>
+      </div>
+    </fieldset>
+  </form>
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            回到页面顶部
+          </button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/EanYang7/cs231n" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.top", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.path", "toc.follow", "content.action.edit", "content.action.view", "content.code.copy"], "search": "../assets/javascripts/workers/search.dfff1995.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.dff1b7c8.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,1465 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="CS231n: Deep Learning for Computer Vision">
+      
+      
+      
+        <link rel="canonical" href="https://eanyang7.github.io/cs231n/poster/">
+      
+      
+      
+      
+      <link rel="icon" href="../logo.jpg">
+      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.3.1">
+    
+    
+      
+        <title>CS231n Poster Session - CS231n</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.046329b4.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.85d0ee34.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function n(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],n("js",new Date),n("config","G-5F8XNH7BCX"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){this.value&&n("event","search",{search_term:this.value})}),document$.subscribe(function(){var a=document.forms.feedback;if(void 0!==a)for(var e of a.querySelectorAll("[type=submit]"))e.addEventListener("click",function(e){e.preventDefault();var t=document.location.pathname,e=this.getAttribute("data-md-value");n("event","feedback",{page:t,data:e}),a.firstElementChild.disabled=!0;e=a.querySelector(".md-feedback__note [data-md-value='"+e+"']");e&&(e.hidden=!1)}),a.hidden=!1}),location$.subscribe(function(e){n("config","G-5F8XNH7BCX",{page_path:e.pathname})})});var e=document.createElement("script");e.async=!0,e.src="https://www.googletagmanager.com/gtag/js?id=G-5F8XNH7BCX",document.getElementById("__analytics").insertAdjacentElement("afterEnd",e)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#2017-stanford-cs231n-poster-session" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href=".." title="CS231n" class="md-header__button md-logo" aria-label="CS231n" data-md-component="logo">
+      
+  <img src="../logo.jpg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CS231n
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              CS231n Poster Session
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换为暗黑模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换为暗黑模式" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换为浅色模式"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="切换为浅色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="选择当前语言">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04M18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12m-2.62 7 1.62-4.33L19.12 17h-3.24Z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="/cs231n/" hreflang="zh" class="md-select__link">
+              中文
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="https://cs231n.github.io/" hreflang="en" class="md-select__link">
+              English(源网站)
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/EanYang7/cs231n" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    EanYang7/cs231n
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href=".." class="md-tabs__link">
+          
+  
+  首页
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../courses/preparation/setup/" class="md-tabs__link">
+          
+  
+  课程
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../assignments/2023/assignment1/" class="md-tabs__link">
+          
+  
+  任务
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="CS231n" class="md-nav__button md-logo" aria-label="CS231n" data-md-component="logo">
+      
+  <img src="../logo.jpg" alt="logo">
+
+    </a>
+    CS231n
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/EanYang7/cs231n" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    EanYang7/cs231n
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    首页
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            首页
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CS231n 卷积神经网络视觉识别
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    课程
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            课程
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" >
+        
+          <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    准备工作
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            准备工作
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/preparation/setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    软件设置
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/preparation/python-numpy-tutorial/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Python/Numpy教程
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+        
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    神经网络
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            神经网络
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/classification/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    图像分类
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/linear-classify/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    线性分类
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/optimization-1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    优化：随机梯度下降
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/optimization-2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    反向传播
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2_5" >
+        
+          <label class="md-nav__link" for="__nav_2_2_5" id="__nav_2_2_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    神经网络
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            神经网络
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/neural-networks-1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    创建结构
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/neural-networks-2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    创建数据和损失
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/neural-networks-3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    学习和评估
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/neural-networks-case-study/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    最小神经网络案例研究
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    卷积神经网络
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            卷积神经网络
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/CNN/convolutional-networks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    结构、卷积/池化层
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/CNN/understanding-cnn/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    理解与可视化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/CNN/transfer-learning/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    迁移学习与微调
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    任务
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            任务
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../assignments/2023/assignment1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    任务1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../assignments/2023/assignment2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    任务2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../assignments/2023/assignment3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    任务2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#bing-map-see-the-project-ids-in-the-list-below-and-find-them-on-the-map" class="md-nav__link">
+    Bing Map: See the Project IDs in the list below and find them on the map
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#list-of-projects-3-digit-number-is-id-to-locate-the-poster" class="md-nav__link">
+    List of Projects (3 Digit Number is ID to Locate the Poster)
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+    <a href="https://github.com/EanYang7/cs231n/edit/dev/docs/poster.md" title="编辑此页" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/EanYang7/cs231n/raw/dev/docs/poster.md" title="查看本页的源代码" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5Z"/></svg>
+    </a>
+  
+
+
+<h1 id="2017-stanford-cs231n-poster-session">2017 Stanford CS231n Poster Session<a class="headerlink" href="#2017-stanford-cs231n-poster-session" title="Permanent link">⚓︎</a></h1>
+<div class='fig figcenter fighighlight'>
+  <img src='/assets/bing.jpg'>
+</div>
+
+<ul>
+<li><strong>Location: <a href="https://www.google.com/maps/place/Bing+Concert+Hall/@37.4320543,-122.1660855,15z/data=!4m5!3m4!1s0x0:0xf5f2c6a783cabf93!8m2!3d37.4320543!4d-122.1660855," title="title">Bing Concert Hall</a></strong></li>
+<li><strong>Parking: Parking information can be found <a href="https://lbre.stanford.edu/sites/default/files/parking_and_circulation_map_0.pdf" title="title">here</a></strong></li>
+<li><strong>Sponsor Setup Time: 11:15 am - 12:00 pm</strong></li>
+<li><strong>Poster Session: 12:00 pm - 2:45 pm</strong></li>
+<li><strong>Award Ceremony: 2:55 pm - 3:15 pm</strong></li>
+</ul>
+<p>The 2017 Stanford CS231N poster session will showcase projects in Convolutional Neural Networks for Visual Recognition that students have worked on over the past quarter. This year, 750 students will be presenting over 350 projects. 
+The topics range from Generative Adversarial Networks (GANs), healthcare and medical imaging, art and style transfer, satellite imaging, self-driving cars, video understanding and more! See the complete list of projects and poster session map below to find the location of a specific poster. We will be awarding 10+ awards to the top posters! The top prizes will be $500+ in value! Stanford affiliates (faculty, staff, students, alumni) and their guests are welcome to attend. Catered food and refreshments will be made available over the course of the event. This poster session is made possible through the generous support of Benchmark, Andreessen Horowitz, Nvidia and Apple! </p>
+<h3 id="bing-map-see-the-project-ids-in-the-list-below-and-find-them-on-the-map">Bing Map: See the Project IDs in the list below and find them on the map<a class="headerlink" href="#bing-map-see-the-project-ids-in-the-list-below-and-find-them-on-the-map" title="Permanent link">⚓︎</a></h3>
+<div class='fig figcenter fighighlight'>
+  <img src='/assets/map.png'>
+</div>
+
+<h3 id="list-of-projects-3-digit-number-is-id-to-locate-the-poster">List of Projects (3 Digit Number is ID to Locate the Poster)<a class="headerlink" href="#list-of-projects-3-digit-number-is-id-to-locate-the-poster" title="Permanent link">⚓︎</a></h3>
+<ul>
+<li><strong>101</strong>       Invasive Species Detection                                  </li>
+<li><strong>102</strong>       Scene Classification with Convolutional Neural Networks                                 </li>
+<li><strong>104</strong>       Adaptive Regularization for Neural Networks                                 </li>
+<li><strong>105</strong>       Image-based Product Recommendation System with Convolutional Neural Networks                                    </li>
+<li><strong>107</strong>       Metric Learning for Clustering Images from Unknown Classes                                  </li>
+<li><strong>108</strong>       Intra-Class and Inter-Class Feature Learning through Deep Metric Learning for Large Scale Image Retrieval                                   </li>
+<li><strong>110</strong>       Neural Combinatorial Optimization for Solving Jigsaw Puzzles                                    </li>
+<li><strong>112</strong>       Faster R-CNN with RoI Refinement                                    </li>
+<li><strong>113</strong>       CNNs for Object Recognition in Surveillance                                 </li>
+<li><strong>114</strong>       Greedy Layer-wise Training for Weakly-supervised Object Localization and Segmentation                                   </li>
+<li><strong>116</strong>       Design And Analysis of a Hardware CNN Accelerator                                   </li>
+<li><strong>118</strong>       XNOR-Net on FPGA                                    </li>
+<li><strong>119</strong>       Convolutional Neural Network Classification of Functional Shoe Types                                    </li>
+<li><strong>121</strong>       CHILDNet: Curiosity-driven Human-In-the-Loop Deep Network                                   </li>
+<li><strong>122</strong>       Automated Smart TV UI Performance Testing with Visual Recognition                                   </li>
+<li><strong>125</strong>       Labeling Images with thematic and emotional content                                 </li>
+<li><strong>126</strong>       Classifying U.S. Houses by Architectural Style                                  </li>
+<li><strong>128</strong>       Finding Protests in Social Media Data                                   </li>
+<li><strong>129</strong>       Deep Visual Learning of Reddit Images                                   </li>
+<li><strong>130</strong>       Fast Softmax Sampling for Deep Neural Networks                                  </li>
+<li><strong>131</strong>       Prototypical one-shot learning using high-dimensional embeddings                                    </li>
+<li><strong>133</strong>       Malicious Dropout                                   </li>
+<li><strong>134</strong>       Compression and Acceleration of CNN Training and Evaluation                                 </li>
+<li><strong>135</strong>       YOLO for real time object detection on mobile                                   </li>
+<li><strong>136</strong>       Identifying Architectural Styles by Convolutional Neural Network                                    </li>
+<li><strong>200</strong>       UAV Depth Perception from Visual Images using a Deep Convolutional Neural Network                                   </li>
+<li><strong>203</strong>       Depth Estimation from Single Image Using Convolutional Neural Networks                                  </li>
+<li><strong>204</strong>       Improving 3D Scene Reconstruction through Object Recognition and Segmentation                                   </li>
+<li><strong>205</strong>       Depth-Enhanced Classification Network                                   </li>
+<li><strong>207</strong>       Depth Regression from a Single Monocular Image using a Multi-Scale Deep Network                                 </li>
+<li><strong>209</strong>       Understanding Physical Geometry of a Scene from Single Monocular Images                                 </li>
+<li><strong>210</strong>       StereoPhonic: Depth From Stereo on Phones                                   </li>
+<li><strong>211</strong>       Deep Video Interpolation                                    </li>
+<li><strong>212</strong>       To Post or Not To Post: Using CNNs to Classify Social Media Worthy Images                                   </li>
+<li><strong>213</strong>       Item Removal Detection for Retail Environments with Neural Networks                                 </li>
+<li><strong>214</strong>       Extracting Kinematic Information Using Pose Estimation                                  </li>
+<li><strong>216</strong>       Assessing Driver Distraction from Real-Time Video                                   </li>
+<li><strong>217</strong>       Hand Gesture Recognition using 3D models and Convolutional Neural Network                                   </li>
+<li><strong>218</strong>       Hand Gesture Recognition using Image Processing and Convolutional Neural Network                                    </li>
+<li><strong>219</strong>       Mobile, Marker-less, 3D Body Pose Estimation                                    </li>
+<li><strong>220</strong>       Deep 3D Human Key Point Estimation                                  </li>
+<li><strong>221</strong>       Touchy Feely: Real-time Emotion Recognition                                 </li>
+<li><strong>222</strong>       Face detection and recognition with YOLO                                    </li>
+<li><strong>223</strong>       Reconstructing Obfuscated Human Faces                                   </li>
+<li><strong>224</strong>       Recognizing facial expressions using deep learning                                  </li>
+<li><strong>225</strong>       Detection of Hand Grasping Tasks for “Grab and Go” Groceries                                    </li>
+<li><strong>226</strong>       Ava Makeup                                  </li>
+<li><strong>227</strong>       Lip Reading Word Classification                                 </li>
+<li><strong>229</strong>       Gaze Capture with CNNs                                  </li>
+<li><strong>230</strong>       Deep Networks for Robust Depth Estimation with Single-Photon Sensors                                    </li>
+<li><strong>231</strong>       Facial Emotion Recognition for Wild Images                                  </li>
+<li><strong>300</strong>       Effectiveness of Style Transfer as a Data Augmentation Technique                                    </li>
+<li><strong>301</strong>       Historical and Modern Image-to-Image Translation with Generative Adversarial Networks                                   </li>
+<li><strong>302</strong>       Colorization using ConvNets and GAN                                 </li>
+<li><strong>304</strong>       Automatic Manga Colorization with Hint                                  </li>
+<li><strong>305</strong>       Generative Adversarial Networks for Custom Image Generation                                 </li>
+<li><strong>306</strong>       Evaluation of Image Completion Algorithm: Deep Convolutional Generative Adversarial Nets vs. Exemplar-Based Inpainting                                  </li>
+<li><strong>307</strong>       Autoencoders for Inverse Rendering                                  </li>
+<li><strong>308</strong>       Adversarial Generator-Encoder Networks Based Visual Recommender System                                  </li>
+<li><strong>309</strong>       Semi-supervised learning via adversarial training                                   </li>
+<li><strong>311</strong>       Chinese Painting Generation Using Deep Convolutional Generative Adversarial Networks                                    </li>
+<li><strong>312</strong>       Super Resolution on Video using GANs                                    </li>
+<li><strong>313</strong>       Using Generative Models for Semi-Supervised Learning                                    </li>
+<li><strong>314</strong>       Class-Conditional Super-resolution with GANs                                    </li>
+<li><strong>315</strong>       FlowGAN                                 </li>
+<li><strong>316</strong>       Generative Text to Image Synthesis with Applications to Reinforcement Learning in Minecraft                                 </li>
+<li><strong>317</strong>       Frame Interpolation Using Generative Adversarial Networks                                   </li>
+<li><strong>318</strong>       Can We Train Dogs and Humans Together: Hidden Distribution GANs                                 </li>
+<li><strong>319</strong>       Multi-task Learning on Multi-Spectral Images Using GANs for Predicting Poverty                                  </li>
+<li><strong>320</strong>       From 2D Sketch to 3D Shading                                    </li>
+<li><strong>322</strong>       Art Generation from text with GANs                                  </li>
+<li><strong>323</strong>       Re(live) Photos: Predicting Neighboring Frames with GANs                                    </li>
+<li><strong>324</strong>       Multi-instances text-to-image generation with StackGAN                                  </li>
+<li><strong>325</strong>       Plant Disease Detection with Deep Learning                                  </li>
+<li><strong>327</strong>       Label-Free Object Detection in Video                                    </li>
+<li><strong>328</strong>       Filling the Blanks: GANs vs RNNs                                    </li>
+<li><strong>329</strong>       Towards Facial Reconstruction from Sparse Data: Utilizing Encoder-Decoder Networks with GANs to Infer Facial Rotations                                  </li>
+<li><strong>330</strong>       maaGMA: Modified-Adversarial-Autoencoding Generator with Multiple Adversaries                                   </li>
+<li><strong>331</strong>       visual search by brushing                                   </li>
+<li><strong>400</strong>       Using Convolutional Neural Networks to Predict Completion Year of Fine Art Paintings                                    </li>
+<li><strong>401</strong>       Multi-style Transfer: Generalizing Style Transfer to an Artist                                  </li>
+<li><strong>402</strong>       Style Transfer of Images Incorporating Depth Perception and Object Segmentation                                 </li>
+<li><strong>403</strong>       Automatic Sketch Colourization                                  </li>
+<li><strong>404</strong>       Semantic Segmented Style Transfer                                   </li>
+<li><strong>405</strong>       Mixed Style Transfer                                    </li>
+<li><strong>406</strong>       Artist Identification with Convolutional Neural Networks                                    </li>
+<li><strong>407</strong>       Learning Instance Normalization Parameters for Real-Time Arbitrary Style Transfer                                   </li>
+<li><strong>409</strong>       Automatic image colorization using deep neural networks                                 </li>
+<li><strong>410</strong>       Classifying Rjiksmuseum Paintings by Artist                                 </li>
+<li><strong>411</strong>       From Renaissance to Pop: A Study of Artistic Eras using Deep CNNs                                   </li>
+<li><strong>412</strong>       Style transfer between two photographs                                  </li>
+<li><strong>414</strong>       ArtTalk: Labeling Images with Thematic and Emotional Content                                    </li>
+<li><strong>415</strong>       Labeling Paintings with Thematic and Emotional Content                                  </li>
+<li><strong>416</strong>       Localized Style Transfer Using Semantic Segmentation                                    </li>
+<li><strong>417</strong>       Smooth In-Image Style Transitions                                   </li>
+<li><strong>418</strong>       AutoColorisation                                    </li>
+<li><strong>419</strong>       Judging Thematic Similarity in Paintings                                    </li>
+<li><strong>420</strong>       Freehand Sketch Recognition                                 </li>
+<li><strong>421</strong>       EXIF Estimation With Convolutional Neural Networks                                  </li>
+<li><strong>423</strong>       Full Resolutional Video Compression Using Recurrent Convolutional Neural Networks                                   </li>
+<li><strong>424</strong>       HiDDeN: Hiding Data with Deep Networks                                  </li>
+<li><strong>425</strong>       Line Drawing Colorization                                   </li>
+<li><strong>426</strong>       DeepSynth: Synthesizing A Musical Instrument With Video                                 </li>
+<li><strong>428</strong>       Exploring Style Transfer                                    </li>
+<li><strong>500</strong>       Mice behaviour analysis in open field test                                  </li>
+<li><strong>501</strong>       Unsupervised Deep Learning with variational autoencoder for Interpretable Mammogram CBIR and Risk scoring                                   </li>
+<li><strong>502</strong>       Brain Tumor Segmentation                                    </li>
+<li><strong>503</strong>       Vision-Based Approach to Senior Healthcare: Depth-Based Activity Recognition with Convolutional Neural Networks                                 </li>
+<li><strong>505</strong>       Privacy-Preserving Knowledge Transfer for Hand Hygiene Detection                                    </li>
+<li><strong>506</strong>       Depth-Based Activity Recognition in ICUs Using Convolutional Neural Networks                                    </li>
+<li><strong>507</strong>       BURNED: Efficient and Accurate Burn Prognosis Using Deep Learning                                   </li>
+<li><strong>511</strong>       Differentiating Tumor Cells from Healthy Cells in a Tumor Biopsy using CNNs                                 </li>
+<li><strong>512</strong>       Multimodal Brain MRI Tumor Segmentation via Convolutional Neural Networks                                   </li>
+<li><strong>513</strong>       Accelerating dynamic magnetic resonance image reconstruction using deep convolutional neural networks                                   </li>
+<li><strong>514</strong>       Predict DNA methylation states from whole slide images of brain tumors                                  </li>
+<li><strong>515</strong>       Predicting Lung Cancer Incidence from CT Imagery                                    </li>
+<li><strong>516</strong>       Automatic Neuronal Cell Classification in Calcium Imaging with Convolutional Neural Networks                                    </li>
+<li><strong>517</strong>       GlimpseNet: Multi-Instance Generative Attention for Full Mammogram Diagnosis                                    </li>
+<li><strong>518</strong>       Deep Convolutional Neural Networks for Lung Cancer Detection                                    </li>
+<li><strong>519</strong>       Predicting therapeutic efficacy in Non Small Cell Lung Cancer                                   </li>
+<li><strong>520</strong>       Breast Cancer Image Segmentation: Cancer Cell vs Stroma                                 </li>
+<li><strong>521</strong>       MRI to MGMT: Predicting Drug Efficacy for Glioblastoma Patients                                 </li>
+<li><strong>523</strong>       Prediction of Head and Neck Cancer Submolecular Types from Pathology Images                                 </li>
+<li><strong>524</strong>       Automated Detection of Diabetic Retinopathy using Deep Learning                                 </li>
+<li><strong>525</strong>       Patch-based Head and Neck Cancer Subtype Classification                                 </li>
+<li><strong>526</strong>       Deep Neural Nets for Brain Tumor Segmentation                                   </li>
+<li><strong>527</strong>       Deep Learning for Chest X-ray abnormality detection                                 </li>
+<li><strong>528</strong>       Multiparametric MR Image Analysis for Prostate Cancer Assessment with Convolutional Neural Networks                                 </li>
+<li><strong>530</strong>       MR Contrast Prediction Using Deep Learning                                  </li>
+<li><strong>531</strong>       Brendan - A Deep Convolutional Network for Representing Latent Features of Protein-Ligand Binding Poses                                 </li>
+<li><strong>533</strong>       Using Deep Learning for Segmentation of Microscopy Images                                   </li>
+<li><strong>534</strong>       Quantum Annealing Assisted Deep Learning for Lung Cancer Detection                                  </li>
+<li><strong>536</strong>       Early Stage Integrated Circuit Design Efficacy Prediction using Congestion and Cell Density Images                                  </li>
+<li><strong>537</strong>       Geological scenario identification using seismic impedance data                                 </li>
+<li><strong>538</strong>       Variational Autoencoders for Classical Ising Models                                 </li>
+<li><strong>539</strong>       Convolutional Neural Networks for Pile Up Identification in ATLAS                                   </li>
+<li><strong>541</strong>       Deep Learning application to proton radiography analysis                                    </li>
+<li><strong>542</strong>       Wave-dynamics simulation using deep neural networks                                 </li>
+<li><strong>545</strong>       RouteAI: A Convolutional Neural Network based Router for Integrated Circuits                                    </li>
+<li><strong>547</strong>       Convolutional Neural Networks For Automated Surface-Wettability Characterization                                    </li>
+<li><strong>548</strong>       Data Classification with Residual Network for Single Particle Imaging Experiments                                   </li>
+<li><strong>550</strong>       Extraction of Building Footprints from Satellite Imagery                                    </li>
+<li><strong>551</strong>       Predicting Land Use and Atmospheric Conditions from Amazon Rainforest Satellite Imagery                                 </li>
+<li><strong>552</strong>       Temporal Poverty Prediction                                 </li>
+<li><strong>553</strong>       UAV Road Mapping Using Convolutional Neural Nets                                    </li>
+<li><strong>554</strong>       Motion Prediction from Trajectory and Top-Down Visual Data                                  </li>
+<li><strong>555</strong>       Understanding Localized Remote Sensing-Based Crop Yield Prediction using Convolutional Neural Networks                                  </li>
+<li><strong>556</strong>       Neighborhood Watch: Using CNNs to Predict Income Brackets from Google StreetView Images                                 </li>
+<li><strong>557</strong>       CNNs for wide-area precipitation estimation from geostationary satellite imagery                                    </li>
+<li><strong>558</strong>       Mapping Tidal Salt Marshes                                  </li>
+<li><strong>559</strong>       Predicting Health using Satellite Images                                    </li>
+<li><strong>561</strong>       Convolutional Neural Nets for Segmentation of Satellite Imagery                                 </li>
+<li><strong>563</strong>       Discovering Scenic Roads Using Neural Networks                                  </li>
+<li><strong>564</strong>       Rail Network Detection from Aerial Imagery using Deep Learning                                  </li>
+<li><strong>601</strong>       AI Attack: Learning to Play a Video Game Using Visual Inputs                                    </li>
+<li><strong>602</strong>       Deep Predictive Action Conditional Neural Network for Frame Prediction in Atari Games                                   </li>
+<li><strong>603</strong>       Playing Go without Game Tree Search Using Convolutional Neural Networks                                 </li>
+<li><strong>604</strong>       Learning a Visual State Representation for Generative Adversarial Imitation Learning                                    </li>
+<li><strong>605</strong>       Playing Geometry Dash with Deep Reinforcement Learning                                  </li>
+<li><strong>606</strong>       End-to-end models for task-oriented visual dialogue with reinforcement                                  </li>
+<li><strong>607</strong>       Classifying grocery items images using Convolutional Neural Networks                                    </li>
+<li><strong>608</strong>       Imitation Learning with THOR                                    </li>
+<li><strong>610</strong>       Differentiable Neural Computer for Maze Navigation                                  </li>
+<li><strong>611</strong>       Playing Atari Games with Deep Learning                                  </li>
+<li><strong>612</strong>       Trajectory-Aware Visual Navigation in Indoor Scenes with Target-driven Deep Reinforcement Learning                                  </li>
+<li><strong>614</strong>       Indoor Navigation with Imitation Learning                                   </li>
+<li><strong>616</strong>       Deep Q-Learning with OpenAI Gym                                 </li>
+<li><strong>617</strong>       A3C Methods for General Game Playing                                    </li>
+<li><strong>618</strong>       Deep Reinforcement Learning using Memory-based Approaches                                   </li>
+<li><strong>619</strong>       FoxNet: A Deep-Learning Agent for Nintendo’s Star Fox 64                                    </li>
+<li><strong>620</strong>       Target-Driven Navigation with Imitation Learning                                    </li>
+<li><strong>621</strong>       End-to-End Learning for Fighting Forest Fires (EELFFF)                                  </li>
+<li><strong>622</strong>       Teach Me To Tango - Fidelity Estimation of Visual Odometry Systems for Robust Navigation                                    </li>
+<li><strong>623</strong>       Indoor Target-driven Visual Navigation                                  </li>
+<li><strong>624</strong>       NeuralKart: A Real-Time Mario Kart 64 AI                                    </li>
+<li><strong>625</strong>       Understanding Driver’s Intention Using Convolutional Neural Networks                                    </li>
+<li><strong>626</strong>       Self-Driving Car Steering Angle Prediction Based on Image Recognition                                   </li>
+<li><strong>627</strong>       Object Detection and Its Implementation on Android Devices                                  </li>
+<li><strong>629</strong>       Convolutional Architectures for Self-Driving Cars                                   </li>
+<li><strong>630</strong>       Real-Time Multiple Object Tracking for Autonomous Cars                                  </li>
+<li><strong>631</strong>       Single Stage Detector for Object Detection                                  </li>
+<li><strong>632</strong>       Convolutional Neural Network Information Fusion based on Dempster-Shafer Theory for Urban Scene Understanding                                   </li>
+<li><strong>633</strong>       Street View Instance Segmentation using R-CNN models                                    </li>
+<li><strong>700</strong>       Detecting videos containing (child) pornography                                 </li>
+<li><strong>701</strong>       Superflow: Frame Prediction with Convolutional Neural Network                                   </li>
+<li><strong>702</strong>       YouTube8-M: Video Classification                                    </li>
+<li><strong>705</strong>       YouTube-8M Video Classificatoin                                 </li>
+<li><strong>707</strong>       YOLO-based Adaptive Window Two-stream Convolutional Neural Network for Video Classification                                 </li>
+<li><strong>708</strong>       Spotlight: A Smart Video Highlight Generator                                    </li>
+<li><strong>709</strong>       Video Understanding: From Video Classification to Video Captioning                                  </li>
+<li><strong>710</strong>       Selecting Youtube Video Thumbnails via Convolutional Neural Networks                                    </li>
+<li><strong>711</strong>       Google Cloud and YouTube-8M Video Understanding Challenge                                   </li>
+<li><strong>713</strong>       Prediction of Personality First Impression with Deep Bimodal LSTM                                   </li>
+<li><strong>714</strong>       Video frame Interpolation and extrapolation                                 </li>
+<li><strong>715</strong>       Using Convolutional Neural Networks to Classify Noisy Sports Videos                                 </li>
+<li><strong>716</strong>       Detecting Guns in Video Content                                 </li>
+<li><strong>717</strong>       Soccer Stats with Computer Vision                                   </li>
+<li><strong>718</strong>       Real-time Surveillance Video Analytics System                                   </li>
+<li><strong>800</strong>       Using Graphical Programming Languages Designed for Novices to Train Neural Networks to Understand and Write Simple Programs                                 </li>
+<li><strong>801</strong>       Siamese Convolutional Neural Networks for Authorship Verification                                   </li>
+<li><strong>804</strong>       Deep Convolutional Neural Networks for Automatic Speech Recognition                                 </li>
+<li><strong>805</strong>       CLEVR Advancements for High-Level Visual Reasoning Programs                                 </li>
+<li><strong>806</strong>       Pix2Sketch                                  </li>
+<li><strong>807</strong>       Testing Image Understanding through Question Answering                                  </li>
+<li><strong>808</strong>       Real-time Object detection                                  </li>
+<li><strong>810</strong>       Handwritten Text Recognition using Deep Learning                                    </li>
+<li><strong>811</strong>       Bilinear Pooling and Co-Attention Inspired Models for Visual Question Answering                                 </li>
+<li><strong>812</strong>       Applying NLP Deep Learning Ideas to Image Classification                                    </li>
+<li><strong>814</strong>       You CAN Judge a Book by its Cover                                   </li>
+<li><strong>815</strong>       Image to Latex                                  </li>
+<li><strong>816</strong>       Combining RNN and CNN to Understand the Usefulness of Yelp Reviews                                  </li>
+<li><strong>817</strong>       Where is Waldo, a deep-learning approach to general purpose template matching                                   </li>
+<li><strong>818</strong>       An Automated Art Historian                                  </li>
+<li><strong>819</strong>       Deep Bayesian Pragmatics for Image Captioning                                   </li>
+<li><strong>900</strong>       Predicting Deforestation in the Amazon                                  </li>
+<li><strong>902</strong>       Amazon Rainforest Satellite Image Labeling                                  </li>
+<li><strong>903</strong>       Understanding the Amazon from Space                                 </li>
+<li><strong>904</strong>       Understand Amazon Deforestation using Neural Network                                    </li>
+<li><strong>905</strong>       Multi-label Classification on Satellite Images of the Amazon Rainforest                                 </li>
+<li><strong>906</strong>       Deep Multi-Label Classification for High Resolution Satellite Imagery of Rainforests                                    </li>
+<li><strong>907</strong>       Classification of natural landmarks and human footprint of Amazon using satellite data                                  </li>
+<li><strong>908</strong>       Image Classification with Deep Learning                                 </li>
+<li><strong>909</strong>       Understanding the Amazon Basin from Space                                   </li>
+<li><strong>911</strong>       Deeprootz: Mapping the Amazon                                   </li>
+<li><strong>912</strong>       Understanding the Amazon from Space                                 </li>
+<li><strong>913</strong>       Understanding the Amazon from Space                                 </li>
+<li><strong>914</strong>       Understanding the Amazon from Space                                 </li>
+<li><strong>915</strong>       DeepRootz: Classifying satellite images of the Amazon rainforest                                    </li>
+<li><strong>916</strong>       Trainforest                                 </li>
+<li><strong>917</strong>       Land Cover Classification in the Amazon                                 </li>
+<li><strong>918</strong>       Tracking Human Impact on the Amazon rainforest                                  </li>
+<li><strong>919</strong>       Understanding the Amazon from Space                                 </li>
+<li><strong>920</strong>       Guiding the management of cervical cancer with convolutional neural networks                                    </li>
+<li><strong>921</strong>       Cervix Screening Classification for Cancer Preventive Treatment                                 </li>
+<li><strong>922</strong>       Deep Learning Approaches for Determining Optimal Cervical Cancer Treatment                                  </li>
+<li><strong>923</strong>       Cervix Type Classification Using Deep Learning and Image Classification                                 </li>
+<li><strong>924</strong>       Deep Learning for Cervical Cancer                                   </li>
+<li><strong>925</strong>       Identifying Cervix Types using Deep Convolutional Networks                                  </li>
+<li><strong>926</strong>       Exploring Methods on Tiny ImageNet Problem                                  </li>
+<li><strong>927</strong>       Wide Residual Network for the Tiny Image Net Challenge                                  </li>
+<li><strong>928</strong>       The Power of Inception: Tackling the Tiny ImageNet Challenge                                    </li>
+<li><strong>929</strong>       Unconstrained Handwriting Recognition                                   </li>
+<li><strong>930</strong>       Tiny ImageNet Challenge                                 </li>
+<li><strong>931</strong>       Deep Convolutional Neural Networks for ImageNet Classification                                  </li>
+<li><strong>933</strong>       Overwhelming Tiny ImageNet: Bayesian Optimization on Residual Networks                                  </li>
+<li><strong>934</strong>       A Dense Take on Inception                                   </li>
+<li><strong>935</strong>       Tiny ImageNet Challenge                                 </li>
+<li><strong>937</strong>       Classification on Tiny ImageNet                                 </li>
+<li><strong>938</strong>       Tiny ImageNet Challenge Investigating the Scaling of Inception Layers for Reduced Scale Classiﬁcation Problems                                  </li>
+<li><strong>939</strong>       Attention Networks for ImageNet Classification                                  </li>
+<li><strong>940</strong>       Image Classification for Tiny ImageNet Challenge                                    </li>
+<li><strong>941</strong>       Analyzing Deforestation in the Amazon                                   </li>
+</ul>
+
+  <hr>
+<div class="md-source-file">
+  <small>
+    
+      最后更新:
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 16, 2023</span>
+      
+        <br>
+        创建日期:
+        <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 16, 2023</span>
+      
+    
+  </small>
+</div>
+
+
+  
+
+
+
+  <form class="md-feedback" name="feedback" hidden>
+    <fieldset>
+      <legend class="md-feedback__title">
+        对当前页面有任何疑问吗？
+      </legend>
+      <div class="md-feedback__inner">
+        <div class="md-feedback__list">
+          
+            <button class="md-feedback__icon md-icon" type="submit" title="This page was helpful" data-md-value="1">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 9v12H1V9h4m4 12a2 2 0 0 1-2-2V9c0-.55.22-1.05.59-1.41L14.17 1l1.06 1.06c.27.27.44.64.44 1.05l-.03.32L14.69 8H21a2 2 0 0 1 2 2v2c0 .26-.05.5-.14.73l-3.02 7.05C19.54 20.5 18.83 21 18 21H9m0-2h9.03L21 12v-2h-8.79l1.13-5.32L9 9.03V19Z"/></svg>
+            </button>
+          
+            <button class="md-feedback__icon md-icon" type="submit" title="This page could be improved" data-md-value="0">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 15V3h4v12h-4M15 3a2 2 0 0 1 2 2v10c0 .55-.22 1.05-.59 1.41L9.83 23l-1.06-1.06c-.27-.27-.44-.64-.44-1.06l.03-.31.95-4.57H3a2 2 0 0 1-2-2v-2c0-.26.05-.5.14-.73l3.02-7.05C4.46 3.5 5.17 3 6 3h9m0 2H5.97L3 12v2h8.78l-1.13 5.32L15 14.97V5Z"/></svg>
+            </button>
+          
+        </div>
+        <div class="md-feedback__note">
+          
+            <div data-md-value="1" hidden>
+              
+              
+                
+              
+              感谢您的反馈！
+            </div>
+          
+            <div data-md-value="0" hidden>
+              
+              
+                
+              
+              感谢您的反馈！请点击这里<a href="https://github.com/EanYang7/cs231n/issues" target="_blank" rel="noopener">这里</a>提供问题反馈.
+            </div>
+          
+        </div>
+      </div>
+    </fieldset>
+  </form>
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            回到页面顶部
+          </button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/EanYang7/cs231n" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.top", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.path", "toc.follow", "content.action.edit", "content.action.view", "content.code.copy"], "search": "../assets/javascripts/workers/search.dfff1995.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.dff1b7c8.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

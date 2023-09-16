@@ -1,0 +1,1627 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="CS231n: Deep Learning for Computer Vision">
+      
+      
+      
+        <link rel="canonical" href="https://eanyang7.github.io/cs231n/courses/neural_network/optimization-1/">
+      
+      
+        <link rel="prev" href="../linear-classify/">
+      
+      
+        <link rel="next" href="../optimization-2/">
+      
+      
+      <link rel="icon" href="../../../logo.jpg">
+      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.3.1">
+    
+    
+      
+        <title>优化：随机梯度下降 - CS231n</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.046329b4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.85d0ee34.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function n(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],n("js",new Date),n("config","G-5F8XNH7BCX"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){this.value&&n("event","search",{search_term:this.value})}),document$.subscribe(function(){var a=document.forms.feedback;if(void 0!==a)for(var e of a.querySelectorAll("[type=submit]"))e.addEventListener("click",function(e){e.preventDefault();var t=document.location.pathname,e=this.getAttribute("data-md-value");n("event","feedback",{page:t,data:e}),a.firstElementChild.disabled=!0;e=a.querySelector(".md-feedback__note [data-md-value='"+e+"']");e&&(e.hidden=!1)}),a.hidden=!1}),location$.subscribe(function(e){n("config","G-5F8XNH7BCX",{page_path:e.pathname})})});var e=document.createElement("script");e.async=!0,e.src="https://www.googletagmanager.com/gtag/js?id=G-5F8XNH7BCX",document.getElementById("__analytics").insertAdjacentElement("afterEnd",e)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../.." title="CS231n" class="md-header__button md-logo" aria-label="CS231n" data-md-component="logo">
+      
+  <img src="../../../logo.jpg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CS231n
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              优化：随机梯度下降
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换为暗黑模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换为暗黑模式" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换为浅色模式"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="切换为浅色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="选择当前语言">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04M18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12m-2.62 7 1.62-4.33L19.12 17h-3.24Z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="/cs231n/" hreflang="zh" class="md-select__link">
+              中文
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="https://cs231n.github.io/" hreflang="en" class="md-select__link">
+              English(源网站)
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/EanYang7/cs231n" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    EanYang7/cs231n
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../.." class="md-tabs__link">
+          
+  
+  首页
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../preparation/setup/" class="md-tabs__link">
+          
+  
+  课程
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../assignments/2023/assignment1/" class="md-tabs__link">
+          
+  
+  任务
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="CS231n" class="md-nav__button md-logo" aria-label="CS231n" data-md-component="logo">
+      
+  <img src="../../../logo.jpg" alt="logo">
+
+    </a>
+    CS231n
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/EanYang7/cs231n" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    EanYang7/cs231n
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    首页
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            首页
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CS231n 卷积神经网络视觉识别
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    课程
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            课程
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" >
+        
+          <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    准备工作
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            准备工作
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../preparation/setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    软件设置
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../preparation/python-numpy-tutorial/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Python/Numpy教程
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" checked>
+        
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    神经网络
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            神经网络
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../classification/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    图像分类
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../linear-classify/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    线性分类
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    优化：随机梯度下降
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    优化：随机梯度下降
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    引言
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    可视化损失函数
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    优化
+  </a>
+  
+    <nav class="md-nav" aria-label="优化">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    策略＃1：一个非常糟糕的解决方案：随机搜索
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    策略#2：随机本地搜索
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    策略 #3：跟随梯度
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    计算梯度
+  </a>
+  
+    <nav class="md-nav" aria-label="计算梯度">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#finite-differences" class="md-nav__link">
+    使用有限差分finite differences数值计算梯度
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calculus" class="md-nav__link">
+    使用微积分Calculus解析计算梯度
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    梯度下降
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    总结
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../optimization-2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    反向传播
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2_5" >
+        
+          <label class="md-nav__link" for="__nav_2_2_5" id="__nav_2_2_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    神经网络
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            神经网络
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../neural-networks-1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    创建结构
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../neural-networks-2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    创建数据和损失
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../neural-networks-3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    学习和评估
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../neural-networks-case-study/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    最小神经网络案例研究
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    卷积神经网络
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            卷积神经网络
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CNN/convolutional-networks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    结构、卷积/池化层
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CNN/understanding-cnn/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    理解与可视化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CNN/transfer-learning/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    迁移学习与微调
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    任务
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            任务
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../assignments/2023/assignment1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    任务1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../assignments/2023/assignment2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    任务2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../assignments/2023/assignment3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    任务2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    引言
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    可视化损失函数
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    优化
+  </a>
+  
+    <nav class="md-nav" aria-label="优化">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    策略＃1：一个非常糟糕的解决方案：随机搜索
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    策略#2：随机本地搜索
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    策略 #3：跟随梯度
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    计算梯度
+  </a>
+  
+    <nav class="md-nav" aria-label="计算梯度">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#finite-differences" class="md-nav__link">
+    使用有限差分finite differences数值计算梯度
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calculus" class="md-nav__link">
+    使用微积分Calculus解析计算梯度
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    梯度下降
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    总结
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+    <a href="https://github.com/EanYang7/cs231n/edit/dev/docs/courses/neural_network/optimization-1.md" title="编辑此页" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/EanYang7/cs231n/raw/dev/docs/courses/neural_network/optimization-1.md" title="查看本页的源代码" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5Z"/></svg>
+    </a>
+  
+
+
+  <h1>优化：随机梯度下降</h1>
+
+<h3 id="_1">引言<a class="headerlink" href="#_1" title="Permanent link">⚓︎</a></h3>
+<p>在前一节中，我们在图像分类任务的背景下介绍了两个关键组成部分：</p>
+<ol>
+<li>一个（参数化的）<strong>分数函数</strong>，将原始图像像素映射到类别分数（例如，一个线性函数）。</li>
+<li>一个<strong>损失函数</strong>，根据感知分数induced scores与训练数据中的真实标签的一致性来衡量特定参数集的质量。我们看到有许多方法和版本可以用来实现这个目标（例如Softmax/SVM）。</li>
+</ol>
+<p>具体来说，回想一下线性函数的形式为 $ f(x_i, W) =  W x_i $，我们开发的SVM被公式化为：</p>
+<div class="arithmatex">\[
+L = \frac{1}{N} \sum_i \sum_{j\neq y_i} \left[ \max(0, f(x_i; W)_j - f(x_i; W)_{y_i} + 1) \right] + \alpha R(W)
+\]</div>
+<p>我们看到，产生与示例 <span class="arithmatex">\(x_i\)</span> 的基础真实标签 <span class="arithmatex">\(y_i\)</span> 一致的参数 <span class="arithmatex">\(W\)</span> 的设置也将具有非常低的损失 <span class="arithmatex">\(L\)</span>。现在，我们将介绍第三个和最后一个关键组成部分：<strong>优化</strong>。优化是找到最小化损失函数的参数 <span class="arithmatex">\(W\)</span> 集合的过程。</p>
+<p><strong>铺垫：</strong>一旦我们了解了这三个核心组件是如何相互作用的，我们将重新审视第一个组件（参数化函数映射），并将其扩展到比线性映射复杂得多的函数：首先是整个神经网络，然后是卷积神经网络。损失函数和优化过程将保持相对不变。</p>
+<h3 id="_2">可视化损失函数<a class="headerlink" href="#_2" title="Permanent link">⚓︎</a></h3>
+<p>在本课程中，我们将研究的损失函数通常定义在非常高维的空间中（例如，在CIFAR-10中，线性分类器的权重矩阵的大小为[10 x 3073]，总共有30,730个参数），使得它们很难可视化。然而，我们仍然可以通过沿着光线rays（1维）或平面（2维）切割高维空间来获得一些关于它们的直观感受。例如，我们可以生成一个随机的权重矩阵<span class="arithmatex">\(W\)</span>（对应于空间中的一个点），然后沿着一条光线前进并记录沿途的损失函数值。也就是说，我们可以生成一个随机方向<span class="arithmatex">\(W_1\)</span>，并通过评估不同<span class="arithmatex">\(a\)</span>值的<span class="arithmatex">\(L(W + a W_1)\)</span>来沿着这个方向计算损失。这个过程生成一个简单的绘图，其中<span class="arithmatex">\(a\)</span>值作为x轴，损失函数值作为y轴。我们还可以通过在二维空间中评估损失 $ L(W + a W_1 + b W_2) $ 来以相同的方式执行两个维度的过程，当我们改变 <span class="arithmatex">\(a, b\)</span> 时，<span class="arithmatex">\(a, b\)</span> 可以对应于x轴和y轴，并且可以使用颜色来可视化损失函数的值：</p>
+<p><img alt="image-20230911125437924" src="../optimization-1.assets/image-20230911125437924.png" /> </p>
+<blockquote>
+<p>这是一个多类别SVM（无正则化）的损失函数图景，其中包括CIFAR-10中的一个单一示例（左、中）和一百个示例（右）。左图：仅通过变化 <b>a</b> 来获得的一维损失。中、右图：损失的二维切片，蓝色=低损失，红色=高损失。请注意损失函数的分段线性结构。多个示例的损失是通过平均组合的，因此右图的碗形是许多分段线性碗（例如中间的碗）的平均值。</p>
+</blockquote>
+<p>我们可以通过检查数学公式来解释损失函数的分段线性结构。对于单个示例，我们有：</p>
+<div class="arithmatex">\[
+L_i = \sum_{j\neq y_i} \left[ \max(0, w_j^Tx_i - w_{y_i}^Tx_i + 1) \right]
+\]</div>
+<p>从方程式中可以清楚地看出，每个示例的数据损失是 <span class="arithmatex">\(W\)</span> 的线性函数之和（由于 <span class="arithmatex">\(\max(0,-)\)</span> 函数的零阈值）。此外，<span class="arithmatex">\(W\)</span> 的每一行（即 <span class="arithmatex">\(w_j\)</span>）有时候在其前面有正号（当它对应于示例的错误类别时），有时候有负号（当它对应于该示例的正确类别时）。为了更加明确这一点，考虑一个包含三个一维点和三个类别的简单数据集。不带正则化的完整SVM损失变成了：</p>
+<div class="arithmatex">\[
+\begin{align}
+L_0 = &amp; \max(0, w_1^Tx_0 - w_0^Tx_0 + 1) + \max(0, w_2^Tx_0 - w_0^Tx_0 + 1) \\\\
+L_1 = &amp; \max(0, w_0^Tx_1 - w_1^Tx_1 + 1) + \max(0, w_2^Tx_1 - w_1^Tx_1 + 1) \\\\
+L_2 = &amp; \max(0, w_0^Tx_2 - w_2^Tx_2 + 1) + \max(0, w_1^Tx_2 - w_2^Tx_2 + 1) \\\\
+L = &amp; (L_0 + L_1 + L_2)/3
+\end{align}
+\]</div>
+<p>由于这些示例是一维的，数据 <span class="arithmatex">\(x_i\)</span> 和权重 <span class="arithmatex">\(w_j\)</span> 都是数字。以 <span class="arithmatex">\(w_0\)</span> 为例，上述某些项是 <span class="arithmatex">\(w_0\)</span> 的线性函数，每个项都在零处被截断。我们可以将其可视化如下：</p>
+<p><img alt="svmbowl" src="../optimization-1.assets/svmbowl.png" /> </p>
+<blockquote>
+<p>1维图示数据损失。x轴是单个权重，y轴是损失。数据损失是多个项的总和，每个项要么与特定权重无关，要么是它的线性函数，被截断为零。完整的SVM数据损失是这个形状的30,730维版本。</p>
+</blockquote>
+<p>作为一个旁注，你可能已经从它的碗状外观猜到了SVM成本函数是<a href="http://en.wikipedia.org/wiki/Convex_function">凸函数convex function</a>的一个例子。有大量的文献致力于高效地最小化这类函数，你还可以参加斯坦福的一门课程（<a href="http://stanford.edu/~boyd/cvxbook/">凸优化convex optimization</a>）。一旦我们将得分函数<span class="arithmatex">\(f\)</span>扩展到神经网络，我们的目标函数将变成非凸函数，上面的可视化将不再呈现碗状，而是复杂而崎岖的地形。</p>
+<p><em>不可微Non-differentiable损失函数</em>。作为一个技术说明，你还可以看到损失函数中的<em>拐点kinks</em>（由于max操作）在技术上使得损失函数不可微，因为在这些拐点处梯度未被定义。然而，<a href="http://en.wikipedia.org/wiki/Subderivative">次梯度subgradient</a>仍然存在并且通常被使用。在这门课程中，我们将互换使用<em>次梯度</em>和<em>梯度</em>这两个术语。</p>
+<h3 id="_3">优化<a class="headerlink" href="#_3" title="Permanent link">⚓︎</a></h3>
+<p>再次强调，损失函数允许我们量化任何特定权重<strong>W</strong>的质量。优化的目标是找到最小化损失函数的<strong>W</strong>。我们现在将激励并慢慢开发一种优化损失函数的方法。对于那些具有以前经验的人来说，这部分可能看起来有些奇怪，因为我们将使用的工作示例（SVM损失）是一个凸问题，但请记住我们的目标是最终优化神经网络，在那里我们不能轻松使用凸优化文献中开发的任何工具。</p>
+<h4 id="1">策略＃1：一个非常糟糕的解决方案：随机搜索<a class="headerlink" href="#1" title="Permanent link">⚓︎</a></h4>
+<p>由于检查给定的权重<strong>W</strong>如此简单，可能会首先（非常糟糕）想到的一个想法是尝试许多不同的随机权重，然后跟踪哪个效果最好。该过程可能如下所示：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># assume X_train is the data where each column is an example (e.g. 3073 x 50,000)</span>
+<span class="c1"># assume Y_train are the labels (e.g. 1D array of 50,000)</span>
+<span class="c1"># assume the function L evaluates the loss function</span>
+
+<span class="n">bestloss</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span> <span class="c1"># Python assigns the highest possible float value</span>
+<span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">):</span>
+  <span class="n">W</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">3073</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.0001</span> <span class="c1"># generate random parameters</span>
+  <span class="n">loss</span> <span class="o">=</span> <span class="n">L</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">,</span> <span class="n">W</span><span class="p">)</span> <span class="c1"># get the loss over the entire training set</span>
+  <span class="k">if</span> <span class="n">loss</span> <span class="o">&lt;</span> <span class="n">bestloss</span><span class="p">:</span> <span class="c1"># keep track of the best solution</span>
+    <span class="n">bestloss</span> <span class="o">=</span> <span class="n">loss</span>
+    <span class="n">bestW</span> <span class="o">=</span> <span class="n">W</span>
+  <span class="nb">print</span> <span class="s1">&#39;in attempt </span><span class="si">%d</span><span class="s1"> the loss was </span><span class="si">%f</span><span class="s1">, best </span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">bestloss</span><span class="p">)</span>
+
+<span class="c1"># prints:</span>
+<span class="c1"># in attempt 0 the loss was 9.401632, best 9.401632</span>
+<span class="c1"># in attempt 1 the loss was 8.959668, best 8.959668</span>
+<span class="c1"># in attempt 2 the loss was 9.044034, best 8.959668</span>
+<span class="c1"># in attempt 3 the loss was 9.278948, best 8.959668</span>
+<span class="c1"># in attempt 4 the loss was 8.857370, best 8.857370</span>
+<span class="c1"># in attempt 5 the loss was 8.943151, best 8.857370</span>
+<span class="c1"># in attempt 6 the loss was 8.605604, best 8.605604</span>
+<span class="c1"># ... (trunctated: continues for 1000 lines)</span>
+</code></pre></div>
+<p>在上面的代码中，我们可以看到我们尝试了几个随机的权重向量<strong>W</strong>，其中一些比其他的效果好。我们可以取在这次搜索中找到的最佳权重<strong>W</strong>，然后在测试集上尝试它：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Assume X_test is [3073 x 10000], Y_test [10000 x 1]</span>
+<span class="n">scores</span> <span class="o">=</span> <span class="n">Wbest</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Xte_cols</span><span class="p">)</span> <span class="c1"># 10 x 10000, the class scores for all test examples</span>
+<span class="c1"># find the index with max score in each column (the predicted class)</span>
+<span class="n">Yte_predict</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+<span class="c1"># and calculate accuracy (fraction of predictions that are correct)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Yte_predict</span> <span class="o">==</span> <span class="n">Yte</span><span class="p">)</span>
+<span class="c1"># returns 0.1555</span>
+</code></pre></div>
+<p>最佳的<strong>W</strong>可以获得约<strong>15.5%</strong>的准确率。考虑到完全随机猜测类别只能达到10%，对于这种毫无头绪的随机搜索解决方案来说，这并不是一个非常糟糕的结果！</p>
+<p><strong>核心思想：迭代优化</strong>。当然，事实证明我们可以做得更好。核心思想是找到最佳权重<strong>W</strong>是一个非常困难甚至不可能的问题（特别是一旦<strong>W</strong>包含了整个复杂神经网络的权重），但将特定的权重<strong>W</strong>进行微调以使其略微改善的问题要容易得多。换句话说，我们的方法将是从随机的<strong>W</strong>开始，然后迭代地对其进行改进，使其每次都略微改善。</p>
+<blockquote>
+<p>我们的策略是从随机权重开始，然后随着时间的推移迭代地对其进行改进，以获得更低的损失</p>
+</blockquote>
+<p><strong>盲目的徒步旅行者比喻</strong>。一个有用的类比是将自己看作是在一个多山的地形上徒步，而且双眼被蒙住，试图到达底部。在CIFAR-10的例子中，这些山是30,730维的，因为<strong>W</strong>的维度是10 x 3073。在山上的每一点，我们都会达到特定的损失（地形的高度）。</p>
+<h4 id="2">策略#2：随机本地搜索<a class="headerlink" href="#2" title="Permanent link">⚓︎</a></h4>
+<p>你可能会想到的第一种策略是尝试沿着随机方向延伸一只脚，然后只有当它向下倾斜时才迈出一步。具体来说，我们将从随机的<span class="arithmatex">\(W\)</span>开始，生成对其的随机扰动<span class="arithmatex">\(\delta W\)</span>，如果扰动后的<span class="arithmatex">\(W + \delta W\)</span>处的损失更低，我们将执行更新。这个过程的代码如下：</p>
+<div class="highlight"><pre><span></span><code><span class="n">W</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">3073</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.001</span> <span class="c1"># generate random starting W</span>
+<span class="n">bestloss</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">):</span>
+  <span class="n">step_size</span> <span class="o">=</span> <span class="mf">0.0001</span>
+  <span class="n">Wtry</span> <span class="o">=</span> <span class="n">W</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">3073</span><span class="p">)</span> <span class="o">*</span> <span class="n">step_size</span>
+  <span class="n">loss</span> <span class="o">=</span> <span class="n">L</span><span class="p">(</span><span class="n">Xtr_cols</span><span class="p">,</span> <span class="n">Ytr</span><span class="p">,</span> <span class="n">Wtry</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">loss</span> <span class="o">&lt;</span> <span class="n">bestloss</span><span class="p">:</span>
+    <span class="n">W</span> <span class="o">=</span> <span class="n">Wtry</span>
+    <span class="n">bestloss</span> <span class="o">=</span> <span class="n">loss</span>
+  <span class="nb">print</span> <span class="s1">&#39;iter </span><span class="si">%d</span><span class="s1"> loss is </span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">bestloss</span><span class="p">)</span>
+</code></pre></div>
+<p>使用与之前相同数量的损失函数评估（1000次），这种方法实现了<strong>21.4%</strong>的测试集分类准确率。这比之前好一些，但仍然浪费和计算昂贵。</p>
+<h4 id="3">策略 #3：跟随梯度<a class="headerlink" href="#3" title="Permanent link">⚓︎</a></h4>
+<p>在前一节中，我们试图找到一个在权重空间中可以改进我们的权重向量的方向（并为我们提供更低的损失）的方向。事实证明，没有必要随机搜索一个好的方向：我们可以计算出一个最佳方向，我们应该改变我们的权重向量，这个方向在数学上被保证是最陡下降的方向（至少在步长趋向于零时）。这个方向与损失函数的<strong>梯度gradient</strong>有关。在我们的徒步旅行类比中，这种方法大致对应于感觉到脚下的山坡，并朝着感觉最陡的方向前进。</p>
+<p>在一维函数中，斜率是你可能感兴趣的任何点的函数的瞬时变化率。梯度是对不仅接受单个数字而且接受一组数字的函数的斜率的一种概括。此外，梯度只是输入空间中每个维度的斜率的向量（更常被称为<strong>导数derivatives</strong>）。关于其输入的1-D函数的导数的数学表达式如下：</p>
+<div class="arithmatex">\[
+\frac{df(x)}{dx} = \lim_{h\ \to 0} \frac{f(x + h) - f(x)}{h}
+\]</div>
+<p>当我们感兴趣的函数接受一组数字而不是单个数字时，我们将导数称为<strong>偏导数partial derivatives</strong>，梯度只是每个维度中的偏导数的向量。</p>
+<h3 id="_4">计算梯度<a class="headerlink" href="#_4" title="Permanent link">⚓︎</a></h3>
+<p>有两种计算梯度的方法：一种是慢速、近似但容易的方法（<strong>数值梯度numerical gradient</strong>），另一种是快速、精确但更容易出错的方法，需要微积分（<strong>解析梯度analytic gradient</strong>）。我们现在将介绍这两种方法。</p>
+<h4 id="finite-differences">使用有限差分finite differences数值计算梯度<a class="headerlink" href="#finite-differences" title="Permanent link">⚓︎</a></h4>
+<p>上面给出的公式允许我们通过数值方法计算梯度。这是一个通用函数，它接受一个函数<code>f</code>、要在其上评估梯度的向量<code>x</code>，并返回在<code>x</code>处<code>f</code>的梯度：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">eval_numerical_gradient</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  a naive implementation of numerical gradient of f at x</span>
+<span class="sd">  - f should be a function that takes a single argument</span>
+<span class="sd">  - x is the point (numpy array) to evaluate the gradient at</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="n">fx</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="c1"># evaluate function value at original point</span>
+  <span class="n">grad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+  <span class="n">h</span> <span class="o">=</span> <span class="mf">0.00001</span>
+
+  <span class="c1"># iterate over all indexes in x</span>
+  <span class="n">it</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nditer</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;multi_index&#39;</span><span class="p">],</span> <span class="n">op_flags</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;readwrite&#39;</span><span class="p">])</span>
+  <span class="k">while</span> <span class="ow">not</span> <span class="n">it</span><span class="o">.</span><span class="n">finished</span><span class="p">:</span>
+
+    <span class="c1"># evaluate function at x+h</span>
+    <span class="n">ix</span> <span class="o">=</span> <span class="n">it</span><span class="o">.</span><span class="n">multi_index</span>
+    <span class="n">old_value</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span>
+    <span class="n">x</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span> <span class="o">=</span> <span class="n">old_value</span> <span class="o">+</span> <span class="n">h</span> <span class="c1"># increment by h</span>
+    <span class="n">fxh</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="c1"># evalute f(x + h)</span>
+    <span class="n">x</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span> <span class="o">=</span> <span class="n">old_value</span> <span class="c1"># restore to previous value (very important!)</span>
+
+    <span class="c1"># compute the partial derivative</span>
+    <span class="n">grad</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">fxh</span> <span class="o">-</span> <span class="n">fx</span><span class="p">)</span> <span class="o">/</span> <span class="n">h</span> <span class="c1"># the slope</span>
+    <span class="n">it</span><span class="o">.</span><span class="n">iternext</span><span class="p">()</span> <span class="c1"># step to next dimension</span>
+
+  <span class="k">return</span> <span class="n">grad</span>
+</code></pre></div>
+<p>按照我们上面给出的梯度公式，上面的代码逐个维度迭代，沿着该维度进行小的变化<code>h</code>，并通过查看函数变化了多少来计算该维度上损失函数的偏导数。最终，变量<code>grad</code>保存了完整的梯度。</p>
+<p><strong>实际考虑</strong>。请注意，在数学公式中，梯度的定义是在<strong>h</strong>趋近于零的极限情况下，但在实际应用中，通常可以使用非常小的值（例如示例中的1e-5）。理想情况下，您希望使用不会导致数值问题的最小步长。此外，在实践中，使用<strong>中心差分公式centered difference formula</strong>计算数值梯度通常效果更好：$ [f(x+h) - f(x-h)] / 2 h $ 。详细信息请参阅<a href="http://en.wikipedia.org/wiki/Numerical_differentiation">维基</a>。</p>
+<p>我们可以使用上面提供的函数来计算任何点和任何函数的梯度。让我们计算CIFAR-10损失函数在权重空间中的某个随机点的梯度：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># to use the generic code above we want a function that takes a single argument</span>
+<span class="c1"># (the weights in our case) so we close over X_train and Y_train</span>
+<span class="k">def</span> <span class="nf">CIFAR10_loss_fun</span><span class="p">(</span><span class="n">W</span><span class="p">):</span>
+  <span class="k">return</span> <span class="n">L</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">,</span> <span class="n">W</span><span class="p">)</span>
+
+<span class="n">W</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">3073</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.001</span> <span class="c1"># random weight vector</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">eval_numerical_gradient</span><span class="p">(</span><span class="n">CIFAR10_loss_fun</span><span class="p">,</span> <span class="n">W</span><span class="p">)</span> <span class="c1"># get the gradient</span>
+</code></pre></div>
+<p>梯度告诉我们损失函数沿每个维度的斜率，我们可以使用它进行更新：</p>
+<div class="highlight"><pre><span></span><code><span class="n">loss_original</span> <span class="o">=</span> <span class="n">CIFAR10_loss_fun</span><span class="p">(</span><span class="n">W</span><span class="p">)</span> <span class="c1"># the original loss</span>
+<span class="nb">print</span> <span class="s1">&#39;original loss: </span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">loss_original</span><span class="p">,</span> <span class="p">)</span>
+
+<span class="c1"># lets see the effect of multiple step sizes</span>
+<span class="k">for</span> <span class="n">step_size_log</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">9</span><span class="p">,</span> <span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">7</span><span class="p">,</span> <span class="o">-</span><span class="mi">6</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+  <span class="n">step_size</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">step_size_log</span>
+  <span class="n">W_new</span> <span class="o">=</span> <span class="n">W</span> <span class="o">-</span> <span class="n">step_size</span> <span class="o">*</span> <span class="n">df</span> <span class="c1"># new position in the weight space</span>
+  <span class="n">loss_new</span> <span class="o">=</span> <span class="n">CIFAR10_loss_fun</span><span class="p">(</span><span class="n">W_new</span><span class="p">)</span>
+  <span class="nb">print</span> <span class="s1">&#39;for step size </span><span class="si">%f</span><span class="s1"> new loss: </span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">step_size</span><span class="p">,</span> <span class="n">loss_new</span><span class="p">)</span>
+
+<span class="c1"># prints:</span>
+<span class="c1"># original loss: 2.200718</span>
+<span class="c1"># for step size 1.000000e-10 new loss: 2.200652</span>
+<span class="c1"># for step size 1.000000e-09 new loss: 2.200057</span>
+<span class="c1"># for step size 1.000000e-08 new loss: 2.194116</span>
+<span class="c1"># for step size 1.000000e-07 new loss: 2.135493</span>
+<span class="c1"># for step size 1.000000e-06 new loss: 1.647802</span>
+<span class="c1"># for step size 1.000000e-05 new loss: 2.844355</span>
+<span class="c1"># for step size 1.000000e-04 new loss: 25.558142</span>
+<span class="c1"># for step size 1.000000e-03 new loss: 254.086573</span>
+<span class="c1"># for step size 1.000000e-02 new loss: 2539.370888</span>
+<span class="c1"># for step size 1.000000e-01 new loss: 25392.214036</span>
+</code></pre></div>
+<p><strong>朝着负梯度方向更新</strong>。请注意，在上面的代码中，为了计算<code>W_new</code>，我们是在梯度<code>df</code>的负方向上进行更新的，因为我们希望我们的损失函数减小，而不是增加。</p>
+<p><strong>步长step的影响</strong>。梯度告诉我们函数具有最快增加速率的方向，但它不告诉我们沿着这个方向应该迈多远的一步。正如我们将在本课程的后期看到的那样，选择步长（也称为<em>学习率learning rate</em>）将成为训练神经网络中最重要（也是最头疼的）的超参数设置之一。在我们的盲目下坡下降比喻中，我们感觉到脚下的山坡朝某个方向倾斜，但我们应该迈多远的一步是不确定的。如果我们小心翼翼地挪动脚步，我们可以期望取得一致但非常小的进展（这对应于采用小步长）。相反，我们可以选择迈出大步，以更快地下降，但这可能得不偿失。正如您在上面的代码示例中看到的那样，有一些时候采取更大的步骤会导致更高的损失，因为我们“越过了目标”。</p>
+<p><img alt="stepsize" src="../optimization-1.assets/stepsize.jpg" /> </p>
+<blockquote>
+<p>可视化步长的影响。我们从某个特定的位置W开始，并计算梯度（或更确切地说，它的负值 - 白色箭头），它告诉我们损失函数中最陡峭的减小方向。小步骤可能会导致稳定但缓慢的进展。大步骤可以导致更好的进展，但更加冒险。请注意，最终，对于大步长，我们会越过目标，使损失变得更糟。步长（或者我们以后将称之为<strong>学习率</strong>）将成为我们必须仔细调整的最重要的超参数之一。</p>
+</blockquote>
+<p><strong>效率问题</strong>。您可能已经注意到，计算数值梯度的复杂度与参数数量呈线性关系。在我们的示例中，总共有30730个参数，因此我们需要对损失函数进行30731次评估，以计算梯度并执行单个参数更新。这个问题只会变得更糟，因为现代神经网络很容易有数千万个参数。显然，这种策略不具备可扩展性，我们需要更好的方法。</p>
+<h4 id="calculus">使用微积分Calculus解析计算梯度<a class="headerlink" href="#calculus" title="Permanent link">⚓︎</a></h4>
+<p>数值梯度使用有限差分逼近非常简单，但缺点是它是近似的（因为我们必须选择一个较小的<em>h</em>值，而真正的梯度定义为<em>h</em>趋近于零的极限），并且计算起来非常昂贵。第二种计算梯度的方法是使用微积分进行分析，它允许我们导出梯度的直接公式（没有近似），而且计算速度也非常快。然而，与数值梯度不同，它在实现时更容易出错，这就是为什么在实践中非常常见的是计算分析梯度并将其与数值梯度进行比较以检查实现的正确性。这被称为<strong>梯度检查gradient check</strong>。</p>
+<p>让我们以单个数据点的SVM损失函数为例：</p>
+<div class="arithmatex">\[
+L_i = \sum_{j\neq y_i} \left[ \max(0, w_j^Tx_i - w_{y_i}^Tx_i + \Delta) \right]
+\]</div>
+<p>我们可以针对权重计算梯度。例如，针对<span class="arithmatex">\(w_{y_i}\)</span>计算梯度，我们得到：</p>
+<div class="arithmatex">\[
+\nabla_{w_{y_i}} L_i = - \left( \sum_{j\neq y_i} \mathbb{1}(w_j^Tx_i - w_{y_i}^Tx_i + \Delta &gt; 0) \right) x_i
+\]</div>
+<p>其中<span class="arithmatex">\(\mathbb{1}\)</span>是指示函数，如果内部条件为真，则为1，否则为零。虽然在书写时这个表达式可能看起来吓人，但在代码中实现时，您只需计算未满足所需间隔的类别数量（从而有利于损失函数），然后数据向量<span class="arithmatex">\(x_i\)</span>乘以此数字即为梯度。请注意，这只是与正确类别对应的<span class="arithmatex">\(W\)</span>行的梯度。对于其他行，其中<span class="arithmatex">\(j \neq y_i\)</span>，梯度是：</p>
+<div class="arithmatex">\[
+\nabla_{w_j} L_i = \mathbb{1}(w_j^Tx_i - w_{y_i}^Tx_i + \Delta &gt; 0) x_i
+\]</div>
+<p>一旦您导出了梯度的表达式，实现这些表达式并使用它们执行梯度更新就很简单了。</p>
+<h3 id="_5">梯度下降<a class="headerlink" href="#_5" title="Permanent link">⚓︎</a></h3>
+<p>现在我们可以计算损失函数的梯度了，反复评估梯度然后执行参数更新的过程被称为<em>梯度下降Gradient Descent</em>。其<strong>普通vanilla</strong>版本如下所示：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Vanilla Gradient Descent</span>
+
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+  <span class="n">weights_grad</span> <span class="o">=</span> <span class="n">evaluate_gradient</span><span class="p">(</span><span class="n">loss_fun</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">weights</span><span class="p">)</span>
+  <span class="n">weights</span> <span class="o">+=</span> <span class="o">-</span> <span class="n">step_size</span> <span class="o">*</span> <span class="n">weights_grad</span> <span class="c1"># perform parameter update</span>
+</code></pre></div>
+<p>这个简单的循环是所有神经网络库的核心。有其他方法可以执行优化（例如LBFGS），但梯度下降目前是迄今为止<strong>最常见和最成熟</strong>的优化神经网络损失函数的方法。在整个课程中，我们将对这个循环的细节进行一些改进（例如更新方程的详细细节），但跟随梯度直到我们满意结果的核心思想将保持不变。</p>
+<p><strong>小批量梯度下降</strong>。在大规模应用中（例如ILSVRC挑战赛），训练数据可能有数百万个示例。因此，为了执行单个参数更新，计算整个训练集上的完整损失函数似乎是一种浪费。解决这个问题的一个非常常见的方法是计算<strong>批量batches</strong>训练数据的梯度。例如，在当前最先进的卷积神经网络ConvNets中，一个典型的批量包含来自整个120万个训练集的256个示例。然后使用这个批量来执行参数更新：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Vanilla Minibatch Gradient Descent</span>
+
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+  <span class="n">data_batch</span> <span class="o">=</span> <span class="n">sample_training_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span> <span class="c1"># sample 256 examples</span>
+  <span class="n">weights_grad</span> <span class="o">=</span> <span class="n">evaluate_gradient</span><span class="p">(</span><span class="n">loss_fun</span><span class="p">,</span> <span class="n">data_batch</span><span class="p">,</span> <span class="n">weights</span><span class="p">)</span>
+  <span class="n">weights</span> <span class="o">+=</span> <span class="o">-</span> <span class="n">step_size</span> <span class="o">*</span> <span class="n">weights_grad</span> <span class="c1"># perform parameter update</span>
+</code></pre></div>
+<p>这个方法之所以有效，是因为训练数据中的示例是<strong>相关的</strong>。要理解这一点，考虑一个极端情况，即ILSVRC中的所有120万幅图像实际上都由1000幅唯一图像的精确副本组成（每个类别一个，换句话说，每幅图像有1200个相同的副本）。那么很明显，我们为所有1200个相同副本计算的梯度都是相同的，当我们将所有120万幅图像上的数据损失平均时，得到的损失与仅在1000个小子集上评估时得到的损失完全相同。当然，在实践中，数据集不会包含重复的图像，小批量的梯度很好地近似于整个目标函数objective的梯度。因此，在实践中，通过评估小批量梯度以执行更频繁的参数更新，可以实现更快的收敛。</p>
+<p>这个过程的极端情况是小批量只包含一个示例。这个过程被称为<strong>随机梯度下降Stochastic Gradient Descent（SGD）</strong>（有时也称为<strong>在线on-line</strong>梯度下降）。这种情况相对不太常见，因为在实践中，由于矢量化代码优化，评估100个示例的梯度通常比100次评估一个示例的梯度计算效率更高。尽管SGD在技术上是指一次使用一个示例来计算梯度，但人们在提到小批量梯度下降时（通常假设使用小批量）也会使用SGD这个术语。小批量的大小是一个超参数，但交叉验证并不常见。通常，它基于内存限制（如果有的话），或设置为某个值，例如32、64或128。在实践中，我们使用<strong>2的幂次方</strong>，因为许多矢量化操作的实现在输入大小为2的幂次方时运行得更快。</p>
+<h3 id="_6">总结<a class="headerlink" href="#_6" title="Permanent link">⚓︎</a></h3>
+<p><img alt="dataflow" src="../optimization-1.assets/dataflow.jpeg" /> </p>
+<blockquote>
+<p>信息流的总结。成对的数据集(x,y)是固定的。权重开始是随机数，可以改变。在前向传递期间，分数函数计算类别分数，存储在向量f中。损失函数包含两个组件：数据损失计算分数f与标签y之间的兼容性。正则化损失仅与权重有关。在梯度下降期间，我们计算权重上的梯度（可选地在数据上计算梯度，如果需要的话），并使用它们在梯度下降期间执行参数更新。</p>
+</blockquote>
+<p>在本节中，</p>
+<ul>
+<li>我们把损失函数看做是一个 <strong>高维优化空间high-dimensional optimization landscape</strong>，在其中我们试图到达底部。我们开发的工作类比是一位希望到达底部的被蒙住眼睛的徒步者。特别是，我们看到SVM损失函数是分段线性和碗状的。</li>
+<li>我们阐述了通过<strong>迭代改进</strong>来优化损失函数的想法，其中我们从一组随机权重开始，逐步细化它们，直到损失最小化。</li>
+<li>我们看到了函数的<strong>梯度</strong>提供了最陡升方向，并讨论了一种简单但低效的方法，即使用有限差分近似（有限差分是计算数值梯度时使用的<em>h</em>的值）来数值计算梯度。</li>
+<li>我们看到参数更新需要一个棘手的<strong>步长</strong>（或<strong>学习率</strong>）设置，必须设置得恰到好处：如果太低，进展稳定但缓慢。如果太高，进展可以更快，但更有风险。我们将在未来的章节中更详细地探讨这个权衡。</li>
+<li>我们讨论了计算<strong>数值</strong>和<strong>解析</strong>梯度之间的权衡。数值梯度简单，但是是近似的，计算代价高。解析梯度精确，计算速度快，但更容易出错，因为它需要数学推导梯度。因此，在实践中，我们总是使用解析梯度，然后执行<strong>梯度检查</strong>，其中将其实现与数值梯度进行比较。</li>
+<li>我们介绍了<strong>梯度下降</strong>算法，该算法循环迭代地计算梯度并执行参数更新。</li>
+</ul>
+<p><strong>接下来：</strong>本节的核心要点是，能够计算损失函数相对于其权重的梯度（并对其有直观的理解）是设计、训练和理解神经网络所需的最重要技能。在下一节中，我们将熟练地使用链式法则chain rule分析计算梯度，也称为<strong>反向传播</strong>。这将使我们能够高效地优化相对任意的损失函数，这些函数表达了各种类型的神经网络，包括卷积神经网络。</p>
+
+  <hr>
+<div class="md-source-file">
+  <small>
+    
+      最后更新:
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 16, 2023</span>
+      
+        <br>
+        创建日期:
+        <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 16, 2023</span>
+      
+    
+  </small>
+</div>
+
+
+  
+
+
+
+  <form class="md-feedback" name="feedback" hidden>
+    <fieldset>
+      <legend class="md-feedback__title">
+        对当前页面有任何疑问吗？
+      </legend>
+      <div class="md-feedback__inner">
+        <div class="md-feedback__list">
+          
+            <button class="md-feedback__icon md-icon" type="submit" title="This page was helpful" data-md-value="1">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 9v12H1V9h4m4 12a2 2 0 0 1-2-2V9c0-.55.22-1.05.59-1.41L14.17 1l1.06 1.06c.27.27.44.64.44 1.05l-.03.32L14.69 8H21a2 2 0 0 1 2 2v2c0 .26-.05.5-.14.73l-3.02 7.05C19.54 20.5 18.83 21 18 21H9m0-2h9.03L21 12v-2h-8.79l1.13-5.32L9 9.03V19Z"/></svg>
+            </button>
+          
+            <button class="md-feedback__icon md-icon" type="submit" title="This page could be improved" data-md-value="0">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 15V3h4v12h-4M15 3a2 2 0 0 1 2 2v10c0 .55-.22 1.05-.59 1.41L9.83 23l-1.06-1.06c-.27-.27-.44-.64-.44-1.06l.03-.31.95-4.57H3a2 2 0 0 1-2-2v-2c0-.26.05-.5.14-.73l3.02-7.05C4.46 3.5 5.17 3 6 3h9m0 2H5.97L3 12v2h8.78l-1.13 5.32L15 14.97V5Z"/></svg>
+            </button>
+          
+        </div>
+        <div class="md-feedback__note">
+          
+            <div data-md-value="1" hidden>
+              
+              
+                
+              
+              感谢您的反馈！
+            </div>
+          
+            <div data-md-value="0" hidden>
+              
+              
+                
+              
+              感谢您的反馈！请点击这里<a href="https://github.com/EanYang7/cs231n/issues" target="_blank" rel="noopener">这里</a>提供问题反馈.
+            </div>
+          
+        </div>
+      </div>
+    </fieldset>
+  </form>
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            回到页面顶部
+          </button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/EanYang7/cs231n" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.instant", "navigation.top", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.path", "toc.follow", "content.action.edit", "content.action.view", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.dfff1995.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.dff1b7c8.min.js"></script>
+      
+        <script src="../../../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

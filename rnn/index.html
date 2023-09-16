@@ -1,0 +1,1512 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="CS231n: Deep Learning for Computer Vision">
+      
+      
+      
+        <link rel="canonical" href="https://eanyang7.github.io/cs231n/rnn/">
+      
+      
+      
+      
+      <link rel="icon" href="../logo.jpg">
+      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.3.1">
+    
+    
+      
+        <title>Rnn - CS231n</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.046329b4.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.85d0ee34.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function n(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],n("js",new Date),n("config","G-5F8XNH7BCX"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){this.value&&n("event","search",{search_term:this.value})}),document$.subscribe(function(){var a=document.forms.feedback;if(void 0!==a)for(var e of a.querySelectorAll("[type=submit]"))e.addEventListener("click",function(e){e.preventDefault();var t=document.location.pathname,e=this.getAttribute("data-md-value");n("event","feedback",{page:t,data:e}),a.firstElementChild.disabled=!0;e=a.querySelector(".md-feedback__note [data-md-value='"+e+"']");e&&(e.hidden=!1)}),a.hidden=!1}),location$.subscribe(function(e){n("config","G-5F8XNH7BCX",{page_path:e.pathname})})});var e=document.createElement("script");e.async=!0,e.src="https://www.googletagmanager.com/gtag/js?id=G-5F8XNH7BCX",document.getElementById("__analytics").insertAdjacentElement("afterEnd",e)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#introduction-to-rnn" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href=".." title="CS231n" class="md-header__button md-logo" aria-label="CS231n" data-md-component="logo">
+      
+  <img src="../logo.jpg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CS231n
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Rnn
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换为暗黑模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换为暗黑模式" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换为浅色模式"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="切换为浅色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="选择当前语言">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04M18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12m-2.62 7 1.62-4.33L19.12 17h-3.24Z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="/cs231n/" hreflang="zh" class="md-select__link">
+              中文
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="https://cs231n.github.io/" hreflang="en" class="md-select__link">
+              English(源网站)
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/EanYang7/cs231n" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    EanYang7/cs231n
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href=".." class="md-tabs__link">
+          
+  
+  首页
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../courses/preparation/setup/" class="md-tabs__link">
+          
+  
+  课程
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../assignments/2023/assignment1/" class="md-tabs__link">
+          
+  
+  任务
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="CS231n" class="md-nav__button md-logo" aria-label="CS231n" data-md-component="logo">
+      
+  <img src="../logo.jpg" alt="logo">
+
+    </a>
+    CS231n
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/EanYang7/cs231n" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    EanYang7/cs231n
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    首页
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            首页
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CS231n 卷积神经网络视觉识别
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    课程
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            课程
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" >
+        
+          <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    准备工作
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            准备工作
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/preparation/setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    软件设置
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/preparation/python-numpy-tutorial/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Python/Numpy教程
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+        
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    神经网络
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            神经网络
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/classification/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    图像分类
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/linear-classify/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    线性分类
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/optimization-1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    优化：随机梯度下降
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/optimization-2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    反向传播
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2_5" >
+        
+          <label class="md-nav__link" for="__nav_2_2_5" id="__nav_2_2_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    神经网络
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            神经网络
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/neural-networks-1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    创建结构
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/neural-networks-2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    创建数据和损失
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/neural-networks-3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    学习和评估
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/neural-networks-case-study/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    最小神经网络案例研究
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    卷积神经网络
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            卷积神经网络
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/CNN/convolutional-networks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    结构、卷积/池化层
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/CNN/understanding-cnn/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    理解与可视化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/CNN/transfer-learning/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    迁移学习与微调
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    任务
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            任务
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../assignments/2023/assignment1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    任务1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../assignments/2023/assignment2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    任务2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../assignments/2023/assignment3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    任务2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduction-to-rnn" class="md-nav__link">
+    Introduction to RNN
+  </a>
+  
+    <nav class="md-nav" aria-label="Introduction to RNN">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-are-existing-convnets-insufficient" class="md-nav__link">
+    Why are existing convnets insufficient?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recurrent-neural-network" class="md-nav__link">
+    Recurrent Neural Network
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rnn-example-as-character-level-language-model" class="md-nav__link">
+    RNN example as Character-level language model
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multilayer-rnns" class="md-nav__link">
+    Multilayer RNNs
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#long-short-term-memory-lstm" class="md-nav__link">
+    Long-Short Term Memory (LSTM)
+  </a>
+  
+    <nav class="md-nav" aria-label="Long-Short Term Memory (LSTM)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vanilla-rnn-gradient-flow-vanishing-gradient-problem" class="md-nav__link">
+    Vanilla RNN Gradient Flow &amp; Vanishing Gradient Problem
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lstm-formulation" class="md-nav__link">
+    LSTM Formulation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#does-lstm-solve-the-vanishing-gradient-problem" class="md-nav__link">
+    Does LSTM solve the vanishing gradient problem?
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+    <a href="https://github.com/EanYang7/cs231n/edit/dev/docs/rnn.md" title="编辑此页" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/EanYang7/cs231n/raw/dev/docs/rnn.md" title="查看本页的源代码" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5Z"/></svg>
+    </a>
+  
+
+
+  <h1>Rnn</h1>
+
+<p>Table of Contents:</p>
+<ul>
+<li><a href="#intro">Introduction to RNN</a></li>
+<li><a href="#char">RNN example as Character-level language model</a></li>
+<li><a href="#multi">Multilayer RNNs</a></li>
+<li><a href="#lstm">Long-Short Term Memory (LSTM)</a></li>
+</ul>
+<p><a name='intro'></a></p>
+<h2 id="introduction-to-rnn">Introduction to RNN<a class="headerlink" href="#introduction-to-rnn" title="Permanent link">⚓︎</a></h2>
+<p>In this lecture note, we're going to be talking about the Recurrent Neural Networks (RNNs). One
+great thing about the RNNs is that they offer a lot of flexibility on how we wire up the neural
+network architecture. Normally when we're working with neural networks (Figure 1), we are given a fixed sized
+input vector (red), then we process it with some hidden layers (green), and  we produce a
+fixed sized output vector (blue) as depicted in the leftmost model ("Vanilla" Neural Networks) in Figure 1.
+While <strong>"Vanilla" Neural Networks</strong> receive a single input and produce one label for that image, there are tasks where
+the model produce a sequence of outputs as shown in the one-to-many model in Figure 1. <strong>Recurrent Neural Networks</strong> allow 
+us to operate over sequences of input, output, or both at the same time. 
+* An example of <strong>one-to-many</strong> model is image captioning where we are given a fixed sized image and produce a sequence of words that describe the content of that image through RNN (second model in Figure 1).
+* An example of <strong>many-to-one</strong> task is action prediction where we look at a sequence of video frames instead of a single image and produce
+a label of what action was happening in the video as shown in the third model in Figure 1. Another example of many-to-one task is 
+sentiment classification in NLP where we are given a sequence of words of a sentence and then classify what sentiment (e.g. positive or negative) that sentence is.
+* An example of <strong>many-to-many</strong> task is video-captioning where the input is a sequence of video frames and the output is caption that describes
+what was in the video as shown in the fourth model in Figure 1. Another example of many-to-many task is machine translation in NLP, where we can have an
+RNN that takes a sequence of words of a sentence in English, and then this RNN is asked to produce a sequence of words of a sentence in French. 
+* There is a also a <strong>variation of many-to-many</strong> task as shown in the last model in Figure 1, 
+where the model generates an output at every timestep. An example of this many-to-many task is video classification on a frame level
+where the model classifies every single frame of video with some number of classes. We should note that we don't want 
+this prediction to only be a function of the current timestep (current frame of the video), but also all the timesteps (frames)
+that have come before this video. </p>
+<p>In general, RNNs allow us to wire up an architecture, where the prediction at every single timestep is a
+function of all the timesteps that have come before.</p>
+<div class="fig figcenter fighighlight">
+  <img src="/assets/rnn/types.png" width="100%">
+  <div class="figcaption"> <b> Figure 1.</b> Different (non-exhaustive) types of Recurrent Neural Network architectures. Red boxes are input vectors. Green boxes are hidden layers. Blue boxes are output vectors.</div>
+</div>
+
+<h3 id="why-are-existing-convnets-insufficient">Why are existing convnets insufficient?<a class="headerlink" href="#why-are-existing-convnets-insufficient" title="Permanent link">⚓︎</a></h3>
+<p>The existing convnets are insufficient to deal with tasks that have inputs and outputs with variable sequence lengths. 
+In the example of video captioning, inputs have variable number of frames (e.g. 10-minute and 10-hour long video) and outputs are captions
+of variable length. Convnets can only take in inputs with a fixed size of width and height and cannot generalize over 
+inputs with different sizes. In order to tackle this problem, we introduce Recurrent Neural Networks (RNNs). </p>
+<h3 id="recurrent-neural-network">Recurrent Neural Network<a class="headerlink" href="#recurrent-neural-network" title="Permanent link">⚓︎</a></h3>
+<p>RNN is basically a blackbox (Left of Figure 2), where it has an “internal state” that is updated as a sequence is processed. At every single timestep, we feed in an input vector into RNN where it modifies that state as a function of what it receives. When we tune RNN weights, 
+RNN will show different behaviors in terms of how its state evolves as it receives these inputs. 
+We are also interested in producing an output based on the RNN state, so we can produce these output vectors on top of the RNN (as depicted in Figure 2).</p>
+<p>If we unroll an RNN model (Right of Figure 2), then there are inputs (e.g. video frame) at different timesteps shown as <span class="arithmatex">\(<span class="arithmatex">\(x_1, x_2, x_3\)</span>\)</span> ... <span class="arithmatex">\(<span class="arithmatex">\(x_t\)</span>\)</span>. 
+RNN at each timestep takes in two inputs -- an input frame (<span class="arithmatex">\(<span class="arithmatex">\(x_i\)</span>\)</span>) and previous representation of what it seems so far (i.e. history) -- to generate an output <span class="arithmatex">\(<span class="arithmatex">\(y_i\)</span>\)</span> and update its history, which will get forward propagated over time. All the RNN blocks in Figure 2 (Right) are the same block that share the same parameter, but have different inputs and history at each timestep.</p>
+<div class="fig figcenter fighighlight">
+  <img src="/assets/rnn/rnn_blackbox.png" width="16%" >
+  <img src="/assets/rnn/unrolledRNN.png" width="60%" >
+  <div class="figcaption"><b>Figure 2. </b>Simplified RNN box (Left) and Unrolled RNN (Right).</div>
+</div>
+
+<p>More precisely, RNN can be represented as a recurrence formula of some function <span class="arithmatex">\(<span class="arithmatex">\(f_W\)</span>\)</span> with
+parameters <span class="arithmatex">\(<span class="arithmatex">\(W\)</span>\)</span>:</p>
+<div class="arithmatex">\[
+h_t = f_W(h_{t-1}, x_t)
+\]</div>
+<p>where at every timestep it receives some previous state as a vector <span class="arithmatex">\(<span class="arithmatex">\(h_{t-1}\)</span>\)</span> of previous
+iteration timestep <span class="arithmatex">\(<span class="arithmatex">\(t-1\)</span>\)</span> and current input vector <span class="arithmatex">\(<span class="arithmatex">\(x_t\)</span>\)</span> to produce the current state as a vector
+<span class="arithmatex">\(<span class="arithmatex">\(h_t\)</span>\)</span>. A fixed function <span class="arithmatex">\(<span class="arithmatex">\(f_W\)</span>\)</span> with weights <span class="arithmatex">\(<span class="arithmatex">\(W\)</span>\)</span> is applied at every single timestep and that allows us to use
+the Recurrent Neural Network on sequences without having to commit to the size of the sequence because
+we apply the exact same function at every single timestep, no matter how long the input or output
+sequences are.</p>
+<p>In the most simplest form of RNN, which we call a Vanilla RNN, the network is just a single hidden
+state <span class="arithmatex">\(<span class="arithmatex">\(h\)</span>\)</span> where we use a recurrence formula that basically tells us how we should update our hidden
+state <span class="arithmatex">\(<span class="arithmatex">\(h\)</span>\)</span> as a function of previous hidden state <span class="arithmatex">\(<span class="arithmatex">\(h_{t-1}\)</span>\)</span> and the current input <span class="arithmatex">\(<span class="arithmatex">\(x_t\)</span>\)</span>. In particular, we're
+going to have weight matrices <span class="arithmatex">\(<span class="arithmatex">\(W_{hh}\)</span>\)</span> and <span class="arithmatex">\(<span class="arithmatex">\(W_{xh}\)</span>\)</span>, where they will project both the hidden
+state <span class="arithmatex">\(<span class="arithmatex">\(h_{t-1}\)</span>\)</span> from the previous timestep and the current input <span class="arithmatex">\(<span class="arithmatex">\(x_t\)</span>\)</span>, and then those are going to be summed
+and squished with <span class="arithmatex">\(<span class="arithmatex">\(tanh\)</span>\)</span> function to update the hidden state <span class="arithmatex">\(<span class="arithmatex">\(h_t\)</span>\)</span> at timestep <span class="arithmatex">\(<span class="arithmatex">\(t\)</span>\)</span>. This recurrence
+is telling us how <span class="arithmatex">\(<span class="arithmatex">\(h\)</span>\)</span> will change as a function of its history and also the current input at this
+timestep:</p>
+<div class="arithmatex">\[
+h_t = tanh(W_{hh}h_{t-1} + W_{xh}x_t)
+\]</div>
+<div class="fig figcenter">
+  <img src="/assets/rnn/vanilla_rnn_mformula_1.png" width="80%" >
+</div>
+
+<p>We can base predictions on top of <span class="arithmatex">\(<span class="arithmatex">\(h_t\)</span>\)</span> by using just another matrix projection on top
+of the hidden state. This is the simplest complete case in which you can wire up a neural network:</p>
+<div class="arithmatex">\[
+y_t = W_{hy}h_t
+\]</div>
+<div class="fig figcenter">
+  <img src="/assets/rnn/vanilla_rnn_mformula_2.png" width="40%" >
+</div>
+
+<p>So far we have showed RNN in terms of abstract vectors <span class="arithmatex">\(<span class="arithmatex">\(x, h, y\)</span>\)</span>, however we can endow these vectors
+with semantics in the following section.</p>
+<p><a name='char'></a></p>
+<h2 id="rnn-example-as-character-level-language-model">RNN example as Character-level language model<a class="headerlink" href="#rnn-example-as-character-level-language-model" title="Permanent link">⚓︎</a></h2>
+<p>One of the simplest ways in which we can use an RNN is in the case of a character-level language model
+since it's intuitive to understand. The way this RNN will work is we will feed a sequence of characters
+into the RNN and at every single timestep, we will ask the RNN to predict the next character in the
+sequence. The prediction of RNN will be in the form of score distribution of the characters in the vocabulary
+for what RNN thinks should come next in the sequence that it has seen so far.</p>
+<p>So suppose, in a very simple example (Figure 3), we have the training sequence of just one string <span class="arithmatex">\(<span class="arithmatex">\(\text{"hello"}\)</span>\)</span>, and we have a vocabulary
+<span class="arithmatex">\(<span class="arithmatex">\(V \in \{\text{"h"}, \text{"e"}, \text{"l"}, \text{"o"}\}\)</span>\)</span> of 4 characters in the entire dataset. We are going to try to get an RNN to
+learn to predict the next character in the sequence on this training data.</p>
+<div class="fig figcenter fighighlight">
+  <img src="/assets/rnn/char_level_language_model.png" width="60%" >
+  <div class="figcaption">Figure 3. Simplified Character-level Language Model RNN.</div>
+</div>
+
+<p>As shown in Figure 3, we'll feed in one character at a time into an RNN, first <span class="arithmatex">\(<span class="arithmatex">\(\text{"h"}\)</span>\)</span>, then
+<span class="arithmatex">\(<span class="arithmatex">\(\text{"e"}\)</span>\)</span>, then <span class="arithmatex">\(<span class="arithmatex">\(\text{"l"}\)</span>\)</span>, and finally <span class="arithmatex">\(<span class="arithmatex">\(\text{"l"}\)</span>\)</span>. All characters are encoded in the representation
+of what's called a one-hot vector, where only one unique bit of the vector is turned on for each unique
+character in the vocabulary. For example:</p>
+<div class="arithmatex">\[
+\begin{bmatrix}1 \\ 0 \\ 0 \\ 0 \end{bmatrix} = \text{"h"}\ \ 
+\begin{bmatrix}0 \\ 1 \\ 0 \\ 0 \end{bmatrix} = \text{"e"}\ \ 
+\begin{bmatrix}0 \\ 0 \\ 1 \\ 0 \end{bmatrix} = \text{"l"}\ \ 
+\begin{bmatrix}0 \\ 0 \\ 0 \\ 1 \end{bmatrix} = \text{"o"}
+\]</div>
+<p>Then we're going to use the recurrence formula from the previous section at every single timestep.
+Suppose we start off with <span class="arithmatex">\(<span class="arithmatex">\(h\)</span>\)</span> as a vector of size 3 with all zeros. By using this fixed recurrence
+formula, we're going to end up with a 3-dimensional representation of the next hidden state <span class="arithmatex">\(<span class="arithmatex">\(h\)</span>\)</span>
+that basically at any point in time summarizes all the characters that have come until then:</p>
+<div class="arithmatex">\[
+\begin{aligned}
+\begin{bmatrix}0.3 \\ -0.1 \\ 0.9 \end{bmatrix} &amp;= f_W(W_{hh}\begin{bmatrix}0 \\ 0 \\ 0 \end{bmatrix} + W_{xh}\begin{bmatrix}1 \\ 0 \\ 0 \\ 0 \end{bmatrix}) \ \ \ \ &amp;(1) \\
+\begin{bmatrix}1.0 \\ 0.3 \\ 0.1 \end{bmatrix} &amp;= f_W(W_{hh}\begin{bmatrix}0.3 \\ -0.1 \\ 0.9 \end{bmatrix} + W_{xh}\begin{bmatrix}0 \\ 1 \\ 0 \\ 0 \end{bmatrix}) \ \ \ \ &amp;(2) \\
+\begin{bmatrix}0.1 \\ -0.5 \\ -0.3 \end{bmatrix} &amp;= f_W(W_{hh}\begin{bmatrix}1.0 \\ 0.3 \\ 0.1 \end{bmatrix} + W_{xh}\begin{bmatrix}0 \\ 0 \\ 1 \\ 0 \end{bmatrix}) \ \ \ \ &amp;(3) \\
+\begin{bmatrix}-0.3 \\ 0.9 \\ 0.7 \end{bmatrix} &amp;= f_W(W_{hh}\begin{bmatrix}0.1 \\ -0.5 \\ -0.3 \end{bmatrix} + W_{xh}\begin{bmatrix}0 \\ 0 \\ 1 \\ 0 \end{bmatrix}) \ \ \ \ &amp;(4)
+\end{aligned}
+\]</div>
+<p>As we apply this recurrence at every timestep, we're going to predict what should be the next character
+in the sequence at every timestep. Since we have four characters in vocabulary <span class="arithmatex">\(<span class="arithmatex">\(V\)</span>\)</span>, we're going to
+predict 4-dimensional vector of logits at every single timestep.</p>
+<p>As shown in Figure 3, in the very first timestep we fed in <span class="arithmatex">\(<span class="arithmatex">\(\text{"h"}\)</span>\)</span>, and the RNN with its current
+setting of weights computed a vector of logits:</p>
+<div class="arithmatex">\[
+\begin{bmatrix}1.0 \\ 2.2 \\ -3.0 \\ 4.1 \end{bmatrix} \rightarrow \begin{bmatrix}\text{"h"} \\ \text{"e"} \\ \text{"l"}\\ \text{"o"} \end{bmatrix}
+\]</div>
+<p>where RNN thinks that the next character <span class="arithmatex">\(<span class="arithmatex">\(\text{"h"}\)</span>\)</span> is <span class="arithmatex">\(<span class="arithmatex">\(1.0\)</span>\)</span> likely to come next, <span class="arithmatex">\(<span class="arithmatex">\(\text{"e"}\)</span>\)</span> is <span class="arithmatex">\(<span class="arithmatex">\(2.2\)</span>\)</span> likely,
+<span class="arithmatex">\(<span class="arithmatex">\(\text{"e"}\)</span>\)</span> is <span class="arithmatex">\(<span class="arithmatex">\(-3.0\)</span>\)</span> likely, and <span class="arithmatex">\(<span class="arithmatex">\(\text{"o"}\)</span>\)</span> is <span class="arithmatex">\(<span class="arithmatex">\(4.1\)</span>\)</span> likely to come next. In this case,
+RNN incorrectly suggests that <span class="arithmatex">\(<span class="arithmatex">\(\text{"o"}\)</span>\)</span> should come next, as the score of <span class="arithmatex">\(<span class="arithmatex">\(4.1\)</span>\)</span> is the highest.
+However, of course, we know that in this training sequence <span class="arithmatex">\(<span class="arithmatex">\(\text{"e"}\)</span>\)</span> should follow <span class="arithmatex">\(<span class="arithmatex">\(\text{"h"}\)</span>\)</span>,
+so in fact the score of <span class="arithmatex">\(<span class="arithmatex">\(2.2\)</span>\)</span> is the correct answer as it's highlighted in green in Figure 3, and we want that to be high and all other scores
+to be low. At every single timestep we have a target for what next character should come in the sequence,
+therefore the error signal is backpropagated as a gradient of the loss function through the connections.
+As a loss function we could choose to have a softmax classifier, for example, so we just get all those losses
+flowing down from the top backwards to calculate the gradients on all the weight matrices to figure out how to
+shift the matrices so that the correct probabilities are coming out of the RNN. Similarly we can imagine
+how to scale up the training of the model over larger training dataset.</p>
+<p><a name='multi'></a></p>
+<h2 id="multilayer-rnns">Multilayer RNNs<a class="headerlink" href="#multilayer-rnns" title="Permanent link">⚓︎</a></h2>
+<p>So far we have only shown RNNs with just one layer. However, we're not limited to only a single layer architectures.
+One of the ways, RNNs are used today is in more complex manner. RNNs can be stacked together in multiple layers,
+which gives more depth, and empirically deeper architectures tend to work better (Figure 4).</p>
+<div class="fig figcenter fighighlight">
+  <img src="/assets/rnn/multilayer_rnn.png" width="40%" >
+  <div class="figcaption">Figure 4. Multilayer RNN example.</div>
+</div>
+
+<p>For example, in Figure 4, there are three separate RNNs each with their own set of weights. Three RNNs
+are stacked on top of each other, so the input of the second RNN (second RNN layer in Figure 4) is the
+vector of the hidden state vector of the first RNN (first RNN layer in Figure 4). All stacked RNNs
+are trained jointly, and the diagram in Figure 4 represents one computational graph.</p>
+<p><a name='lstm'></a></p>
+<h2 id="long-short-term-memory-lstm">Long-Short Term Memory (LSTM)<a class="headerlink" href="#long-short-term-memory-lstm" title="Permanent link">⚓︎</a></h2>
+<p>So far we have seen only a simple recurrence formula for the Vanilla RNN. In practice, we actually will
+rarely ever use Vanilla RNN formula. Instead, we will use what we call a Long-Short Term Memory (LSTM)
+RNN.</p>
+<h3 id="vanilla-rnn-gradient-flow-vanishing-gradient-problem">Vanilla RNN Gradient Flow &amp; Vanishing Gradient Problem<a class="headerlink" href="#vanilla-rnn-gradient-flow-vanishing-gradient-problem" title="Permanent link">⚓︎</a></h3>
+<p>An RNN block takes in input <span class="arithmatex">\(<span class="arithmatex">\(x_t\)</span>\)</span> and previous hidden representation <span class="arithmatex">\(<span class="arithmatex">\(h_{t-1}\)</span>\)</span> and learn a transformation, which is then passed through tanh to produce the hidden representation <span class="arithmatex">\(<span class="arithmatex">\(h_{t}\)</span>\)</span> for the next time step and output <span class="arithmatex">\(<span class="arithmatex">\(y_{t}\)</span>\)</span> as shown in the equation below.</p>
+<div class="arithmatex">\[ h_t = tanh(W_{hh}h_{t-1} + W_{xh}x_t) \]</div>
+<p>For the back propagation, Let's examine how the output at the very last timestep affects the weights at the very first time step.
+The partial derivative of <span class="arithmatex">\(<span class="arithmatex">\(h_t\)</span>\)</span> with respect to <span class="arithmatex">\(<span class="arithmatex">\(h_{t-1}\)</span>\)</span> is written as: 
+$$ \frac{\partial h_t}{\partial h_{t-1}} =  tanh^{'}(W_{hh}h_{t-1} + W_{xh}x_t)W_{hh} $$</p>
+<p>We update the weights <span class="arithmatex">\(<span class="arithmatex">\(W_{hh}\)</span>\)</span> by getting the derivative of the loss at the very last time step <span class="arithmatex">\(<span class="arithmatex">\(L_{t}\)</span>\)</span> with respect to <span class="arithmatex">\(<span class="arithmatex">\(W_{hh}\)</span>\)</span>. </p>
+<div class="arithmatex">\[
+\begin{aligned}
+\frac{\partial L_{t}}{\partial W_{hh}} = \frac{\partial L_{t}}{\partial h_{t}} \frac{\partial h_{t}}{\partial h_{t-1} } \dots \frac{\partial h_{1}}{\partial W_{hh}} \\
+= \frac{\partial L_{t}}{\partial h_{t}}(\prod_{t=2}^{T} \frac{\partial h_{t}}{\partial  h_{t-1}})\frac{\partial h_{1}}{\partial W_{hh}} \\
+= \frac{\partial L_{t}}{\partial h_{t}}(\prod_{t=2}^{T}  tanh^{'}(W_{hh}h_{t-1} + W_{xh}x_t)W_{hh}^{T-1})\frac{\partial h_{1}}{\partial W_{hh}} \\
+\end{aligned}
+\]</div>
+<ul>
+<li>
+<p><strong>Vanishing gradient:</strong> We see that <span class="arithmatex">\(<span class="arithmatex">\(tanh^{'}(W_{hh}h_{t-1} + W_{xh}x_t)\)</span>\)</span> will almost always be less than 1 because tanh is always between negative one and one. Thus, as <span class="arithmatex">\(<span class="arithmatex">\(t\)</span>\)</span> gets larger (i.e. longer timesteps),  the gradient ($$\frac{\partial L_{t}}{\partial W} $$) will descrease in value and get close to zero. 
+This will lead to vanishing gradient problem, where gradients at future time steps rarely impact gradients at the very first time step. This is problematic when we model long sequence of inputs because the updates will be extremely slow. </p>
+</li>
+<li>
+<p><strong>Removing non-linearity (tanh):</strong> If we remove non-linearity (tanh) to solve the vanishing gradient problem, then we will be left with<br />
+$$
+\begin{aligned}
+\frac{\partial L_{t}}{\partial W} = \frac{\partial L_{t}}{\partial h_{t}}(\prod_{t=2}^{T} W_{hh}^{T-1})\frac{\partial h_{1}}{\partial W} 
+\end{aligned}
+$$</p>
+<ul>
+<li>Exploding gradients: If the largest singular value of W_{hh} is greater than 1, then the gradients will blow up and the model will get very large gradients coming back from future time steps. Exploding gradient often leads to getting gradients that are NaNs. </li>
+<li>Vanishing gradients: If the laregest singular value of W_{hh} is smaller than 1, then we will have vanishing gradient problem as mentioned above which will significantly slow down learning.   </li>
+</ul>
+</li>
+</ul>
+<p>In practice, we can treat the exploding gradient problem through gradient clipping, which is clipping large gradient values to a maximum threshold. However, since vanishing gradient problem still exists in cases where largest singular value of W_{hh} matrix is less than one, LSTM was designed to avoid this problem. </p>
+<h3 id="lstm-formulation">LSTM Formulation<a class="headerlink" href="#lstm-formulation" title="Permanent link">⚓︎</a></h3>
+<p>The following is the precise formulation for LSTM. On step <span class="arithmatex">\(<span class="arithmatex">\(t\)</span>\)</span>, there is a hidden state <span class="arithmatex">\(<span class="arithmatex">\(h_t\)</span>\)</span> and
+a cell state <span class="arithmatex">\(<span class="arithmatex">\(c_t\)</span>\)</span>. Both <span class="arithmatex">\(<span class="arithmatex">\(h_t\)</span>\)</span> and <span class="arithmatex">\(<span class="arithmatex">\(c_t\)</span>\)</span> are vectors of size <span class="arithmatex">\(<span class="arithmatex">\(n\)</span>\)</span>. One distinction of LSTM from
+Vanilla RNN is that LSTM has this additional <span class="arithmatex">\(<span class="arithmatex">\(c_t\)</span>\)</span> cell state, and intuitively it can be thought of as
+<span class="arithmatex">\(<span class="arithmatex">\(c_t\)</span>\)</span> stores long-term information. LSTM can read, erase, and write information to and from this <span class="arithmatex">\(<span class="arithmatex">\(c_t\)</span>\)</span> cell.
+The way LSTM alters <span class="arithmatex">\(<span class="arithmatex">\(c_t\)</span>\)</span> cell is through three special gates: <span class="arithmatex">\(<span class="arithmatex">\(i, f, o\)</span>\)</span> which correspond to “input”,
+“forget”, and “output” gates. The values of these gates vary from closed (0) to open (1). All <span class="arithmatex">\(<span class="arithmatex">\(i, f, o\)</span>\)</span>
+gates are vectors of size <span class="arithmatex">\(<span class="arithmatex">\(n\)</span>\)</span>.</p>
+<p>At every timestep we have an input vector <span class="arithmatex">\(<span class="arithmatex">\(x_t\)</span>\)</span>, previous hidden state <span class="arithmatex">\(<span class="arithmatex">\(h_{t-1}\)</span>\)</span>, previous cell state <span class="arithmatex">\(<span class="arithmatex">\(c_{t-1}\)</span>\)</span>,
+and LSTM computes the next hidden state <span class="arithmatex">\(<span class="arithmatex">\(h_t\)</span>\)</span>, and next cell state <span class="arithmatex">\(<span class="arithmatex">\(c_t\)</span>\)</span> at timestep <span class="arithmatex">\(<span class="arithmatex">\(t\)</span>\)</span> as follows:</p>
+<div class="arithmatex">\[
+\begin{aligned}
+f_t &amp;= \sigma(W_{hf}h_{t_1} + W_{xf}x_t) \\
+i_t &amp;= \sigma(W_{hi}h_{t_1} + W_{xi}x_t) \\
+o_t &amp;= \sigma(W_{ho}h_{t_1} + W_{xo}x_t) \\
+g_t &amp;= \text{tanh}(W_{hg}h_{t_1} + W_{xg}x_t) \\
+\end{aligned}
+\]</div>
+<div class="fig figcenter">
+  <img src="/assets/rnn/lstm_mformula_1.png" width="50%" >
+</div>
+
+<div class="arithmatex">\[
+\begin{aligned}
+c_t &amp;= f_t \odot c_{t-1} + i_t \odot g_t \\
+h_t &amp;= o_t \odot \text{tanh}(c_t) \\
+\end{aligned}
+\]</div>
+<div class="fig figcenter">
+  <img src="/assets/rnn/lstm_mformula_2.png" width="40%" >
+</div>
+
+<p>where <span class="arithmatex">\(<span class="arithmatex">\(\odot\)</span>\)</span> is an element-wise Hadamard product. <span class="arithmatex">\(<span class="arithmatex">\(g_t\)</span>\)</span> in the above formulas is an intermediary
+calculation cache that's later used with <span class="arithmatex">\(<span class="arithmatex">\(o\)</span>\)</span> gate in the above formulas.</p>
+<p>Since all <span class="arithmatex">\(<span class="arithmatex">\(f, i, o\)</span>\)</span> gate vector values range from 0 to 1, because they were squashed by sigmoid function
+<span class="arithmatex">\(<span class="arithmatex">\(\sigma\)</span>\)</span>, when multiplied element-wise, we can see that:</p>
+<ul>
+<li><strong>Forget Gate:</strong> Forget gate <span class="arithmatex">\(<span class="arithmatex">\(f_t\)</span>\)</span> at time step <span class="arithmatex">\(<span class="arithmatex">\(t\)</span>\)</span> controls how much information needs to be "removed" from the previous cell state <span class="arithmatex">\(<span class="arithmatex">\(c_{t-1}\)</span>\)</span>. 
+This forget gate learns to erase hidden representations from the previous time steps, which is why LSTM will have two 
+hidden represtnations <span class="arithmatex">\(<span class="arithmatex">\(h_t\)</span>\)</span> and cell state <span class="arithmatex">\(<span class="arithmatex">\(c_t\)</span>\)</span>. This <span class="arithmatex">\(<span class="arithmatex">\(c_t\)</span>\)</span> will get propagated over time and learn whether to forget
+the previous cell state or not.</li>
+<li><strong>Input Gate:</strong> Input gate <span class="arithmatex">\(<span class="arithmatex">\(i_t\)</span>\)</span> at time step <span class="arithmatex">\(<span class="arithmatex">\(t\)</span>\)</span> controls how much information needs to be "added" to the next cell state <span class="arithmatex">\(<span class="arithmatex">\(c_t\)</span>\)</span> from previous hidden state <span class="arithmatex">\(<span class="arithmatex">\(h_{t-1}\)</span>\)</span> and input <span class="arithmatex">\(<span class="arithmatex">\(x_t\)</span>\)</span>. Instead of tanh, the "input" gate <span class="arithmatex">\(<span class="arithmatex">\(i\)</span>\)</span> has a sigmoid function, which converts inputs to values between zero and one.
+This serves as a switch, where values are either almost always zero or almost always one. This "input" gate decides whether to take the RNN output that is produced by the "gate" gate <span class="arithmatex">\(<span class="arithmatex">\(g\)</span>\)</span> and multiplies the output with input gate <span class="arithmatex">\(<span class="arithmatex">\(i\)</span>\)</span>.</li>
+<li><strong>Output Gate:</strong> Output gate <span class="arithmatex">\(<span class="arithmatex">\(o_t\)</span>\)</span> at time step <span class="arithmatex">\(<span class="arithmatex">\(t\)</span>\)</span> controls how much information needs to be "shown" as output in the current hidden state <span class="arithmatex">\(<span class="arithmatex">\(h_t\)</span>\)</span>. </li>
+</ul>
+<p>The key idea of LSTM is the cell state, the horizontal line running through between recurrent timesteps. You can imagine the cell
+state to be some kind of highway of information passing through straight down the entire chain, with
+only some minor linear interactions. With the formulation above, it's easy for information to just flow
+along this highway (Figure 5). Thus, even when there is a bunch of LSTMs stacked together, we can get an uninterrupted gradient flow where the gradients flow back through cell states instead of hidden states <span class="arithmatex">\(<span class="arithmatex">\(h\)</span>\)</span> without vanishing in every time step.</p>
+<p>This greatly fixes the gradient vanishing/exploding problem we have outlined above. Figure 5 also shows that gradient contains a vector of activations of the "forget" gate. This allows better control of gradients values by using suitable parameter updates of the "forget" gate.</p>
+<div class="fig figcenter fighighlight">
+  <img src="/assets/rnn/lstm_highway.png" width="70%" >
+  <div class="figcaption">Figure 5. LSTM cell state highway.</div>
+</div>
+
+<h3 id="does-lstm-solve-the-vanishing-gradient-problem">Does LSTM solve the vanishing gradient problem?<a class="headerlink" href="#does-lstm-solve-the-vanishing-gradient-problem" title="Permanent link">⚓︎</a></h3>
+<p>LSTM architecture makes it easier for the RNN to preserve information over many recurrent time steps. For example,
+if the forget gate is set to 1, and the input gate is set to 0, then the infomation of the cell state
+will always be preserved over many recurrent time steps. For a Vanilla RNN, in contrast, it's much harder to preserve information
+in hidden states in recurrent time steps by just making use of a single weight matrix.</p>
+<p>LSTMs do not guarantee that there is no vanishing/exploding gradient problems, but it does provide an
+easier way for the model to learn long-distance dependencies.</p>
+
+  <hr>
+<div class="md-source-file">
+  <small>
+    
+      最后更新:
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 16, 2023</span>
+      
+        <br>
+        创建日期:
+        <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 16, 2023</span>
+      
+    
+  </small>
+</div>
+
+
+  
+
+
+
+  <form class="md-feedback" name="feedback" hidden>
+    <fieldset>
+      <legend class="md-feedback__title">
+        对当前页面有任何疑问吗？
+      </legend>
+      <div class="md-feedback__inner">
+        <div class="md-feedback__list">
+          
+            <button class="md-feedback__icon md-icon" type="submit" title="This page was helpful" data-md-value="1">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 9v12H1V9h4m4 12a2 2 0 0 1-2-2V9c0-.55.22-1.05.59-1.41L14.17 1l1.06 1.06c.27.27.44.64.44 1.05l-.03.32L14.69 8H21a2 2 0 0 1 2 2v2c0 .26-.05.5-.14.73l-3.02 7.05C19.54 20.5 18.83 21 18 21H9m0-2h9.03L21 12v-2h-8.79l1.13-5.32L9 9.03V19Z"/></svg>
+            </button>
+          
+            <button class="md-feedback__icon md-icon" type="submit" title="This page could be improved" data-md-value="0">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 15V3h4v12h-4M15 3a2 2 0 0 1 2 2v10c0 .55-.22 1.05-.59 1.41L9.83 23l-1.06-1.06c-.27-.27-.44-.64-.44-1.06l.03-.31.95-4.57H3a2 2 0 0 1-2-2v-2c0-.26.05-.5.14-.73l3.02-7.05C4.46 3.5 5.17 3 6 3h9m0 2H5.97L3 12v2h8.78l-1.13 5.32L15 14.97V5Z"/></svg>
+            </button>
+          
+        </div>
+        <div class="md-feedback__note">
+          
+            <div data-md-value="1" hidden>
+              
+              
+                
+              
+              感谢您的反馈！
+            </div>
+          
+            <div data-md-value="0" hidden>
+              
+              
+                
+              
+              感谢您的反馈！请点击这里<a href="https://github.com/EanYang7/cs231n/issues" target="_blank" rel="noopener">这里</a>提供问题反馈.
+            </div>
+          
+        </div>
+      </div>
+    </fieldset>
+  </form>
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            回到页面顶部
+          </button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/EanYang7/cs231n" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.top", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.path", "toc.follow", "content.action.edit", "content.action.view", "content.code.copy"], "search": "../assets/javascripts/workers/search.dfff1995.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.dff1b7c8.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,1571 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="CS231n: Deep Learning for Computer Vision">
+      
+      
+      
+        <link rel="canonical" href="https://eanyang7.github.io/cs231n/courses/neural_network/optimization-2/">
+      
+      
+        <link rel="prev" href="../optimization-1/">
+      
+      
+        <link rel="next" href="../neural-networks-1/">
+      
+      
+      <link rel="icon" href="../../../logo.jpg">
+      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.3.1">
+    
+    
+      
+        <title>反向传播 - CS231n</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.046329b4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.85d0ee34.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function n(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],n("js",new Date),n("config","G-5F8XNH7BCX"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){this.value&&n("event","search",{search_term:this.value})}),document$.subscribe(function(){var a=document.forms.feedback;if(void 0!==a)for(var e of a.querySelectorAll("[type=submit]"))e.addEventListener("click",function(e){e.preventDefault();var t=document.location.pathname,e=this.getAttribute("data-md-value");n("event","feedback",{page:t,data:e}),a.firstElementChild.disabled=!0;e=a.querySelector(".md-feedback__note [data-md-value='"+e+"']");e&&(e.hidden=!1)}),a.hidden=!1}),location$.subscribe(function(e){n("config","G-5F8XNH7BCX",{page_path:e.pathname})})});var e=document.createElement("script");e.async=!0,e.src="https://www.googletagmanager.com/gtag/js?id=G-5F8XNH7BCX",document.getElementById("__analytics").insertAdjacentElement("afterEnd",e)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../.." title="CS231n" class="md-header__button md-logo" aria-label="CS231n" data-md-component="logo">
+      
+  <img src="../../../logo.jpg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CS231n
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              反向传播
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换为暗黑模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换为暗黑模式" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换为浅色模式"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="切换为浅色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="选择当前语言">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04M18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12m-2.62 7 1.62-4.33L19.12 17h-3.24Z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="/cs231n/" hreflang="zh" class="md-select__link">
+              中文
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="https://cs231n.github.io/" hreflang="en" class="md-select__link">
+              English(源网站)
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/EanYang7/cs231n" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    EanYang7/cs231n
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../.." class="md-tabs__link">
+          
+  
+  首页
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../preparation/setup/" class="md-tabs__link">
+          
+  
+  课程
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../assignments/2023/assignment1/" class="md-tabs__link">
+          
+  
+  任务
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="CS231n" class="md-nav__button md-logo" aria-label="CS231n" data-md-component="logo">
+      
+  <img src="../../../logo.jpg" alt="logo">
+
+    </a>
+    CS231n
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/EanYang7/cs231n" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    EanYang7/cs231n
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    首页
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            首页
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CS231n 卷积神经网络视觉识别
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    课程
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            课程
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" >
+        
+          <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    准备工作
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            准备工作
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../preparation/setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    软件设置
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../preparation/python-numpy-tutorial/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Python/Numpy教程
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" checked>
+        
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    神经网络
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            神经网络
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../classification/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    图像分类
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../linear-classify/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    线性分类
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../optimization-1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    优化：随机梯度下降
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    反向传播
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    反向传播
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    介绍
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    梯度的简单表达和解释
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    使用链式法则的复合表达式
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    反向传播的直观理解
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sigmoid" class="md-nav__link">
+    模块化：Sigmoid示例
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    实践中的反向传播：分阶段计算
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    反向传播中的模式
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    矢量化操作的梯度
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    总结
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    参考资料
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2_5" >
+        
+          <label class="md-nav__link" for="__nav_2_2_5" id="__nav_2_2_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    神经网络
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            神经网络
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../neural-networks-1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    创建结构
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../neural-networks-2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    创建数据和损失
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../neural-networks-3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    学习和评估
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../neural-networks-case-study/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    最小神经网络案例研究
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    卷积神经网络
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            卷积神经网络
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CNN/convolutional-networks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    结构、卷积/池化层
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CNN/understanding-cnn/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    理解与可视化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CNN/transfer-learning/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    迁移学习与微调
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    任务
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            任务
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../assignments/2023/assignment1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    任务1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../assignments/2023/assignment2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    任务2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../assignments/2023/assignment3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    任务2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    介绍
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    梯度的简单表达和解释
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    使用链式法则的复合表达式
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    反向传播的直观理解
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sigmoid" class="md-nav__link">
+    模块化：Sigmoid示例
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    实践中的反向传播：分阶段计算
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    反向传播中的模式
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    矢量化操作的梯度
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    总结
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    参考资料
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+    <a href="https://github.com/EanYang7/cs231n/edit/dev/docs/courses/neural_network/optimization-2.md" title="编辑此页" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/EanYang7/cs231n/raw/dev/docs/courses/neural_network/optimization-2.md" title="查看本页的源代码" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5Z"/></svg>
+    </a>
+  
+
+
+  <h1>反向传播</h1>
+
+<h3 id="_1">介绍<a class="headerlink" href="#_1" title="Permanent link">⚓︎</a></h3>
+<p><strong>动机</strong>. 在本节中，我们将深入理解<strong>反向传播backpropagation</strong>的直观含义，它是通过递归应用<strong>链式法则chain rule</strong>来计算表达式的梯度的方法。理解这一过程及其细微之处对于您理解、有效开发、设计和调试神经网络至关重要。</p>
+<p><strong>问题描述</strong>. 本节研究的核心问题如下：我们给定了某个函数 <span class="arithmatex">\(f(x)\)</span> ，其中 <span class="arithmatex">\(x\)</span> 是输入向量，我们想计算 <span class="arithmatex">\(f\)</span> 在 <span class="arithmatex">\(x\)</span> 处的梯度（即 <span class="arithmatex">\(\nabla f(x)\)</span> ）。</p>
+<p><strong>动机</strong>. 请记住，我们对此问题感兴趣的主要原因是，在神经网络的特定情况下，<span class="arithmatex">\(f\)</span> 将对应于损失函数（ <span class="arithmatex">\(L\)</span> ），而输入 <span class="arithmatex">\(x\)</span> 将由训练数据和神经网络权重组成。例如，损失可能是SVM损失函数，输入既包括训练数据 <span class="arithmatex">\((x_i,y_i), i=1 \ldots N\)</span> ，也包括权重和偏差 <span class="arithmatex">\(W,b\)</span>。 请注意（如机器学习中通常的情况），我们认为训练数据是给定和固定的，权重是我们可以控制的变量。因此，尽管我们可以很容易地使用反向传播来计算输入示例 <span class="arithmatex">\(x_i\)</span> 的梯度，但实际上我们通常只计算参数（例如 <span class="arithmatex">\(W,b\)</span>）的梯度，以便我们可以使用它进行参数更新。然而，正如我们稍后在课堂上将看到的，<span class="arithmatex">\(x_i\)</span> 上的梯度有时仍然很有用，例如用于可视化和解释神经网络可能在做什么。</p>
+<p>如果你参加这个课程，并且对使用链式法则推导梯度感到很舒适，我们仍然希望鼓励你至少浏览这一部分，因为它从实值电路的反向流中提供了一个关于反向传播的不常见视角，你从中获得的任何洞察都可能在整个课程中对你有所帮助。</p>
+<h3 id="_2">梯度的简单表达和解释<a class="headerlink" href="#_2" title="Permanent link">⚓︎</a></h3>
+<p>让我们从简单的情况开始，以便我们可以建立更复杂表达式的符号和约定。考虑一个简单的两个数字相乘的函数 <span class="arithmatex">\(f(x,y) = x y\)</span>。通过简单的微积分，可以得出对于任一输入的偏导数：</p>
+<div class="arithmatex">\[
+f(x,y) = x y \hspace{0.5in} \rightarrow \hspace{0.5in} \frac{\partial f}{\partial x} = y \hspace{0.5in} \frac{\partial f}{\partial y} = x
+\]</div>
+<p><strong>解释</strong>：记住导数告诉你什么：它们指示了一个函数在某一点附近无限小区域内相对于该变量的变化速率：</p>
+<div class="arithmatex">\[
+\frac{df(x)}{dx} = \lim_{h\ \to 0} \frac{f(x + h) - f(x)}{h}
+\]</div>
+<p>技术上要注意的是，左边的除号与右边的不同，它不表示除法。相反，这个符号表示运算符 <span class="arithmatex">\(\frac{d}{dx}\)</span> 应用于函数 <span class="arithmatex">\(f\)</span>，并返回一个不同的函数（导数）。一个很好的理解上述表达式的方式是，当 <span class="arithmatex">\(h\)</span> 非常小的时候，函数可以很好地近似为一条直线，而导数就是它的斜率。换句话说，每个变量的导数告诉你整个表达式对它的值的敏感度。例如，如果 <span class="arithmatex">\(x = 4, y = -3\)</span>，那么 <span class="arithmatex">\(f(x,y) = -12\)</span>，并且对于 <span class="arithmatex">\(x\)</span> 的导数 <span class="arithmatex">\(\frac{\partial f}{\partial x} = -3\)</span>。这告诉我们，如果我们将这个变量的值增加一个微小的量，由于负号的作用，整个表达式的效果将减小（减小了三倍），这可以通过重新排列上面的方程 (<span class="arithmatex">\(f(x + h) = f(x) + h \frac{df(x)}{dx}\)</span> ) 来看出。类似地，由于 <span class="arithmatex">\(\frac{\partial f}{\partial y} = 4\)</span>，我们期望通过一些非常小的量 <span class="arithmatex">\(h\)</span> 增加 <span class="arithmatex">\(y\)</span> 的值也会增加函数的输出（由于正号），增加的量为 <span class="arithmatex">\(4h\)</span>。</p>
+<blockquote>
+<p><strong>每个变量的导数告诉你整个表达式对其值的敏感度。</strong></p>
+</blockquote>
+<p>正如前面提到的，梯度 <span class="arithmatex">\(\nabla f\)</span> 是偏导数的向量，因此我们有 <span class="arithmatex">\(\nabla f = [\frac{\partial f}{\partial x}, \frac{\partial f}{\partial y}] = [y, x]\)</span>。尽管梯度在技术上是一个向量，但为了简单起见，我们通常会使用诸如 <em>"x 上的梯度"</em> 这样的术语，而不是技术上正确的 <em>"x 上的偏导数"</em>。</p>
+<p>我们还可以推导出加法运算的导数：</p>
+<div class="arithmatex">\[
+f(x,y) = x + y \hspace{0.5in} \rightarrow \hspace{0.5in} \frac{\partial f}{\partial x} = 1 \hspace{0.5in} \frac{\partial f}{\partial y} = 1
+\]</div>
+<p>也就是说，无论 <span class="arithmatex">\(x,y\)</span> 的值是什么，<span class="arithmatex">\(x\)</span> 和 <span class="arithmatex">\(y\)</span> 的导数都是一。这是有道理的，因为增加 <span class="arithmatex">\(x\)</span> 或 <span class="arithmatex">\(y\)</span> 中的任何一个都会增加 <span class="arithmatex">\(f\)</span> 的输出，并且这种增加的速度不受 <span class="arithmatex">\(x,y\)</span> 的实际值的影响（与上面的乘法的情况不同）。我们在课程中会经常使用的最后一个函数是 <em>最大值max</em> 运算：</p>
+<div class="arithmatex">\[
+f(x,y) = \max(x, y) \hspace{0.5in} \rightarrow \hspace{0.5in} \frac{\partial f}{\partial x} = \mathbb{1}(x &gt;= y) \hspace{0.5in} \frac{\partial f}{\partial y} = \mathbb{1}(y &gt;= x)
+\]</div>
+<p>也就是说，(子)梯度在较大的输入上为1，在另一个输入上为0。直观地说，如果输入是 <span class="arithmatex">\(x = 4, y = 2\)</span>，那么最大值是4，函数对于 <span class="arithmatex">\(y\)</span> 的设置不敏感。也就是说，如果我们将其增加一个微小的量 <span class="arithmatex">\(h\)</span>，函数将继续输出4，因此梯度为零：没有影响。当然，如果我们将 <span class="arithmatex">\(y\)</span> 增加一个大量（例如大于2），那么 <span class="arithmatex">\(f\)</span> 的值会发生变化，但导数不告诉我们关于这种大幅度变化对函数输入的影响。它们只提供了关于输入的微小、无限小变化的信息，正如在其定义中所示，由 <span class="arithmatex">\(\lim_{h \rightarrow 0}\)</span> 表示。</p>
+<h3 id="_3">使用链式法则的复合表达式<a class="headerlink" href="#_3" title="Permanent link">⚓︎</a></h3>
+<p>现在让我们考虑涉及多个组合函数的更复杂表达式，比如 <span class="arithmatex">\(f(x, y, z) = (x + y)z\)</span>。这个表达式仍然足够简单，可以直接进行求导，但我们将采取一种特定的方法，有助于理解反向传播背后的直觉。特别要注意，这个表达式可以分解为两个表达式：<span class="arithmatex">\(q = x + y\)</span> 和 <span class="arithmatex">\(f = qz\)</span>。此外，我们知道如何分别计算这两个表达式的导数，就像在前一节中看到的那样。<span class="arithmatex">\(f\)</span> 只是 <span class="arithmatex">\(q\)</span> 和 <span class="arithmatex">\(z\)</span> 的乘法，所以 <span class="arithmatex">\(\frac{\partial f}{\partial q} = z, \frac{\partial f}{\partial z} = q\)</span>，而 <span class="arithmatex">\(q\)</span> 是 <span class="arithmatex">\(x\)</span> 和 <span class="arithmatex">\(y\)</span> 的加法，所以 <span class="arithmatex">\(\frac{\partial q}{\partial x} = 1, \frac{\partial q}{\partial y} = 1\)</span>。然而，我们不一定关心中间值 <span class="arithmatex">\(q\)</span> 的梯度 —— <span class="arithmatex">\(\frac{\partial f}{\partial q}\)</span> 的值是无用的。相反，我们最终关心的是 <span class="arithmatex">\(f\)</span> 相对于其输入 <span class="arithmatex">\(x, y, z\)</span> 的梯度。<strong>链式法则</strong> 告诉我们正确将这些梯度表达式"链"在一起的方法是通过乘法。例如，<span class="arithmatex">\(\frac{\partial f}{\partial x} = \frac{\partial f}{\partial q} \frac{\partial q}{\partial x}\)</span>。在实践中，这只是两个保存两个梯度的数的乘法。让我们通过一个示例来看看这一点：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># set some inputs</span>
+<span class="n">x</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="p">;</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span> <span class="n">z</span> <span class="o">=</span> <span class="o">-</span><span class="mi">4</span>
+
+<span class="c1"># perform the forward pass</span>
+<span class="n">q</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="c1"># q becomes 3</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">q</span> <span class="o">*</span> <span class="n">z</span> <span class="c1"># f becomes -12</span>
+
+<span class="c1"># perform the backward pass (backpropagation) in reverse order:</span>
+<span class="c1"># first backprop through f = q * z</span>
+<span class="n">dfdz</span> <span class="o">=</span> <span class="n">q</span> <span class="c1"># df/dz = q, so gradient on z becomes 3</span>
+<span class="n">dfdq</span> <span class="o">=</span> <span class="n">z</span> <span class="c1"># df/dq = z, so gradient on q becomes -4</span>
+<span class="n">dqdx</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">dqdy</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="c1"># now backprop through q = x + y</span>
+<span class="n">dfdx</span> <span class="o">=</span> <span class="n">dfdq</span> <span class="o">*</span> <span class="n">dqdx</span>  <span class="c1"># The multiplication here is the chain rule!</span>
+<span class="n">dfdy</span> <span class="o">=</span> <span class="n">dfdq</span> <span class="o">*</span> <span class="n">dqdy</span>  
+</code></pre></div>
+<p>我们最终得到了变量 <code>[dfdx, dfdy, dfdz]</code> 中的梯度，这告诉我们变量 <code>x, y, z</code> 对 <code>f</code> 的敏感度！这是反向传播的最简单示例。在接下来的内容中，我们将使用更简洁的符号，省略 <code>df</code> 前缀。例如，我们将简单地写 <code>dq</code> 而不是 <code>dfdq</code>，并始终假设梯度是针对最终输出进行计算的。</p>
+<p>这个计算也可以通过电路图circuit diagram很好地进行可视化：</p>
+<div class="fig figleft fighighlight">
+<svg style="max-width: 420px" viewbox="0 0 420 220"><defs><marker id="arrowhead" refX="6" refY="2" markerWidth="6" markerHeight="4" orient="auto"><path d="M 0,0 V 4 L6,2 Z"></path></marker></defs><line x1="40" y1="30" x2="110" y2="30" stroke="black" stroke-width="1"></line><text x="45" y="24" font-size="16" fill="green">-2</text><text x="45" y="47" font-size="16" fill="red">-4</text><text x="35" y="24" font-size="16" text-anchor="end" fill="black">x</text><line x1="40" y1="100" x2="110" y2="100" stroke="black" stroke-width="1"></line><text x="45" y="94" font-size="16" fill="green">5</text><text x="45" y="117" font-size="16" fill="red">-4</text><text x="35" y="94" font-size="16" text-anchor="end" fill="black">y</text><line x1="40" y1="170" x2="110" y2="170" stroke="black" stroke-width="1"></line><text x="45" y="164" font-size="16" fill="green">-4</text><text x="45" y="187" font-size="16" fill="red">3</text><text x="35" y="164" font-size="16" text-anchor="end" fill="black">z</text><line x1="210" y1="65" x2="280" y2="65" stroke="black" stroke-width="1"></line><text x="215" y="59" font-size="16" fill="green">3</text><text x="215" y="82" font-size="16" fill="red">-4</text><text x="205" y="59" font-size="16" text-anchor="end" fill="black">q</text><circle cx="170" cy="65" fill="white" stroke="black" stroke-width="1" r="20"></circle><text x="170" y="70" font-size="20" fill="black" text-anchor="middle">+</text><line x1="110" y1="30" x2="150" y2="65" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line><line x1="110" y1="100" x2="150" y2="65" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line><line x1="190" y1="65" x2="210" y2="65" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line><line x1="380" y1="117" x2="450" y2="117" stroke="black" stroke-width="1"></line><text x="385" y="111" font-size="16" fill="green">-12</text><text x="385" y="134" font-size="16" fill="red">1</text><text x="375" y="111" font-size="16" text-anchor="end" fill="black">f</text><circle cx="340" cy="117" fill="white" stroke="black" stroke-width="1" r="20"></circle><text x="340" y="127" font-size="20" fill="black" text-anchor="middle">*</text><line x1="280" y1="65" x2="320" y2="117" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line><line x1="110" y1="170" x2="320" y2="117" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line><line x1="360" y1="117" x2="380" y2="117" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line></svg>
+
+<div style="clear:both;"></div>
+
+</div>
+
+<blockquote>
+<p>实值real-valued的<i>"电路"</i>在左侧展示了计算的可视化表示。<b>正向传播forward pass</b>从输入到输出计算值（用绿色显示）。然后<b>反向传播backward pass</b>从末端开始，并递归地应用链式法则来计算梯度（用红色显示），直到电路的输入。可以将梯度看作是通过电路反向流动的。</p>
+</blockquote>
+<h3 id="_4">反向传播的直观理解<a class="headerlink" href="#_4" title="Permanent link">⚓︎</a></h3>
+<p>注意，反向传播是一个美妙的局部过程。电路图中的每个门都接收一些输入，并可以立即计算两件事：1. 它的输出值和 2. 其输出相对于其输入的<em>局部</em>梯度。注意，门可以完全独立地做到这一点，而不需要了解它们所嵌入的整个电路的任何细节。然而，一旦正向传播结束，在反向传播过程中，该门最终会了解到其输出值对整个电路最终输出的梯度。链式法则告诉我们，门应该将该梯度乘以它通常为所有输入计算的每个梯度。</p>
+<blockquote>
+<p>由于链式法则导致的这种额外乘法（对于每个输入）可以将一个单一且相对无用的门变成一个复杂电路（如整个神经网络）中的一个齿轮cog。</p>
+</blockquote>
+<p>让我们再次参考例子，以直观地了解这是如何工作的。加法门接收输入 [-2, 5] 并计算输出 3。由于门正在进行加法运算，其对其两个输入的局部梯度都是 +1。电路的其余部分计算出最终值，即 -12。在应用链式法则递归反向通过电路的反向传播过程中，加法门（是乘法门的一个输入）了解到其输出的梯度是 -4。如果我们将电路拟人化anthropomorphize为希望输出更高的值（这有助于直观理解），那么我们可以认为电路“希望”加法门的输出更低（由于负号），并且有 <em>4 的力量</em>。为了继续递归并链接梯度，加法门取得该梯度并将其乘以其输入的所有局部梯度（使 <strong>x</strong> 和 <strong>y</strong> 上的梯度都变为 1 * -4 = -4）。注意到这有预期的效果：如果 <strong>x, y</strong> 减少（响应于他们的负梯度），那么加法门的输出就会减少，这反过来又使乘法门的输出增加。</p>
+<p>因此，反向传播可以被认为是门通过梯度信号彼此通信，它们是否希望其输出增加或减少（以及多强烈），以使最终输出值更高。</p>
+<h3 id="sigmoid">模块化：Sigmoid示例<a class="headerlink" href="#sigmoid" title="Permanent link">⚓︎</a></h3>
+<p>我们上面介绍的门是相对随意的。任何可微分的函数都可以作为门，我们可以将多个门组合成一个单一的门，或者在方便的时候将一个函数分解成多个门。让我们看看另一个表达式，以说明这一点：</p>
+<div class="arithmatex">\[
+f(w,x) = \frac{1}{1+e^{-(w_0x_0 + w_1x_1 + w_2)}}
+\]</div>
+<p>正如我们将在课堂上看到的，这个表达式描述了一个使用 <em>sigmoid激活</em> 函数的二维神经元（具有输入 <strong>x</strong> 和权重 <strong>w</strong>）。但现在，让我们简单地将其视为从输入 <em>w,x</em> 到一个单一数字的函数。这个函数由多个门组成。除了上面描述的那些门（add、mul、max）之外，还有四个门：</p>
+<div class="arithmatex">\[
+f(x) = \frac{1}{x} 
+\hspace{1in} \rightarrow \hspace{1in} 
+\frac{df}{dx} = -1/x^2 
+\\\\
+f_c(x) = c + x
+\hspace{1in} \rightarrow \hspace{1in} 
+\frac{df}{dx} = 1 
+\\\\
+f(x) = e^x
+\hspace{1in} \rightarrow \hspace{1in} 
+\frac{df}{dx} = e^x
+\\\\
+f_a(x) = ax
+\hspace{1in} \rightarrow \hspace{1in} 
+\frac{df}{dx} = a
+\]</div>
+<p>其中函数 <span class="arithmatex">\(f_c, f_a\)</span> 分别通过常数 <span class="arithmatex">\(c\)</span> 平移输入和通过常数 <span class="arithmatex">\(a\)</span> 缩放输入。从技术上讲，它们是加法和乘法的特殊情况，但我们在这里将它们引入为（新的）一元门，因为我们不需要常数 <span class="arithmatex">\(c,a\)</span> 的梯度。完整的电路如下所示：</p>
+<div class="fig figleft fighighlight">
+<svg style="max-width: 799px" viewbox="0 0 799 306"><g transform="scale(0.8)"><defs><marker id="arrowhead" refX="6" refY="2" markerWidth="6" markerHeight="4" orient="auto"><path d="M 0,0 V 4 L6,2 Z"></path></marker></defs><line x1="50" y1="30" x2="90" y2="30" stroke="black" stroke-width="1"></line><text x="55" y="24" font-size="16" fill="green">2.00</text><text x="55" y="47" font-size="16" fill="red">-0.20</text><text x="45" y="24" font-size="16" text-anchor="end" fill="black">w0</text><line x1="50" y1="100" x2="90" y2="100" stroke="black" stroke-width="1"></line><text x="55" y="94" font-size="16" fill="green">-1.00</text><text x="55" y="117" font-size="16" fill="red">0.39</text><text x="45" y="94" font-size="16" text-anchor="end" fill="black">x0</text><line x1="50" y1="170" x2="90" y2="170" stroke="black" stroke-width="1"></line><text x="55" y="164" font-size="16" fill="green">-3.00</text><text x="55" y="187" font-size="16" fill="red">-0.39</text><text x="45" y="164" font-size="16" text-anchor="end" fill="black">w1</text><line x1="50" y1="240" x2="90" y2="240" stroke="black" stroke-width="1"></line><text x="55" y="234" font-size="16" fill="green">-2.00</text><text x="55" y="257" font-size="16" fill="red">-0.59</text><text x="45" y="234" font-size="16" text-anchor="end" fill="black">x1</text><line x1="50" y1="310" x2="90" y2="310" stroke="black" stroke-width="1"></line><text x="55" y="304" font-size="16" fill="green">-3.00</text><text x="55" y="327" font-size="16" fill="red">0.20</text><text x="45" y="304" font-size="16" text-anchor="end" fill="black">w2</text><line x1="170" y1="65" x2="210" y2="65" stroke="black" stroke-width="1"></line><text x="175" y="59" font-size="16" fill="green">-2.00</text><text x="175" y="82" font-size="16" fill="red">0.20</text><circle cx="130" cy="65" fill="white" stroke="black" stroke-width="1" r="20"></circle><text x="130" y="75" font-size="20" fill="black" text-anchor="middle">*</text><line x1="90" y1="30" x2="110" y2="65" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line><line x1="90" y1="100" x2="110" y2="65" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line><line x1="150" y1="65" x2="170" y2="65" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line><line x1="170" y1="205" x2="210" y2="205" stroke="black" stroke-width="1"></line><text x="175" y="199" font-size="16" fill="green">6.00</text><text x="175" y="222" font-size="16" fill="red">0.20</text><circle cx="130" cy="205" fill="white" stroke="black" stroke-width="1" r="20"></circle><text x="130" y="215" font-size="20" fill="black" text-anchor="middle">*</text><line x1="90" y1="170" x2="110" y2="205" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line><line x1="90" y1="240" x2="110" y2="205" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line><line x1="150" y1="205" x2="170" y2="205" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line><line x1="290" y1="135" x2="330" y2="135" stroke="black" stroke-width="1"></line><text x="295" y="129" font-size="16" fill="green">4.00</text><text x="295" y="152" font-size="16" fill="red">0.20</text><circle cx="250" cy="135" fill="white" stroke="black" stroke-width="1" r="20"></circle><text x="250" y="140" font-size="20" fill="black" text-anchor="middle">+</text><line x1="210" y1="65" x2="230" y2="135" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line><line x1="210" y1="205" x2="230" y2="135" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line><line x1="270" y1="135" x2="290" y2="135" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line><line x1="410" y1="222" x2="450" y2="222" stroke="black" stroke-width="1"></line><text x="415" y="216" font-size="16" fill="green">1.00</text><text x="415" y="239" font-size="16" fill="red">0.20</text><circle cx="370" cy="222" fill="white" stroke="black" stroke-width="1" r="20"></circle><text x="370" y="227" font-size="20" fill="black" text-anchor="middle">+</text><line x1="330" y1="135" x2="350" y2="222" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line><line x1="90" y1="310" x2="350" y2="222" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line><line x1="390" y1="222" x2="410" y2="222" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line><line x1="530" y1="222" x2="570" y2="222" stroke="black" stroke-width="1"></line><text x="535" y="216" font-size="16" fill="green">-1.00</text><text x="535" y="239" font-size="16" fill="red">-0.20</text><circle cx="490" cy="222" fill="white" stroke="black" stroke-width="1" r="20"></circle><text x="490" y="227" font-size="20" fill="black" text-anchor="middle">*-1</text><line x1="450" y1="222" x2="470" y2="222" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line><line x1="510" y1="222" x2="530" y2="222" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line><line x1="650" y1="222" x2="690" y2="222" stroke="black" stroke-width="1"></line><text x="655" y="216" font-size="16" fill="green">0.37</text><text x="655" y="239" font-size="16" fill="red">-0.53</text><circle cx="610" cy="222" fill="white" stroke="black" stroke-width="1" r="20"></circle><text x="610" y="227" font-size="20" fill="black" text-anchor="middle">exp</text><line x1="570" y1="222" x2="590" y2="222" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line><line x1="630" y1="222" x2="650" y2="222" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line><line x1="770" y1="222" x2="810" y2="222" stroke="black" stroke-width="1"></line><text x="775" y="216" font-size="16" fill="green">1.37</text><text x="775" y="239" font-size="16" fill="red">-0.53</text><circle cx="730" cy="222" fill="white" stroke="black" stroke-width="1" r="20"></circle><text x="730" y="227" font-size="20" fill="black" text-anchor="middle">+1</text><line x1="690" y1="222" x2="710" y2="222" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line><line x1="750" y1="222" x2="770" y2="222" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line><line x1="890" y1="222" x2="930" y2="222" stroke="black" stroke-width="1"></line><text x="895" y="216" font-size="16" fill="green">0.73</text><text x="895" y="239" font-size="16" fill="red">1.00</text><circle cx="850" cy="222" fill="white" stroke="black" stroke-width="1" r="20"></circle><text x="850" y="227" font-size="20" fill="black" text-anchor="middle">1/x</text><line x1="810" y1="222" x2="830" y2="222" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line><line x1="870" y1="222" x2="890" y2="222" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line></g></svg>
+<div style="clear:both;"></div>
+</div>
+
+<blockquote>
+<p>带有 sigmoid 激活函数的二维神经元的示例电路。输入是 [x0,x1]，神经元的（可学习的）权重是 [w0,w1,w2]。正如我们将在后面看到的，神经元计算输入的点积，然后通过 sigmoid 函数将其激活，使其范围在 0 到 1 之间。</p>
+</blockquote>
+<p>在上面的示例中，我们看到了一长串的函数应用，它们作用于 <strong>w,x</strong> 的点积的结果。这些操作实现的函数称为 <em>sigmoid 函数</em> <span class="arithmatex">\(\sigma(x)\)</span>。事实证明，sigmoid 函数关于其输入的导数在进行导数计算时（在分子中添加和减去 1 的有趣部分之后）会简化：</p>
+<div class="arithmatex">\[
+\sigma(x) = \frac{1}{1+e^{-x}} \\\\
+\rightarrow \hspace{0.3in} \frac{d\sigma(x)}{dx} = \frac{e^{-x}}{(1+e^{-x})^2} = \left( \frac{1 + e^{-x} - 1}{1 + e^{-x}} \right) \left( \frac{1}{1+e^{-x}} \right) 
+= \left( 1 - \sigma(x) \right) \sigma(x)
+\]</div>
+<p>正如我们所看到的，梯度的计算变得非常简化并且变得非常简单。例如，sigmoid 表达式接收输入 1.0 并在前向传播过程中计算输出 0.73。上面的推导显示，<em>局部</em> 梯度只需 (1 - 0.73) * 0.73 ~= 0.2，就像电路之前计算的一样（见上面的图像），只不过这样可以用单个简单而高效的表达式完成（并且减少了数值问题）。因此，在任何实际应用中，将这些操作组合成一个单一的门将非常有用。让我们看看这个神经元的反向传播代码：</p>
+<div class="highlight"><pre><span></span><code><span class="n">w</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span> <span class="c1"># assume some random weights and data</span>
+<span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+
+<span class="c1"># forward pass</span>
+<span class="n">dot</span> <span class="o">=</span> <span class="n">w</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">w</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">w</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">f</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">dot</span><span class="p">))</span> <span class="c1"># sigmoid function</span>
+
+<span class="c1"># backward pass through the neuron (backpropagation)</span>
+<span class="n">ddot</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">f</span><span class="p">)</span> <span class="o">*</span> <span class="n">f</span> <span class="c1"># gradient on dot variable, using the sigmoid gradient derivation</span>
+<span class="n">dx</span> <span class="o">=</span> <span class="p">[</span><span class="n">w</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">ddot</span><span class="p">,</span> <span class="n">w</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">ddot</span><span class="p">]</span> <span class="c1"># backprop into x</span>
+<span class="n">dw</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">ddot</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">ddot</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">ddot</span><span class="p">]</span> <span class="c1"># backprop into w</span>
+<span class="c1"># we&#39;re done! we have the gradients on the inputs to the circuit</span>
+</code></pre></div>
+<p><strong>实施技巧：分阶段反向传播</strong>。如上面的代码所示，在实践中，将前向传播分解成容易进行反向传播的阶段总是有用的。例如，在这里我们创建了一个中间变量<code>dot</code>，该变量保存了<code>w</code>和<code>x</code>之间点积的输出。在反向传播过程中，我们便依次计算（按相反的顺序）相应的变量（例如<code>ddot</code>，最终是<code>dw, dx</code>），这些变量保存了这些变量的梯度。</p>
+<p>本节的重点是，如何进行反向传播的细节，以及我们将前向函数的哪些部分视为“门”（gates），都是为了方便。了解表达式的哪些部分具有容易计算的局部梯度有助于用最少的代码和努力将它们链接在一起。</p>
+<h3 id="_5">实践中的反向传播：分阶段计算<a class="headerlink" href="#_5" title="Permanent link">⚓︎</a></h3>
+<p>让我们通过另一个例子来看这一点。假设我们有一个形式如下的函数：</p>
+<div class="arithmatex">\[
+f(x,y) = \frac{x + \sigma(y)}{\sigma(x) + (x+y)^2}
+\]</div>
+<p>明确地说，这个函数完全没有用，也不清楚为什么你会想要计算它的梯度，除了它是一个反向传播在实践中的好例子。非常重要的一点是强调，如果你试图对<span class="arithmatex">\(x\)</span>或<span class="arithmatex">\(y\)</span>进行微分，你将会得到非常大和复杂的表达式。然而，事实证明，这样做是完全不必要的，因为我们不需要有一个显式地计算梯度的函数。我们只需要知道如何计算它。以下是如何构建这样的表达式的前向传播结构：</p>
+<div class="highlight"><pre><span></span><code><span class="n">x</span> <span class="o">=</span> <span class="mi">3</span> <span class="c1"># example values</span>
+<span class="n">y</span> <span class="o">=</span> <span class="o">-</span><span class="mi">4</span>
+
+<span class="c1"># forward pass</span>
+<span class="n">sigy</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">y</span><span class="p">))</span> <span class="c1"># sigmoid in numerator   #(1)</span>
+<span class="n">num</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">sigy</span> <span class="c1"># numerator                               #(2)</span>
+<span class="n">sigx</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">))</span> <span class="c1"># sigmoid in denominator #(3)</span>
+<span class="n">xpy</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>                                              <span class="c1">#(4)</span>
+<span class="n">xpysqr</span> <span class="o">=</span> <span class="n">xpy</span><span class="o">**</span><span class="mi">2</span>                                          <span class="c1">#(5)</span>
+<span class="n">den</span> <span class="o">=</span> <span class="n">sigx</span> <span class="o">+</span> <span class="n">xpysqr</span> <span class="c1"># denominator                        #(6)</span>
+<span class="n">invden</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">den</span>                                       <span class="c1">#(7)</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">num</span> <span class="o">*</span> <span class="n">invden</span> <span class="c1"># done!                                 #(8)</span>
+</code></pre></div>
+<p>哎呀，在表达式的最后，我们已经计算了前向传递。请注意，我们以一种结构化的方式编写了代码，其中包含多个中间变量，每个变量都只是已知局部梯度的简单表达式。因此，计算反向传播非常容易：我们将反向传递，对于前向传递中的每个变量（<code>sigy, num, sigx, xpy, xpysqr, den, invden</code>），我们将有相同的变量，但以<code>d</code>开头，它将保存电路输出相对于该变量的梯度。此外，还要注意，我们反向传播中的每个部分都涉及计算该表达式的局部梯度，并将其与该表达式的梯度相乘进行链接。对于每一行，我们还会突出显示它所指的前向传递的哪一部分：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># backprop f = num * invden</span>
+<span class="n">dnum</span> <span class="o">=</span> <span class="n">invden</span> <span class="c1"># gradient on numerator                             #(8)</span>
+<span class="n">dinvden</span> <span class="o">=</span> <span class="n">num</span>                                                     <span class="c1">#(8)</span>
+<span class="c1"># backprop invden = 1.0 / den </span>
+<span class="n">dden</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">den</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span> <span class="o">*</span> <span class="n">dinvden</span>                                <span class="c1">#(7)</span>
+<span class="c1"># backprop den = sigx + xpysqr</span>
+<span class="n">dsigx</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">dden</span>                                                <span class="c1">#(6)</span>
+<span class="n">dxpysqr</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">dden</span>                                              <span class="c1">#(6)</span>
+<span class="c1"># backprop xpysqr = xpy**2</span>
+<span class="n">dxpy</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">xpy</span><span class="p">)</span> <span class="o">*</span> <span class="n">dxpysqr</span>                                        <span class="c1">#(5)</span>
+<span class="c1"># backprop xpy = x + y</span>
+<span class="n">dx</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">dxpy</span>                                                   <span class="c1">#(4)</span>
+<span class="n">dy</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">dxpy</span>                                                   <span class="c1">#(4)</span>
+<span class="c1"># backprop sigx = 1.0 / (1 + math.exp(-x))</span>
+<span class="n">dx</span> <span class="o">+=</span> <span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">sigx</span><span class="p">)</span> <span class="o">*</span> <span class="n">sigx</span><span class="p">)</span> <span class="o">*</span> <span class="n">dsigx</span> <span class="c1"># Notice += !! See notes below  #(3)</span>
+<span class="c1"># backprop num = x + sigy</span>
+<span class="n">dx</span> <span class="o">+=</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">dnum</span>                                                  <span class="c1">#(2)</span>
+<span class="n">dsigy</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">dnum</span>                                                <span class="c1">#(2)</span>
+<span class="c1"># backprop sigy = 1.0 / (1 + math.exp(-y))</span>
+<span class="n">dy</span> <span class="o">+=</span> <span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">sigy</span><span class="p">)</span> <span class="o">*</span> <span class="n">sigy</span><span class="p">)</span> <span class="o">*</span> <span class="n">dsigy</span>                                 <span class="c1">#(1)</span>
+<span class="c1"># done! phew</span>
+</code></pre></div>
+<p>请注意以下几点：</p>
+<p><strong>缓存前向传递变量</strong>。为了计算反向传递，缓存在前向传递中使用的一些变量非常有帮助。在实际操作中，您希望构造您的代码以便缓存这些变量，并且它们在反向传播期间是可用的。如果这太困难，也可以重新计算它们，但这会浪费时间。</p>
+<p><strong>梯度在分叉forks点相加</strong>。前向表达式多次涉及变量<strong>x</strong>和<strong>y</strong>，因此在执行反向传播时，我们必须小心使用<code>+=</code>而不是<code>=</code>来累积这些变量上的梯度（否则会覆盖它）。这遵循了微积分中的<em>多变量链式法则multivariable chain rule</em>，该法则规定，如果一个变量分支到电路的不同部分，那么流回该变量的梯度将相加。</p>
+<h3 id="_6">反向传播中的模式<a class="headerlink" href="#_6" title="Permanent link">⚓︎</a></h3>
+<p>有趣的是，许多情况下，反向传播的梯度可以直观地解释。例如，在神经网络中三个最常用的门（<em>加法、乘法、最大值</em>）在反向传播期间都有非常简单的解释。考虑这个示例电路：</p>
+<div class="fig figleft fighighlight">
+<svg style="max-width: 460px" viewbox="0 0 460 290"><g transform="scale(1)"><defs><marker id="arrowhead" refX="6" refY="2" markerWidth="6" markerHeight="4" orient="auto"><path d="M 0,0 V 4 L6,2 Z"></path></marker></defs><line x1="50" y1="30" x2="90" y2="30" stroke="black" stroke-width="1"></line><text x="55" y="24" font-size="16" fill="green">3.00</text><text x="55" y="47" font-size="16" fill="red">-8.00</text><text x="45" y="24" font-size="16" text-anchor="end" fill="black">x</text><line x1="50" y1="100" x2="90" y2="100" stroke="black" stroke-width="1"></line><text x="55" y="94" font-size="16" fill="green">-4.00</text><text x="55" y="117" font-size="16" fill="red">6.00</text><text x="45" y="94" font-size="16" text-anchor="end" fill="black">y</text><line x1="50" y1="170" x2="90" y2="170" stroke="black" stroke-width="1"></line><text x="55" y="164" font-size="16" fill="green">2.00</text><text x="55" y="187" font-size="16" fill="red">2.00</text><text x="45" y="164" font-size="16" text-anchor="end" fill="black">z</text><line x1="50" y1="240" x2="90" y2="240" stroke="black" stroke-width="1"></line><text x="55" y="234" font-size="16" fill="green">-1.00</text><text x="55" y="257" font-size="16" fill="red">0.00</text><text x="45" y="234" font-size="16" text-anchor="end" fill="black">w</text><line x1="170" y1="65" x2="210" y2="65" stroke="black" stroke-width="1"></line><text x="175" y="59" font-size="16" fill="green">-12.00</text><text x="175" y="82" font-size="16" fill="red">2.00</text><circle cx="130" cy="65" fill="white" stroke="black" stroke-width="1" r="20"></circle><text x="130" y="75" font-size="20" fill="black" text-anchor="middle">*</text><line x1="90" y1="30" x2="110" y2="65" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line><line x1="90" y1="100" x2="110" y2="65" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line><line x1="150" y1="65" x2="170" y2="65" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line><line x1="170" y1="205" x2="210" y2="205" stroke="black" stroke-width="1"></line><text x="175" y="199" font-size="16" fill="green">2.00</text><text x="175" y="222" font-size="16" fill="red">2.00</text><circle cx="130" cy="205" fill="white" stroke="black" stroke-width="1" r="20"></circle><text x="130" y="210" font-size="20" fill="black" text-anchor="middle">max</text><line x1="90" y1="170" x2="110" y2="205" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line><line x1="90" y1="240" x2="110" y2="205" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line><line x1="150" y1="205" x2="170" y2="205" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line><line x1="290" y1="135" x2="330" y2="135" stroke="black" stroke-width="1"></line><text x="295" y="129" font-size="16" fill="green">-10.00</text><text x="295" y="152" font-size="16" fill="red">2.00</text><circle cx="250" cy="135" fill="white" stroke="black" stroke-width="1" r="20"></circle><text x="250" y="140" font-size="20" fill="black" text-anchor="middle">+</text><line x1="210" y1="65" x2="230" y2="135" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line><line x1="210" y1="205" x2="230" y2="135" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line><line x1="270" y1="135" x2="290" y2="135" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line><line x1="410" y1="135" x2="450" y2="135" stroke="black" stroke-width="1"></line><text x="415" y="129" font-size="16" fill="green">-20.00</text><text x="415" y="152" font-size="16" fill="red">1.00</text><circle cx="370" cy="135" fill="white" stroke="black" stroke-width="1" r="20"></circle><text x="370" y="140" font-size="20" fill="black" text-anchor="middle">*2</text><line x1="330" y1="135" x2="350" y2="135" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line><line x1="390" y1="135" x2="410" y2="135" stroke="black" stroke-width="1" marker-end="url(#arrowhead)"></line></g></svg>
+<div style="clear:both;"></div>
+</div>
+
+<blockquote>
+<p>一个示例电路可以展示反向传播在反向传递过程中执行的操作，以计算输入上的梯度。求和操作将梯度均匀分配到所有输入。最大值操作将梯度路由route到较高的输入。乘法门获取输入激活，交换它们并乘以它的梯度。</p>
+</blockquote>
+<p>通过上面的示例电路，我们可以看到以下情况：</p>
+<p><strong>加法门</strong> 总是将梯度分配到其所有输入中，不管它们在前向传递期间的值是什么。这是因为加法操作的局部梯度仅为+1.0，因此所有输入上的梯度将完全等于输出上的梯度，因为它将乘以1.0（保持不变）。在上面的示例电路中，请注意加法门将梯度2.00均匀分配给了其两个输入，并保持不变。</p>
+<p><strong>最大值门</strong> 路由梯度。与将梯度不变地分配给所有输入的加法门不同，最大值门将梯度（不变地）分配给其一个输入（在前向传递期间具有最高值的输入）。这是因为最大值门的局部梯度对于最高值为1.0，对于所有其他值为0.0。在上面的示例电路中，最大值操作将梯度2.00路由到了变量<strong>z</strong>上，因为<strong>z</strong>的值比<strong>w</strong>高，而<strong>w</strong>上的梯度保持为零。</p>
+<p><strong>乘法门</strong> 稍微难以解释一些。它的局部梯度是输入值（除了交换），并且这个梯度会在链式法则中与其输出上的梯度相乘。在上面的示例中，<strong>x</strong>上的梯度为-8.00，这是-4.00 x 2.00。</p>
+<p><em>不直观的效果及其影响</em>：请注意，如果乘法门的一个输入非常小，而另一个非常大，那么乘法门会执行一些略微不直观的操作：它将为小输入分配相对较大的梯度，并为大输入分配微小的梯度。请注意，在线性分类器中，权重与输入进行点积 <span class="arithmatex">\(w^Tx_i\)</span>（相乘），这意味着数据的规模会影响权重的梯度大小。例如，如果在预处理过程中将所有输入数据示例 <span class="arithmatex">\(x_i\)</span> 乘以1000，那么权重上的梯度将大1000倍，您需要将学习率降低相同的因子来补偿。这就是为什么预处理非常重要，有时是以微妙的方式！并且对梯度流动方式有直观的理解可以帮助您调试其中的一些情况。</p>
+<h3 id="_7">矢量化操作的梯度<a class="headerlink" href="#_7" title="Permanent link">⚓︎</a></h3>
+<p>上面的部分涉及单个变量，但所有概念都以直观的方式扩展到矩阵和向量操作。但是，必须更加关注维度和转置操作。</p>
+<p><strong>矩阵-矩阵乘法梯度</strong>。可能最棘手的操作之一是矩阵-矩阵乘法（通用化了所有矩阵-向量和向量-向量乘法操作）：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># forward pass</span>
+<span class="n">W</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">D</span> <span class="o">=</span> <span class="n">W</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+<span class="c1"># now suppose we had the gradient on D from above in the circuit</span>
+<span class="n">dD</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">D</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="c1"># same shape as D</span>
+<span class="n">dW</span> <span class="o">=</span> <span class="n">dD</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="c1">#.T gives the transpose of the matrix</span>
+<span class="n">dX</span> <span class="o">=</span> <span class="n">W</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">dD</span><span class="p">)</span>
+</code></pre></div>
+<p><em>提示：使用维度分析！</em> 请注意，您不需要记住 <code>dW</code> 和 <code>dX</code> 的表达式，因为它们可以基于维度轻松重新推导。例如，我们知道权重 <code>dW</code> 在计算后必须与 <code>W</code> 的大小相同，并且它必须依赖于 <code>X</code> 和 <code>dD</code> 的矩阵乘法（当 <code>X,W</code> 都是单个数字而不是矩阵时就是这种情况）。总是有一种确切的方法可以实现这一点，以使维度配合起来。例如，如果 <code>X</code> 的大小为 [10 x 3]，<code>dD</code> 的大小为 [5 x 3]，那么如果我们想要 <code>dW</code>，而 <code>W</code> 的形状为 [5 x 10]，那么实现这一点的唯一方法就是 <code>dD.dot(X.T)</code>，如上所示。</p>
+<p><strong>使用小而明确的示例</strong>。一些人可能会发现首次为一些矢量化表达式推导梯度更新有些困难。我们建议首先明确地编写一个最小的矢量化示例，然后在纸上推导梯度，然后将模式推广到其高效的矢量化形式。</p>
+<p>Erik Learned-Miller 还编写了一份与矩阵/向量导数有关的更长的相关文档，您可能会发现它很有帮助。<a href="http://cs231n.stanford.edu/vecDerivs.pdf">在这里找到</a>。</p>
+<h3 id="_8">总结<a class="headerlink" href="#_8" title="Permanent link">⚓︎</a></h3>
+<ul>
+<li>我们对梯度的含义有了直观认识，了解了它们在电路中如何反向传播backwards ，以及它们如何传达电路的哪个部分应该增加或减少，以及以何种力量来使最终输出变高。</li>
+<li>我们讨论了<strong>分阶段计算</strong>在反向传播的实际实现中的重要性。您始终希望将函数分解为可以轻松推导出局部梯度的模块，然后使用链式法则连接它们。关键是，您几乎永远不希望在纸上写出这些表达式，并以符号方式完全不同地进行微分，因为您永远不需要输入变量的显式数学方程。因此，请将您的表达式分解成阶段，以便可以独立地对每个阶段进行微分（这些阶段将是矩阵向量乘法、最大操作、求和操作等），然后一次性反向传播变量。</li>
+</ul>
+<p>在下一节中，我们将开始定义神经网络，而反向传播将允许我们有效地计算损失函数相对于其参数的梯度。换句话说，我们现在已经准备好训练神经网络，这门课程中最具概念性挑战的部分已经过去了！然后，卷积神经网络就近在眼前了。</p>
+<h3 id="_9">参考资料<a class="headerlink" href="#_9" title="Permanent link">⚓︎</a></h3>
+<ul>
+<li><a href="http://arxiv.org/abs/1502.05767">Automatic differentiation in machine learning: a survey</a></li>
+</ul>
+
+  <hr>
+<div class="md-source-file">
+  <small>
+    
+      最后更新:
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 16, 2023</span>
+      
+        <br>
+        创建日期:
+        <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 16, 2023</span>
+      
+    
+  </small>
+</div>
+
+
+  
+
+
+
+  <form class="md-feedback" name="feedback" hidden>
+    <fieldset>
+      <legend class="md-feedback__title">
+        对当前页面有任何疑问吗？
+      </legend>
+      <div class="md-feedback__inner">
+        <div class="md-feedback__list">
+          
+            <button class="md-feedback__icon md-icon" type="submit" title="This page was helpful" data-md-value="1">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 9v12H1V9h4m4 12a2 2 0 0 1-2-2V9c0-.55.22-1.05.59-1.41L14.17 1l1.06 1.06c.27.27.44.64.44 1.05l-.03.32L14.69 8H21a2 2 0 0 1 2 2v2c0 .26-.05.5-.14.73l-3.02 7.05C19.54 20.5 18.83 21 18 21H9m0-2h9.03L21 12v-2h-8.79l1.13-5.32L9 9.03V19Z"/></svg>
+            </button>
+          
+            <button class="md-feedback__icon md-icon" type="submit" title="This page could be improved" data-md-value="0">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 15V3h4v12h-4M15 3a2 2 0 0 1 2 2v10c0 .55-.22 1.05-.59 1.41L9.83 23l-1.06-1.06c-.27-.27-.44-.64-.44-1.06l.03-.31.95-4.57H3a2 2 0 0 1-2-2v-2c0-.26.05-.5.14-.73l3.02-7.05C4.46 3.5 5.17 3 6 3h9m0 2H5.97L3 12v2h8.78l-1.13 5.32L15 14.97V5Z"/></svg>
+            </button>
+          
+        </div>
+        <div class="md-feedback__note">
+          
+            <div data-md-value="1" hidden>
+              
+              
+                
+              
+              感谢您的反馈！
+            </div>
+          
+            <div data-md-value="0" hidden>
+              
+              
+                
+              
+              感谢您的反馈！请点击这里<a href="https://github.com/EanYang7/cs231n/issues" target="_blank" rel="noopener">这里</a>提供问题反馈.
+            </div>
+          
+        </div>
+      </div>
+    </fieldset>
+  </form>
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            回到页面顶部
+          </button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/EanYang7/cs231n" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.instant", "navigation.top", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.path", "toc.follow", "content.action.edit", "content.action.view", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.dfff1995.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.dff1b7c8.min.js"></script>
+      
+        <script src="../../../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

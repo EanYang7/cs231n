@@ -1,0 +1,1551 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="CS231n: Deep Learning for Computer Vision">
+      
+      
+      
+        <link rel="canonical" href="https://eanyang7.github.io/cs231n/courses/neural_network/classification/">
+      
+      
+        <link rel="prev" href="../../preparation/python-numpy-tutorial/">
+      
+      
+        <link rel="next" href="../linear-classify/">
+      
+      
+      <link rel="icon" href="../../../logo.jpg">
+      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.3.1">
+    
+    
+      
+        <title>图像分类 - CS231n</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.046329b4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.85d0ee34.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function n(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],n("js",new Date),n("config","G-5F8XNH7BCX"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){this.value&&n("event","search",{search_term:this.value})}),document$.subscribe(function(){var a=document.forms.feedback;if(void 0!==a)for(var e of a.querySelectorAll("[type=submit]"))e.addEventListener("click",function(e){e.preventDefault();var t=document.location.pathname,e=this.getAttribute("data-md-value");n("event","feedback",{page:t,data:e}),a.firstElementChild.disabled=!0;e=a.querySelector(".md-feedback__note [data-md-value='"+e+"']");e&&(e.hidden=!1)}),a.hidden=!1}),location$.subscribe(function(e){n("config","G-5F8XNH7BCX",{page_path:e.pathname})})});var e=document.createElement("script");e.async=!0,e.src="https://www.googletagmanager.com/gtag/js?id=G-5F8XNH7BCX",document.getElementById("__analytics").insertAdjacentElement("afterEnd",e)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../.." title="CS231n" class="md-header__button md-logo" aria-label="CS231n" data-md-component="logo">
+      
+  <img src="../../../logo.jpg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CS231n
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              图像分类
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换为暗黑模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换为暗黑模式" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换为浅色模式"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="切换为浅色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="选择当前语言">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04M18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12m-2.62 7 1.62-4.33L19.12 17h-3.24Z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="/cs231n/" hreflang="zh" class="md-select__link">
+              中文
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="https://cs231n.github.io/" hreflang="en" class="md-select__link">
+              English(源网站)
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/EanYang7/cs231n" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    EanYang7/cs231n
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../.." class="md-tabs__link">
+          
+  
+  首页
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../preparation/setup/" class="md-tabs__link">
+          
+  
+  课程
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../assignments/2023/assignment1/" class="md-tabs__link">
+          
+  
+  任务
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="CS231n" class="md-nav__button md-logo" aria-label="CS231n" data-md-component="logo">
+      
+  <img src="../../../logo.jpg" alt="logo">
+
+    </a>
+    CS231n
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/EanYang7/cs231n" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    EanYang7/cs231n
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    首页
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            首页
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CS231n 卷积神经网络视觉识别
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    课程
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            课程
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" >
+        
+          <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    准备工作
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            准备工作
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../preparation/setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    软件设置
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../preparation/python-numpy-tutorial/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Python/Numpy教程
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" checked>
+        
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    神经网络
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            神经网络
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    图像分类
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    图像分类
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    图像分类
+  </a>
+  
+    <nav class="md-nav" aria-label="图像分类">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nearest-neighbor-classifier" class="md-nav__link">
+    最近邻分类器 Nearest Neighbor Classifier
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#k-k-nearest-neighbor-classifier" class="md-nav__link">
+    k-最近邻分类器 k - Nearest Neighbor Classifier
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-sets-for-hyperparameter-tuning" class="md-nav__link">
+    用于超参数调整的验证集 Validation sets for Hyperparameter tuning
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    总结 Summary
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#knn" class="md-nav__link">
+    总结：在实践中应用kNN
+  </a>
+  
+    <nav class="md-nav" aria-label="总结：在实践中应用kNN">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    进一步阅读
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../linear-classify/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    线性分类
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../optimization-1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    优化：随机梯度下降
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../optimization-2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    反向传播
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2_5" >
+        
+          <label class="md-nav__link" for="__nav_2_2_5" id="__nav_2_2_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    神经网络
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            神经网络
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../neural-networks-1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    创建结构
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../neural-networks-2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    创建数据和损失
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../neural-networks-3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    学习和评估
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../neural-networks-case-study/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    最小神经网络案例研究
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    卷积神经网络
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            卷积神经网络
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CNN/convolutional-networks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    结构、卷积/池化层
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CNN/understanding-cnn/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    理解与可视化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CNN/transfer-learning/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    迁移学习与微调
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    任务
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            任务
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../assignments/2023/assignment1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    任务1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../assignments/2023/assignment2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    任务2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../assignments/2023/assignment3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    任务2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    图像分类
+  </a>
+  
+    <nav class="md-nav" aria-label="图像分类">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nearest-neighbor-classifier" class="md-nav__link">
+    最近邻分类器 Nearest Neighbor Classifier
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#k-k-nearest-neighbor-classifier" class="md-nav__link">
+    k-最近邻分类器 k - Nearest Neighbor Classifier
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-sets-for-hyperparameter-tuning" class="md-nav__link">
+    用于超参数调整的验证集 Validation sets for Hyperparameter tuning
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    总结 Summary
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#knn" class="md-nav__link">
+    总结：在实践中应用kNN
+  </a>
+  
+    <nav class="md-nav" aria-label="总结：在实践中应用kNN">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    进一步阅读
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+    <a href="https://github.com/EanYang7/cs231n/edit/dev/docs/courses/neural_network/classification.md" title="编辑此页" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/EanYang7/cs231n/raw/dev/docs/courses/neural_network/classification.md" title="查看本页的源代码" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5Z"/></svg>
+    </a>
+  
+
+
+  <h1>图像分类</h1>
+
+<p>这是一个旨在向计算机视觉领域外的人介绍图像分类问题和数据驱动方法的入门介绍。目录如右侧所示：</p>
+<h2 id="_1">图像分类<a class="headerlink" href="#_1" title="Permanent link">⚓︎</a></h2>
+<p><strong>动机</strong>。在本节中，我们将介绍图像分类问题，这是将输入图像分配给固定类别集合中的一个标签的任务。尽管这个问题很简单，但它是计算机视觉中的核心问题之一，具有许多实际应用。此外，正如我们将在课程后面看到的，许多其他看似不同的计算机视觉任务（如目标检测、分割）都可以归结为图像分类。</p>
+<p><strong>示例</strong>。例如，在下面的图像中，图像分类模型接受一个图像并为4个标签（<em>{猫、狗、帽子、杯子}</em>）分配概率。如图所示，请记住，对于计算机而言，图像被表示为一个大的三维数字数组。在这个示例中，猫的图像宽度为248像素，高度为400像素，并具有三个颜色通道：红色、绿色、蓝色（简称RGB）。因此，图像由248 x 400 x 3个数字组成，总共297,600个数字。每个数字都是一个从0（黑色）到255（白色）的整数。我们的任务是将这25万个数字转化为一个单一的标签，比如<em>"猫"</em>。</p>
+<p><img alt="classify" src="../classification.assets/classify.png" /> </p>
+<blockquote>
+<p>在图像分类任务中，我们的目标是为给定的图像预测一个单一标签（或如此处所示，预测标签的分布，以表示我们的置信度）。图像是由整数构成的三维数组，取值范围从0到255，大小为宽度 x 高度 x 3。这里的3代表了三个颜色通道：红色、绿色、蓝色。</p>
+</blockquote>
+<p><strong>挑战</strong>。由于对于人类来说，识别视觉概念（例如猫）相对容易，因此值得从计算机视觉算法的角度考虑所涉及的挑战。在下面我们列举了（不全面的）一些挑战时，请记住图像的原始表示是一个由亮度值组成的三维数组：</p>
+<ul>
+<li><strong>视角变化</strong>。同一对象的单个实例可以以许多不同的方式相对于相机定位。</li>
+<li><strong>尺度变化</strong>。视觉类别通常在大小上表现出变化（指的是实际世界中的大小，而不仅仅是图像中的大小）。</li>
+<li><strong>形变</strong>。许多感兴趣的对象不是刚体，可以以极端方式变形。</li>
+<li><strong>遮挡</strong>。感兴趣的对象可能会被遮挡。有时候，只有对象的一小部分（可能只有几个像素）可见。</li>
+<li><strong>光照条件</strong>。光照对像素级别产生显著影响。</li>
+<li><strong>背景杂乱</strong>。感兴趣的对象可能会与其环境融为一体，难以识别。</li>
+<li><strong>类内变异</strong>。感兴趣的类别通常相对广泛，例如<em>椅子</em>。这些对象有许多不同的类型，每种类型都有自己的外观。</li>
+</ul>
+<p>一个好的图像分类模型必须对所有这些变化的交叉乘积cross product保持不变，同时保留对类间变化的敏感性。</p>
+<p><img alt="challenges" src="../classification.assets/challenges.jpeg" /> </p>
+<p><strong>数据驱动方法</strong>。我们如何编写一个能够将图像分类到不同类别的算法呢？与编写用于对一列数字进行排序的算法不同，很难想象如何编写一个用于识别图像中的猫的算法。因此，与其试图直接在代码中指定感兴趣的每个类别的外观，我们采取的方法与您对待孩子的方法类似：我们将为计算机提供每个类别的许多示例，然后开发学习算法，这些算法会查看这些示例并学习每个类别的视觉外观。这种方法被称为<em>数据驱动方法</em>，因为它首先依赖于积累带有标签的图像的<em>训练数据集</em>。以下是这样一个数据集的示例：</p>
+<p><img alt="trainset" src="../classification.assets/trainset.jpg" /></p>
+<blockquote>
+<p>这是一个包含四个视觉类别的示例训练集。在实际应用中，我们可能有数千个类别，每个类别都有数十万张图像。</p>
+</blockquote>
+<p><strong>图像分类流程</strong>。我们已经看到，在图像分类中的任务是将表示单个图像的像素数组分配一个标签。我们的完整流程可以正式表述如下：</p>
+<ul>
+<li><strong>输入</strong>：我们的输入包括一组<em>N</em>张图像，每张图像都带有<em>K</em>个不同类别中的一个标签。我们将这些数据称为<em>训练集</em>。</li>
+<li><strong>学习</strong>：我们的任务是使用训练集来学习每个类别的外观。我们将这一步称为<em>训练分类器</em>或<em>学习模型</em>。</li>
+<li><strong>评估</strong>：最后，我们通过要求分类器为它以前从未见过的一组新图像预测标签来评估分类器的质量。然后，我们将这些图像的真实标签与分类器预测的标签进行比较。直观地说，我们希望很多预测与真实答案（我们称之为<em>真值ground truth</em>）相匹配。</li>
+</ul>
+<p><a name='nn'></a></p>
+<h3 id="nearest-neighbor-classifier">最近邻分类器 Nearest Neighbor Classifier<a class="headerlink" href="#nearest-neighbor-classifier" title="Permanent link">⚓︎</a></h3>
+<p>作为我们的第一种方法，我们将开发一种称为<strong>最近邻分类器</strong>的方法。这个分类器与卷积神经网络无关，在实践中很少使用，但它将让我们了解图像分类问题的基本方法。</p>
+<p><strong>示例图像分类数据集：CIFAR-10</strong>。一个流行的玩具toy图像分类数据集是<a href="https://www.cs.toronto.edu/~kriz/cifar.html">CIFAR-10数据集</a>。该数据集包含60,000张尺寸为32x32像素的小图像。每个图像都带有10个类别中的一个标签（例如<em>"飞机、汽车、鸟类等"</em>）。这60,000张图像分为50,000张训练集和10,000张测试集。在下面的图像中，您可以看到来自每个10个类别中的10个随机示例图像：</p>
+<p><img alt="nn" src="../classification.assets/nn.jpg" /> </p>
+<blockquote>
+<p>左图：<a href="https://www.cs.toronto.edu/~kriz/cifar.html">CIFAR-10数据集</a>的示例图像。右图：第一列显示了一些测试图像，旁边的每个图像都显示了根据像素差异而确定的训练集中的前10个最近邻图像。</p>
+</blockquote>
+<p>现在假设我们有CIFAR-10的训练集，其中包含50,000张图像（每个标签有5,000张图像），我们希望对剩余的10,000张进行标记。最近邻分类器将获取一个测试图像，将其与训练集中的每一张图像进行比较，并预测与最接近的训练图像相同的标签。在上面的图像右侧，您可以看到这种过程的10个示例测试图像的结果。请注意，在这10个示例中，只有约3个示例中检索到了相同类别的图像，而在其他7个示例中则不是这样。例如，在第8行，马头的最近邻训练图像是一辆红色汽车，这可能是由于强烈的黑色背景造成的。因此，在这种情况下，这张马的图像会被错误地标记为汽车。</p>
+<p>您可能已经注意到，我们并未明确说明我们如何精确比较两张图像的细节，而在这种情况下，这只是两个32 x 32 x 3的图像块。其中一个最简单的可能性是逐像素比较图像并累加所有差异。换句话说，给定两张图像并将它们表示为向量 <span class="arithmatex">\(I_1\)</span>, <span class="arithmatex">\(I_2\)</span> ，比较它们的一个合理选择可能是<strong>L1距离</strong>：</p>
+<div class="arithmatex">\[
+d_1 (I_1, I_2) = \sum_{p} \left| I^p_1 - I^p_2 \right|
+\]</div>
+<p>其中总和取自所有像素。以下是该过程的可视化过程：</p>
+<p><img alt="nneg" src="../classification.assets/nneg.jpeg" /> </p>
+<blockquote>
+<p>使用像素差异来比较两张图像的示例，使用L1距离（在此示例中为一个颜色通道）。两张图像进行逐元素相减，然后将所有差异相加得到一个单一数字。如果两张图像相同，结果将为零。但如果图像非常不同，结果将很大。</p>
+</blockquote>
+<p>让我们也看看如何在代码中实现分类器。首先，让我们将CIFAR-10数据加载到内存中，作为4个数组：训练数据/标签和测试数据/标签。在下面的代码中，<code>Xtr</code>（大小为50,000 x 32 x 32 x 3）包含训练集中的所有图像，相应的一维数组<code>Ytr</code>（长度为50,000）包含训练标签（从0到9）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">Xtr</span><span class="p">,</span> <span class="n">Ytr</span><span class="p">,</span> <span class="n">Xte</span><span class="p">,</span> <span class="n">Yte</span> <span class="o">=</span> <span class="n">load_CIFAR10</span><span class="p">(</span><span class="s1">&#39;data/cifar10/&#39;</span><span class="p">)</span> <span class="c1"># a magic function we provide</span>
+<span class="c1"># flatten out all images to be one-dimensional</span>
+<span class="n">Xtr_rows</span> <span class="o">=</span> <span class="n">Xtr</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">Xtr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">32</span> <span class="o">*</span> <span class="mi">32</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span> <span class="c1"># Xtr_rows becomes 50000 x 3072</span>
+<span class="n">Xte_rows</span> <span class="o">=</span> <span class="n">Xte</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">Xte</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">32</span> <span class="o">*</span> <span class="mi">32</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span> <span class="c1"># Xte_rows becomes 10000 x 3072</span>
+</code></pre></div>
+<p>现在，我们已经将所有图像展开为行，下面是如何训练和评估分类器的示例代码：</p>
+<div class="highlight"><pre><span></span><code><span class="n">nn</span> <span class="o">=</span> <span class="n">NearestNeighbor</span><span class="p">()</span> <span class="c1"># create a Nearest Neighbor classifier class</span>
+<span class="n">nn</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">Xtr_rows</span><span class="p">,</span> <span class="n">Ytr</span><span class="p">)</span> <span class="c1"># train the classifier on the training images and labels</span>
+<span class="n">Yte_predict</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">Xte_rows</span><span class="p">)</span> <span class="c1"># predict labels on the test images</span>
+<span class="c1"># and now print the classification accuracy, which is the average number</span>
+<span class="c1"># of examples that are correctly predicted (i.e. label matches)</span>
+<span class="nb">print</span> <span class="s1">&#39;accuracy: </span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Yte_predict</span> <span class="o">==</span> <span class="n">Yte</span><span class="p">)</span> <span class="p">)</span>
+</code></pre></div>
+<p>请注意，作为评估标准，通常使用<strong>准确度accuracy</strong>，它测量了正确预测的比例。请注意，我们将构建的所有分类器都满足一个共同的API：它们都有一个<code>train(X,y)</code>函数，该函数接受数据和标签进行学习。在内部，该类应该构建一些关于标签以及如何从数据中预测它们的模型。然后还有一个<code>predict(X)</code>函数，该函数接受新数据并预测标签。当然，我们省略了事情的实质部分 - 实际的分类器本身。下面是一个使用L1距离的简单最近邻分类器的实现，它满足了这个模板：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="k">class</span> <span class="nc">NearestNeighbor</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+  <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; X is N x D where each row is an example. Y is 1-dimension of size N &quot;&quot;&quot;</span>
+    <span class="c1"># the nearest neighbor classifier simply remembers all the training data</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Xtr</span> <span class="o">=</span> <span class="n">X</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">ytr</span> <span class="o">=</span> <span class="n">y</span>
+
+  <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; X is N x D where each row is an example we wish to predict label for &quot;&quot;&quot;</span>
+    <span class="n">num_test</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># lets make sure that the output type matches the input type</span>
+    <span class="n">Ypred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_test</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ytr</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+    <span class="c1"># loop over all test rows</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_test</span><span class="p">):</span>
+      <span class="c1"># find the nearest training image to the i&#39;th test image</span>
+      <span class="c1"># using the L1 distance (sum of absolute value differences)</span>
+      <span class="n">distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Xtr</span> <span class="o">-</span> <span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,:]),</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+      <span class="n">min_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span> <span class="c1"># get the index with smallest distance</span>
+      <span class="n">Ypred</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ytr</span><span class="p">[</span><span class="n">min_index</span><span class="p">]</span> <span class="c1"># predict the label of the nearest example</span>
+
+    <span class="k">return</span> <span class="n">Ypred</span>
+</code></pre></div>
+<p>如果运行此代码，您将看到该分类器在CIFAR-10上只能达到<strong>38.6%</strong>的准确率。这比随机猜测要好得多（随机猜测将提供10%的准确率，因为有10个类别），但远远不及人类表现（估计约为94%）<a href="https://karpathy.github.io/2011/04/27/manually-classifying-cifar10/">参考链接</a>，也远远不及最先进的卷积神经网络，它们达到了约95%的准确率，与人类准确率相匹配（请参阅CIFAR-10的<a href="https://www.kaggle.com/c/cifar-10/leaderboard">Kaggle竞赛排行榜</a>）。</p>
+<p><strong>距离的选择。</strong>计算向量之间的距离有许多其他方法。另一个常见的选择可能是使用<strong>L2距离</strong>，它具有计算两个向量之间的欧几里德距离的几何解释。该距离的形式如下：</p>
+<div class="arithmatex">\[
+d_2 (I_1, I_2) = \sqrt{\sum_{p} \left( I^p_1 - I^p_2 \right)^2}
+\]</div>
+<p>换句话说，我们将像以前一样计算像素差异，但这次我们会将它们全部平方，相加，然后最后取平方根。在numpy中，使用上面的代码，我们只需要替换一行代码。即计算距离的那一行：</p>
+<div class="highlight"><pre><span></span><code><span class="n">distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Xtr</span> <span class="o">-</span> <span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,:]),</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">))</span>
+</code></pre></div>
+<p>请注意，我在上面包括了<code>np.sqrt</code>调用，但在实际的最近邻应用中，我们可以省略平方根操作，因为平方根是一个<em>单调函数</em>。也就是说，它会缩放距离的绝对大小，但会保留排序，因此带或不带它的最近邻是相同的。如果在CIFAR-10上使用这个距离运行最近邻分类器，您将获得<strong>35.4%</strong>的准确率（略低于我们的L1距离结果）。</p>
+<p><strong>L1 vs. L2</strong>。考虑这两种度量之间的差异是很有趣的。特别是，当涉及到两个向量之间的差异时，L2距离比L1距离更加严格unforgiving 。也就是说，L2距离更喜欢许多中等程度的差异medium disagreements，而不是一个大的差异。L1和L2距离（或者等效地，一对图像之间的差异的L1/L2范数）是<a href="https://planetmath.org/vectorpnorm">p-范数</a>的最常用的特殊情况。</p>
+<p><a name='knn'></a></p>
+<h3 id="k-k-nearest-neighbor-classifier">k-最近邻分类器 k - Nearest Neighbor Classifier<a class="headerlink" href="#k-k-nearest-neighbor-classifier" title="Permanent link">⚓︎</a></h3>
+<p>您可能已经注意到，当我们希望进行预测时，仅使用最近图像的标签是奇怪的。事实上，几乎总是可以通过使用所谓的<strong>k-最近邻分类器</strong>来获得更好的效果。这个想法非常简单：不再只找到训练集中的单一最近图像，而是找到<strong>k</strong>个最近图像，并让它们对测试图像的标签进行投票。特别地，当<em>k=1</em>时，我们恢复了最近邻分类器。直观地说，较高的<strong>k</strong>值具有平滑效果，使分类器更能抵抗异常值outliers：</p>
+<p><img alt="knn" src="../classification.assets/knn.jpeg" /></p>
+<blockquote>
+<p>这是最近邻和5-最近邻分类器之间的差异示例，使用二维点和三个类别（红色、蓝色、绿色）。彩色区域显示了由L2距离诱导induced的分类器产生的<b>决策边界</b>。白色区域显示了模糊分类的点（即至少有两个类别的投票相等）。请注意，在最近邻分类器的情况下，outlier异常数据点（例如，在蓝点云中间的绿点）会创建可能不正确的小岛屿预测，而5-最近邻分类器则平滑了这些不规则性irregularities，可能导致对测试数据（未显示）更好的<b>泛化</b>。还请注意，在5-最近邻图像中的灰色区域是由于在最近邻中的投票中存在平局（例如，2个最近邻是红色，接下来的两个最近邻是蓝色，最后一个最近邻是绿色）所导致的。</p>
+</blockquote>
+<p>在实践中，您几乎总是希望使用k-最近邻。但是应该使用什么值的<em>k</em>？接下来我们将讨论这个问题。</p>
+<p><a name='val'></a></p>
+<h3 id="validation-sets-for-hyperparameter-tuning">用于超参数调整的验证集 Validation sets for Hyperparameter tuning<a class="headerlink" href="#validation-sets-for-hyperparameter-tuning" title="Permanent link">⚓︎</a></h3>
+<p>k-最近邻分类器需要设置<em>k</em>。但是什么数值最好？此外，我们看到有许多不同的距离函数可供选择：L1范数、L2范数，还有许多其他选择，甚至我们都没有考虑（例如点积）。这些选择被称为<strong>超参数</strong>，它们在许多从数据中学习的机器学习算法的设计中经常出现。通常不明显应该选择什么值/设置。</p>
+<p>您可能会建议我们尝试许多不同的值，看看哪个效果最好。这是一个很好的想法，确实也是我们将要做的事情，但必须非常小心。特别是，<strong>我们不能使用测试集来调整超参数</strong>。无论何时设计机器学习算法，您都应该将测试集视为一种非常宝贵的资源，最好在最后一次之前永远不要触摸它。否则，非常现实的危险是您可能会调整超参数以在测试集上表现良好，但如果部署模型，性能可能会显著降低。在实践中，我们会说您在测试集上<strong>过拟合overfit</strong>。另一种看待问题的方式是，如果您在测试集上调整超参数，实际上是将测试集用作训练集，因此在部署模型时观察到的性能将与您实际观察到的性能相比太过乐观。但是，如果您只在最后一次使用测试集，它仍然是衡量分类器<strong>泛化generalization</strong>的良好代理proxy （我们将在课程后面看到有关泛化的更多讨论）。</p>
+<blockquote>
+<p>仅在最后一次评估测试集。</p>
+</blockquote>
+<p>幸运的是，有一种正确的方法可以调整超参数，而不需要接触测试集。思路是将我们的训练集分为两部分：稍小的训练集和我们称之为<strong>验证集</strong>的部分。以CIFAR-10为例，我们可以例如使用49,000张训练图像进行训练，将1,000张留作验证。这个验证集本质上是一个假的测试集，用于调整超参数。</p>
+<p>在CIFAR-10的情况下，可能会如下所示：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># assume we have Xtr_rows, Ytr, Xte_rows, Yte as before</span>
+<span class="c1"># recall Xtr_rows is 50,000 x 3072 matrix</span>
+<span class="n">Xval_rows</span> <span class="o">=</span> <span class="n">Xtr_rows</span><span class="p">[:</span><span class="mi">1000</span><span class="p">,</span> <span class="p">:]</span> <span class="c1"># take first 1000 for validation</span>
+<span class="n">Yval</span> <span class="o">=</span> <span class="n">Ytr</span><span class="p">[:</span><span class="mi">1000</span><span class="p">]</span>
+<span class="n">Xtr_rows</span> <span class="o">=</span> <span class="n">Xtr_rows</span><span class="p">[</span><span class="mi">1000</span><span class="p">:,</span> <span class="p">:]</span> <span class="c1"># keep last 49,000 for train</span>
+<span class="n">Ytr</span> <span class="o">=</span> <span class="n">Ytr</span><span class="p">[</span><span class="mi">1000</span><span class="p">:]</span>
+
+<span class="c1"># find hyperparameters that work best on the validation set</span>
+<span class="n">validation_accuracies</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">]:</span>
+
+  <span class="c1"># use a particular value of k and evaluation on validation data</span>
+  <span class="n">nn</span> <span class="o">=</span> <span class="n">NearestNeighbor</span><span class="p">()</span>
+  <span class="n">nn</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">Xtr_rows</span><span class="p">,</span> <span class="n">Ytr</span><span class="p">)</span>
+  <span class="c1"># here we assume a modified NearestNeighbor class that can take a k as input</span>
+  <span class="n">Yval_predict</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">Xval_rows</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">k</span><span class="p">)</span>
+  <span class="n">acc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Yval_predict</span> <span class="o">==</span> <span class="n">Yval</span><span class="p">)</span>
+  <span class="nb">print</span> <span class="s1">&#39;accuracy: </span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">acc</span><span class="p">,)</span>
+
+  <span class="c1"># keep track of what works on the validation set</span>
+  <span class="n">validation_accuracies</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">acc</span><span class="p">))</span>
+</code></pre></div>
+<p>在这个过程结束时，我们可以绘制一个图表，显示哪些<em>k</em>值效果最好。然后，我们将使用这个值进行最终评估，仅在实际的测试集上运行一次并报告性能。</p>
+<blockquote>
+<p>将训练集分为训练集和验证集。使用验证集来调整所有超参数。最后，在测试集上运行一次并报告性能。</p>
+</blockquote>
+<p><strong>交叉验证Cross-validation</strong>
+在训练数据的大小（因此也是验证数据）可能很小的情况下，人们有时会使用一种更复杂的超参数调整技术，称为<strong>交叉验证</strong>。以前面的示例为例，交叉验证的思想是，不是随机选择前1000个数据点作为验证集，剩下的作为训练集，而是通过迭代不同的验证集来更好地估计某个<em>k</em>值的性能，减少噪声。例如，在5折交叉验证中(5-fold cross-validation)，我们将训练数据分为5个相等的折叠fold，使用其中4个进行训练，1个进行验证。然后，我们会迭代哪个折叠是验证折叠fold，评估性能，最后在不同折叠fold之间平均性能。</p>
+<p><img alt="cvplot" src="../classification.assets/cvplot.png" /> </p>
+<p>这是一个关于参数<b>k</b>的5折交叉验证运行的示例。对于每个<b>k</b>值，我们在4个折叠上进行训练，并在第5个折叠上进行评估。因此，对于每个<b>k</b>，我们会得到5个在验证折叠上的准确性（准确性是y轴，每个结果都是一个点）。趋势线通过每个<b>k</b>的结果平均值绘制，误差条表示标准差。请注意，在这种特殊情况下，交叉验证建议在这个特定数据集上使用约<b>k</b> = 7的值效果最好（对应于图中的峰值）。如果使用了超过5个折叠，我们可能会看到一个更平滑（即更少噪声）的曲线。</p>
+<p><strong>在实践中</strong>。在实践中，人们更喜欢避免使用交叉验证，而更倾向于使用单一的验证拆分，因为交叉验证可能计算成本较高。人们通常使用的拆分方式是将50%-90%的训练数据用于训练，剩余部分用于验证。然而，这取决于多个因素：例如，如果超参数的数量很大，您可能更喜欢使用更大的验证拆分。如果验证集中的示例数量很小（可能仅有几百个），则使用交叉验证更安全。在实际应用中，常见的折叠数量可能是3折、5折或10折交叉验证。</p>
+<p><img alt="crossval" src="../classification.assets/crossval.jpeg" /> </p>
+<blockquote>
+<p>常见的数据拆分方式。给定一个训练集和一个测试集。训练集被分成若干折（例如，这里有5折）。折1-4成为训练集。一折（例如，这里的黄色折5）被称为验证折，用于调整超参数。交叉验证更进一步，迭代选择哪个折是验证折，分别从1到5。这将被称为5折交叉验证。在最后，一旦模型训练完成并确定了所有最佳超参数，模型会在测试数据上进行一次性的评估（红色）。</p>
+</blockquote>
+<p><a name='procon'></a></p>
+<p><strong>最近邻分类器的优缺点</strong></p>
+<p>值得考虑一下最近邻分类器的一些优点和缺点。显然，一个优点是它非常简单易懂。此外，该分类器无需训练时间，因为所需的只是存储和可能索引训练数据。然而，在测试时我们要付出计算成本，因为对测试样本进行分类需要与每个训练样本进行比较。这是相反的，因为在实践中，我们通常更关心测试时的效率，而不是训练时的效率。事实上，我们将在本课程后面开发的深度神经网络将这种权衡推向了另一个极端：它们训练成本很高，但一旦训练完成，对新的测试样本进行分类非常便宜。这种操作模式在实践中更加可取。</p>
+<p>另外，最近邻分类器的计算复杂性是一个活跃的研究领域，存在多种<strong>近似最近邻Approximate Nearest Neighbor</strong>（ANN）算法和库，可以加速数据集中最近邻查找（例如<a href="https://github.com/mariusmuja/flann">FLANN</a>）。这些算法允许在最近邻检索的正确性与检索期间的空间/时间复杂性之间进行权衡，并通常依赖于一个涉及构建kdtree或运行k均值算法的预处理/索引阶段。</p>
+<p>最近邻分类器在某些情况下可能是一个不错的选择（特别是如果数据维度较低），但在实际图像分类环境中很少合适。一个问题是图像是高维对象（即它们通常包含许多像素），高维空间中的距离可能非常不直观counter-intuitive。下面的图像说明了基于像素的L2相似性与感知相似性perceptual similarities之间的差异：</p>
+<p><img alt="samenorm" src="../classification.assets/samenorm.png" /> </p>
+<blockquote>
+<p>基于像素的距离在高维数据（尤其是图像）上可能非常不直观。左侧是一个原始图像，旁边是另外三个图像，它们在基于像素的L2距离上都与原始图像等距离。显然，像素级的距离与感知perceptual或语义semantic相似性毫无关系。</p>
+</blockquote>
+<p>这里还有一个可视化示例，旨在说服您使用像素差异来比较图像是不足够的。我们可以使用一种名为<a href="https://lvdmaaten.github.io/tsne/">t-SNE</a>的可视化技术，将CIFAR-10图像嵌入到二维空间中，以便最大程度地保留它们之间的（局部）成对距离。在这个可视化中，附近显示的图像根据我们上面开发的L2像素距离被认为非常接近：</p>
+<p><img alt="pixels_embed_cifar10" src="../classification.assets/pixels_embed_cifar10.jpg" /> </p>
+<blockquote>
+<p>使用t-SNE将CIFAR-10图像嵌入到二维空间中。在这个图像中，根据L2像素距离附近显示的图像被认为是接近的。请注意，背景比语义类别差异更具显著性。点击<a href="https://eanyang7.github.io/cs231n/courses/neural_network/classification.assets/pixels_embed_cifar10_big.jpg">这里</a>查看更大版本的可视化。</p>
+</blockquote>
+<p>特别要注意的是，附近的图像更多地取决于图像的一般颜色分布或背景类型，而不是它们的语义身份。例如，一只狗可以被认为与一只青蛙非常接近，因为它们都碰巧在白色背景上。理想情况下，我们希望所有10个类别的图像都形成自己的聚类，这样相同类别的图像可以彼此接近，而不受不相关特征和变化（例如背景）的影响。然而，要实现这一属性，我们需要超越原始像素go beyond raw pixels。</p>
+<p><a name='summary'></a></p>
+<h3 id="summary">总结 Summary<a class="headerlink" href="#summary" title="Permanent link">⚓︎</a></h3>
+<p>总结一下：</p>
+<ul>
+<li>我们介绍了<strong>图像分类</strong>的问题，其中我们被提供了一组带有单一类别标签的图像。然后，我们被要求为一组新的测试图像预测这些类别，并测量预测的准确性。</li>
+<li>我们介绍了一个简单的分类器，称为<strong>最近邻分类器</strong>。我们看到这个分类器有多个与之关联的超参数（例如k的值，或用于比较示例的距离类型），并且没有明显的选择方法。</li>
+<li>我们看到设置这些超参数的正确方法是将训练数据分成两部分：训练集和一个我们称之为<strong>验证集</strong>的伪测试集fake test se。我们尝试不同的超参数值，并保留在验证集上表现最好的值。</li>
+<li>如果担心训练数据不足，我们讨论了一种称为<strong>交叉验证</strong>的过程，它可以帮助减少 估计哪些超参数最有效的 噪声。</li>
+<li>一旦找到最佳超参数，我们固定它们，并在实际的测试集上执行单一的<strong>评估</strong>。</li>
+<li>我们看到最近邻方法在CIFAR-10上可以达到大约40%的准确性。它简单易实现，但要求我们存储整个训练集，而且在测试图像上评估的代价很高。</li>
+<li>最后，我们看到使用L1或L2距离来衡量原始像素值是不足够的，因为这些距离与图像的背景和颜色分布的相关性更强，而与它们的语义内容相关性较弱。</li>
+</ul>
+<p>在接下来的课程中，我们将着手解决这些挑战，最终找到可以达到90%准确性的解决方案，允许我们在学习完成后完全丢弃训练集，并且允许我们在不到一毫秒的时间内评估测试图像。</p>
+<p><a name='summaryapply'></a></p>
+<h3 id="knn">总结：在实践中应用kNN<a class="headerlink" href="#knn" title="Permanent link">⚓︎</a></h3>
+<p>如果你希望在实践中应用kNN（希望不是在图像上，或者仅作为一个基准baseline），请按照以下步骤进行：</p>
+<ol>
+<li>预处理数据：将数据中的特征（例如图像中的一个像素）标准化，使其具有零均值和单位方差。我们将在后面的部分中更详细地介绍这一点，并选择不在本节中讨论数据标准化，因为图像中的像素通常是均匀的，不具有广泛不同的分布，从而减轻了数据标准化的需要。</li>
+<li>如果你的数据是高维的，请考虑使用降维技术，如PCA（主成分分析<a href="https://en.wikipedia.org/wiki/Principal_component_analysis">wiki ref</a>, <a href="http://cs229.stanford.edu/notes/cs229-notes10.pdf">CS229ref</a>, <a href="https://web.archive.org/web/20150503165118/http://www.bigdataexaminer.com:80/understanding-dimensionality-reduction-principal-component-analysis-and-singular-value-decomposition/">blog ref</a>），NCA（邻域成分分析<a href="https://en.wikipedia.org/wiki/Neighbourhood_components_analysis">wiki ref</a>, <a href="https://kevinzakka.github.io/2020/02/10/nca/">blog ref</a>）或甚至<a href="https://scikit-learn.org/stable/modules/random_projection.html">随机投影Random Projections</a>。</li>
+<li>随机将训练数据拆分成训练/验证集。通常情况下，约70-90%的数据通常分配给训练集。这个设置取决于你有多少超参数以及你希望它们具有多大的影响。<strong>如果需要估计许多超参数，应该更倾向于具有较大验证集，以有效地估计它们</strong>。如果你担心验证数据的大小，最好将训练数据拆分为多个折叠并执行交叉验证。如果你有计算预算，最好始终使用交叉验证（折叠越多越好，但也越昂贵）。</li>
+<li>为多个<strong>k</strong>值（越多越好）以及不同的距离类型（L1和L2是不错的选择）在验证数据上训练和评估kNN分类器。</li>
+<li>如果你的kNN分类器运行时间太长，可以考虑使用近似最近邻库（例如<a href="https://github.com/mariusmuja/flann">FLANN</a>）来加速检索（以一些准确性为代价）。</li>
+<li>注意记录给出最佳结果的超参数。关于是否应该使用最佳超参数的完整训练集存在一个问题，因为如果将验证数据合并到训练集中，最佳超参数可能会发生变化（因为数据的大小会更大）。实际上，最好不在最终分类器中使用验证数据，并将其视为估计超参数的<em>耗尽burned</em> 。在测试集上评估最佳模型。报告测试集的准确性，并宣布这个结果是kNN分类器在你的数据上的性能。</li>
+</ol>
+<p><a name='reading'></a></p>
+<h4 id="_2">进一步阅读<a class="headerlink" href="#_2" title="Permanent link">⚓︎</a></h4>
+<p>以下是一些（可选的）链接，你可能会对进一步阅读感兴趣：</p>
+<ul>
+<li>
+<p><a href="https://homes.cs.washington.edu/~pedrod/papers/cacm12.pdf">有关机器学习的一些有用信息</a>，特别是第6节相关，但整篇论文都强烈推荐阅读。</p>
+</li>
+<li>
+<p><a href="https://people.csail.mit.edu/torralba/shortCourseRLOC/index.html">识别和学习物体类别</a>，这是2005年ICCV的一个关于物体分类的短期课程。</p>
+</li>
+</ul>
+
+  <hr>
+<div class="md-source-file">
+  <small>
+    
+      最后更新:
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 16, 2023</span>
+      
+        <br>
+        创建日期:
+        <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 16, 2023</span>
+      
+    
+  </small>
+</div>
+
+
+  
+
+
+
+  <form class="md-feedback" name="feedback" hidden>
+    <fieldset>
+      <legend class="md-feedback__title">
+        对当前页面有任何疑问吗？
+      </legend>
+      <div class="md-feedback__inner">
+        <div class="md-feedback__list">
+          
+            <button class="md-feedback__icon md-icon" type="submit" title="This page was helpful" data-md-value="1">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 9v12H1V9h4m4 12a2 2 0 0 1-2-2V9c0-.55.22-1.05.59-1.41L14.17 1l1.06 1.06c.27.27.44.64.44 1.05l-.03.32L14.69 8H21a2 2 0 0 1 2 2v2c0 .26-.05.5-.14.73l-3.02 7.05C19.54 20.5 18.83 21 18 21H9m0-2h9.03L21 12v-2h-8.79l1.13-5.32L9 9.03V19Z"/></svg>
+            </button>
+          
+            <button class="md-feedback__icon md-icon" type="submit" title="This page could be improved" data-md-value="0">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 15V3h4v12h-4M15 3a2 2 0 0 1 2 2v10c0 .55-.22 1.05-.59 1.41L9.83 23l-1.06-1.06c-.27-.27-.44-.64-.44-1.06l.03-.31.95-4.57H3a2 2 0 0 1-2-2v-2c0-.26.05-.5.14-.73l3.02-7.05C4.46 3.5 5.17 3 6 3h9m0 2H5.97L3 12v2h8.78l-1.13 5.32L15 14.97V5Z"/></svg>
+            </button>
+          
+        </div>
+        <div class="md-feedback__note">
+          
+            <div data-md-value="1" hidden>
+              
+              
+                
+              
+              感谢您的反馈！
+            </div>
+          
+            <div data-md-value="0" hidden>
+              
+              
+                
+              
+              感谢您的反馈！请点击这里<a href="https://github.com/EanYang7/cs231n/issues" target="_blank" rel="noopener">这里</a>提供问题反馈.
+            </div>
+          
+        </div>
+      </div>
+    </fieldset>
+  </form>
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            回到页面顶部
+          </button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/EanYang7/cs231n" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.instant", "navigation.top", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.path", "toc.follow", "content.action.edit", "content.action.view", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.dfff1995.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.dff1b7c8.min.js"></script>
+      
+        <script src="../../../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,1648 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="CS231n: Deep Learning for Computer Vision">
+      
+      
+      
+        <link rel="canonical" href="https://eanyang7.github.io/cs231n/generative-modeling/">
+      
+      
+      
+      
+      <link rel="icon" href="../logo.jpg">
+      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.3.1">
+    
+    
+      
+        <title>Generative Modeling - CS231n</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.046329b4.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.85d0ee34.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function n(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],n("js",new Date),n("config","G-5F8XNH7BCX"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){this.value&&n("event","search",{search_term:this.value})}),document$.subscribe(function(){var a=document.forms.feedback;if(void 0!==a)for(var e of a.querySelectorAll("[type=submit]"))e.addEventListener("click",function(e){e.preventDefault();var t=document.location.pathname,e=this.getAttribute("data-md-value");n("event","feedback",{page:t,data:e}),a.firstElementChild.disabled=!0;e=a.querySelector(".md-feedback__note [data-md-value='"+e+"']");e&&(e.hidden=!1)}),a.hidden=!1}),location$.subscribe(function(e){n("config","G-5F8XNH7BCX",{page_path:e.pathname})})});var e=document.createElement("script");e.async=!0,e.src="https://www.googletagmanager.com/gtag/js?id=G-5F8XNH7BCX",document.getElementById("__analytics").insertAdjacentElement("afterEnd",e)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#motivation-and-overview" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href=".." title="CS231n" class="md-header__button md-logo" aria-label="CS231n" data-md-component="logo">
+      
+  <img src="../logo.jpg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CS231n
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Generative Modeling
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换为暗黑模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换为暗黑模式" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换为浅色模式"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="切换为浅色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="选择当前语言">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04M18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12m-2.62 7 1.62-4.33L19.12 17h-3.24Z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="/cs231n/" hreflang="zh" class="md-select__link">
+              中文
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="https://cs231n.github.io/" hreflang="en" class="md-select__link">
+              English(源网站)
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/EanYang7/cs231n" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    EanYang7/cs231n
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href=".." class="md-tabs__link">
+          
+  
+  首页
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../courses/preparation/setup/" class="md-tabs__link">
+          
+  
+  课程
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../assignments/2023/assignment1/" class="md-tabs__link">
+          
+  
+  任务
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="CS231n" class="md-nav__button md-logo" aria-label="CS231n" data-md-component="logo">
+      
+  <img src="../logo.jpg" alt="logo">
+
+    </a>
+    CS231n
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/EanYang7/cs231n" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    EanYang7/cs231n
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    首页
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            首页
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CS231n 卷积神经网络视觉识别
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    课程
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            课程
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" >
+        
+          <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    准备工作
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            准备工作
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/preparation/setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    软件设置
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/preparation/python-numpy-tutorial/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Python/Numpy教程
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+        
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    神经网络
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            神经网络
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/classification/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    图像分类
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/linear-classify/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    线性分类
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/optimization-1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    优化：随机梯度下降
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/optimization-2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    反向传播
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2_5" >
+        
+          <label class="md-nav__link" for="__nav_2_2_5" id="__nav_2_2_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    神经网络
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            神经网络
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/neural-networks-1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    创建结构
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/neural-networks-2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    创建数据和损失
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/neural-networks-3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    学习和评估
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/neural-networks-case-study/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    最小神经网络案例研究
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    卷积神经网络
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            卷积神经网络
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/CNN/convolutional-networks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    结构、卷积/池化层
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/CNN/understanding-cnn/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    理解与可视化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/CNN/transfer-learning/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    迁移学习与微调
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    任务
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            任务
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../assignments/2023/assignment1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    任务1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../assignments/2023/assignment2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    任务2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../assignments/2023/assignment3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    任务2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#motivation-and-overview" class="md-nav__link">
+    Motivation and Overview
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pixel-rnncnn" class="md-nav__link">
+    Pixel RNN/CNN
+  </a>
+  
+    <nav class="md-nav" aria-label="Pixel RNN/CNN">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#explicit-density-model" class="md-nav__link">
+    Explicit density model
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pixel-rnn" class="md-nav__link">
+    Pixel RNN
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pixel-cnn" class="md-nav__link">
+    Pixel CNN
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#variational-autoencoder" class="md-nav__link">
+    Variational Autoencoder
+  </a>
+  
+    <nav class="md-nav" aria-label="Variational Autoencoder">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview-of-variational-autoencoder" class="md-nav__link">
+    Overview of Variational Autoencoder
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#autoencoders-vs-variational-autoencoders" class="md-nav__link">
+    Autoencoders v.s. Variational Autoencoders
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vae-mathematical-explanation" class="md-nav__link">
+    VAE Mathematical Explanation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vae-training-process" class="md-nav__link">
+    VAE training process
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#generative-adversarial-networks" class="md-nav__link">
+    Generative Adversarial Networks
+  </a>
+  
+    <nav class="md-nav" aria-label="Generative Adversarial Networks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview-of-generative-adversarial-networks" class="md-nav__link">
+    Overview of Generative Adversarial Networks
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generative-adversarial-nets-2014-original-version" class="md-nav__link">
+    Generative Adversarial Nets - 2014 original version
+  </a>
+  
+    <nav class="md-nav" aria-label="Generative Adversarial Nets - 2014 original version">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#discriminator-network" class="md-nav__link">
+    Discriminator network
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generator-network" class="md-nav__link">
+    Generator network
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gan-mathematical-explanation" class="md-nav__link">
+    GAN Mathematical explanation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evaluation" class="md-nav__link">
+    Evaluation
+  </a>
+  
+    <nav class="md-nav" aria-label="Evaluation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inception-scores" class="md-nav__link">
+    Inception Scores
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nearest-neighbours" class="md-nav__link">
+    Nearest Neighbours
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hype-human-eye-perceptual-evaluation" class="md-nav__link">
+    HYPE - Human eye perceptual Evaluation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#challenges" class="md-nav__link">
+    Challenges
+  </a>
+  
+    <nav class="md-nav" aria-label="Challenges">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optimization" class="md-nav__link">
+    Optimization
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mode-collapse" class="md-nav__link">
+    Mode collapse
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#case-studies" class="md-nav__link">
+    Case Studies
+  </a>
+  
+    <nav class="md-nav" aria-label="Case Studies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dcgan" class="md-nav__link">
+    DCGAN
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cyclegan" class="md-nav__link">
+    CycleGAN
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stylegan" class="md-nav__link">
+    StyleGAN
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#further-reading" class="md-nav__link">
+    Further Reading
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+    <a href="https://github.com/EanYang7/cs231n/edit/dev/docs/generative-modeling.md" title="编辑此页" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/EanYang7/cs231n/raw/dev/docs/generative-modeling.md" title="查看本页的源代码" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5Z"/></svg>
+    </a>
+  
+
+
+  <h1>Generative Modeling</h1>
+
+<p>Table of Contents
+- <a href="#Motivation-and-Overview">Motivation and Overview</a>
+- <a href="#Pixel-RNN/CNN">Pixel RNN/CNN</a>
+    - <a href="#Explicit-density-model">Explicit density model</a>
+    - <a href="#Pixel-RNN">Pixel RNN</a>
+    - <a href="#Pixel-CNN">Pixel CNN</a>
+- <a href="#Variational-Autoencoder">Variational Autoencoder</a>
+    - <a href="#Overview-of-Variational-Autoencoder">Overview of Variational Autoencoder</a>
+    - <a href="#Autoencoders-v.s.-Variational-Autoencoders">Autoencoders v.s. Variational Autoencoders</a>
+    - <a href="#VAE-Mathematical-Explanation">VAE Mathematical Explanation</a>
+    - <a href="#VAE-training-process">VAE training process</a>
+- <a href="#Generative-Adversarial-Networks">Generative Adversarial Networks</a>
+    - <a href="#Overview-of-Generative-Adversarial-Networks">Overview of Generative Adversarial Networks</a> 
+    - <a href="#Generative-Adversarial-Nets---2014-original-version">Generative Adversarial Nets - 2014 original version</a>
+        - <a href="#Discriminator-network">Discriminator network</a>
+        - <a href="#Generator-network">Generator network</a>
+    - <a href="#GAN-Mathematical-explanation">GAN Mathematical explanation</a>
+    - <a href="#Evaluation">Evaluation</a>
+        - <a href="#Inception-Scores">Inception Scores</a>
+        - <a href="#Nearest-Neighbours">Nearest Neighbours</a>
+        - <a href="#HYPE---Human-eye-perceptual-Evaluation">HYPE - Human eye perceptual Evaluation</a>
+    - <a href="#Challenges">Challenges</a>
+        - <a href="#Optimization">Optimization</a>
+        - <a href="#Mode-collapse">Mode Collapse</a>
+    - <a href="#Case-Studies">Case Studies</a>
+        - <a href="#DCGAN">DCGAN</a>
+        - <a href="#CycleGAN">CycleGAN</a>
+        - <a href="#StyleGAN">StyleGAN</a>
+    - <a href="#Summary">Summary</a></p>
+<p><a name='intro'></a></p>
+<h2 id="motivation-and-overview">Motivation and Overview<a class="headerlink" href="#motivation-and-overview" title="Permanent link">⚓︎</a></h2>
+<p>In the first half of the quarter, we studied several supervised learning methods, which learn functions to map input images to labels. However, labeling the training data may be expensive because it requires much time and effort. Thus, we are introducing unsupervised learning methods. In unsupervised learning methods, training data is relatively cheaper because the methods don't need labeling from the huge dataset. The goal is to learn the underlying hidden structures or feature representations from raw data directly.</p>
+<p>This table compares supervised and unsupervised learning: 
+|          | Supervised Learning | Unsupervised Learning |
+| -------- | -------- | -------- |
+| Data         | has label y         |    no labels      |
+| Goal         |  input data -&gt; output label        |    Learn some underlying hidden strcture of the data      |
+| Examples     | Classification, regression, object detection, semantic segmentation, image captioning, etc     |   Clustering, dimensionality reduction, feature learning, density estimation, etc.   |</p>
+<p><strong>Generative modeling</strong> is in the class of unsupervised learning. The goal of generative modeling is to generate new samples from the same distribution. In the application of image generation, we want to make sure that the quality of generated images aligns with the raw data image distributions. Thus, during the training process, there are two objectives:
+1. Learn <span class="arithmatex">\(p_{model} (x)\)</span> that <strong>approximates</strong> <span class="arithmatex">\(p_{data}(x)\)</span> 
+2. Sampling new data <span class="arithmatex">\(x\)</span> from <span class="arithmatex">\(p_{model}(x)\)</span> </p>
+<p>Within the first objective (how <span class="arithmatex">\(p_{model} (x)\)</span> approximates <span class="arithmatex">\(p_{data}(x)\)</span>), we can categorize generative model into two types: 
+1. Explicit density estimation
+2. Implicit density estimation</p>
+<p><img alt="" src="https://i.imgur.com/L6l6qLn.png" /></p>
+<p>In this document, we will talk about 3 most popular types: 
+1. Pixel RNN/CNN - Explicit density estimation
+2. Variational Autoencoder - Approximate density
+3. Generative Adversarial Networks - Implicit density</p>
+<h2 id="pixel-rnncnn">Pixel RNN/CNN<a class="headerlink" href="#pixel-rnncnn" title="Permanent link">⚓︎</a></h2>
+<h3 id="explicit-density-model">Explicit density model<a class="headerlink" href="#explicit-density-model" title="Permanent link">⚓︎</a></h3>
+<p><strong>Pixel RNN/CNN</strong> is an explicit density estimation method, which means that we explicitly define and solve for <span class="arithmatex">\(p_{model}(x)\)</span>. For example, given an input image <span class="arithmatex">\(x\)</span>, we can calculate the joint likelihood of each pixel in the image, in order to predict the of the pixel values of the image <span class="arithmatex">\(x\)</span>. Being able to explicitly calculate the joint likelihood is why we called it explicitly defined method. </p>
+<p>However, estimating the joint likelihood of pixels directly can be difficult. A trick borrowed from probability is to rewrite the joint likelihood as a product of the conditional likelihoods on the previous pixels. This uses the chain rule to decompose the likelihood of an image <span class="arithmatex">\(x\)</span> into products of 1-dimensional densities. Our objective is then to maximize the likelihood of training data.</p>
+<div class="arithmatex">\[
+\begin{aligned}
+p(x) = p(x_1, x_2, ..., x_n)
+     &amp;= \prod_{i=1}^n p(x_i | x_1, ..., x_{i - 1}).
+\end{aligned}
+\]</div>
+<h3 id="pixel-rnn">Pixel RNN<a class="headerlink" href="#pixel-rnn" title="Permanent link">⚓︎</a></h3>
+<p>You may notice that the distribution of <span class="arithmatex">\(p(x)\)</span> is very complex because each pixel is conditioned on hundreds of thousands of pixels, making the computation very expensive. How can we resolve this problem? </p>
+<p>Recall RNN that we learn in the previous lecture. RNN has an “internal state” that is updated as a sequence is processed and allows previous outputs to be used as inputs. We can treat the conditional distribution of each pixel as a sequence of data, and apply RNN to model the joint likelihood function. More specifically, we can <em>model the dependency of one pixel on all the previous pixels by keeping the hidden state of all the previous inputs</em>. We use the hidden state to express the dependency of generating a new pixel from the previous pixel. In the beginning, we have the default hidden state,  first pixel <span class="arithmatex">\(x_1\)</span>, and the image we want to generate. We will use the first pixel to generate the second pixel and repeat. Then it becomes a sequential generating process: feeding the previously predicted pixel back to the network to generate the next pixel.</p>
+<p>The process described in the Pixel RNN paper is as follows: Starting from the corner, each pixel is conditional on the pixel from the left and the pixel above. Repeat the sequential generating process until the whole image is generated.</p>
+<p><img alt="" src="https://i.imgur.com/6ajn4Pe.gif" /></p>
+<figcaption> Pixel RNN Sequential Generating Process </figcaption>
+
+<h3 id="pixel-cnn">Pixel CNN<a class="headerlink" href="#pixel-cnn" title="Permanent link">⚓︎</a></h3>
+<p>One drawback of Pixel RNN is that the sequential generation is slow and we need to process the pixels one at a time. Is there a way to process more pixels at a time? In the same paper, the authors proposed another method, <strong>Pixel CNN</strong>, which allows parallelizaton among pixels. Specifically, Pixel CNN uses a <em>masked convolution over context region</em>. Different from regular square receptive field in the convolutional layer, the receptive field of masked convolution need not be a square. </p>
+<p>You may wonder: are we able to generate the whole image with masked convolution? In fact, if we stack enough layers of this kind of masked convolution, we can achieve the same effective receptive field as the pixel generation that conditional on all of the previous pixels (pixel RNN).</p>
+<p><img alt="" src="https://i.imgur.com/2eSJZ2Y.png" /></p>
+<figcaption> Pixel CNN Generating Example </figcaption>
+
+<h2 id="variational-autoencoder">Variational Autoencoder<a class="headerlink" href="#variational-autoencoder" title="Permanent link">⚓︎</a></h2>
+<h3 id="overview-of-variational-autoencoder">Overview of Variational Autoencoder<a class="headerlink" href="#overview-of-variational-autoencoder" title="Permanent link">⚓︎</a></h3>
+<p>The modeling procedure of Pixel RNN is still slow because it's a sequential generation process. What if we make a little bit of trade-off but we can generate all pixels at the same time and model a simpler data distribution? Instead of optimizing the expensive tractable density function directly, we can <em>derive and optimize the lower bound on likelihood</em> instead. This is called Approximate density estimation.</p>
+<p>We can re-write the probability density function as <span class="arithmatex">\(p_{\theta}(x) = \int p_{\theta}(z)p_{\theta}(x|z)dz\)</span>. We introduce a new latent variable <span class="arithmatex">\(z\)</span> to <em>decompose the data likelihood as the marginal distribution of the conditional likelihood w.r.t this latent variable</em>. The latent variable <span class="arithmatex">\(z\)</span> represents <em>the underlying structure of the data distribution</em>. </p>
+<p>This method is called <strong>Variational Autoencoders</strong> (VAE). There is no dependency among the pixels. All pixels are conditional on this variable z. We can generate all pixels at the same time. The drawback is we need to integrate all possible values of z. In reality, <span class="arithmatex">\(p_\theta(z)\)</span> is low dimensional and <span class="arithmatex">\(p_\theta(x|z)\)</span> is often times complex, making it impossible to integrate <span class="arithmatex">\(p_\theta(x)\)</span> with an analytical solution. Thus, we cannot directly optimize this function as a result. We will discuss how to resolve this issue by approximating the unknown posterior distribution from only the observed data <span class="arithmatex">\(x\)</span> in the following section. </p>
+<h3 id="autoencoders-vs-variational-autoencoders">Autoencoders v.s. Variational Autoencoders<a class="headerlink" href="#autoencoders-vs-variational-autoencoders" title="Permanent link">⚓︎</a></h3>
+<p><strong>Autoencoder</strong> Before diving into Variational Autoencoders, let's take a look at <strong>Autoencoder</strong>, a model that encodes input by reconstructing the input itself. An Autoencoder contains an encoder and a decoder, with the goal of learning a low-dimensional feature representation from the input (unlabeled) training data. The encoder compresses the input data to low-dimensional feature vector z, while the decoder decomposes <span class="arithmatex">\(z\)</span> to the same shape as the input data.</p>
+<p>The idea of Autoencoder is to <em>compress input images such that each vector in z contains meaningful factors of variation in data</em>. For example, if the inputs are different faces, the dimensions in z could be facial expressions, poses, different degrees of smile, etc.</p>
+<p>However, we cannot generate new images from an autoencoder because we don't know the distributional space of z. VAE makes Autoencoders generative and allows us to sample from the model to generate data. VAE estimates the latent z representation so that we can generate more realistic images from the sampling. The intuition is z space shall reflect the factors of the variations. Assume that each image x is generated by sampling a new z with a slightly different factor of variations. Overall, z is used to conditionally generate the x.</p>
+<h3 id="vae-mathematical-explanation">VAE Mathematical Explanation<a class="headerlink" href="#vae-mathematical-explanation" title="Permanent link">⚓︎</a></h3>
+<p>We need two things to represent the model:
+1. choose a proper <span class="arithmatex">\(p(z)\)</span>:
+Gaussian distribution is a reasonable choice for latent attributes. We can interpret every expression as a variation of the average neutral expression.
+2. conditional distribution <span class="arithmatex">\(p(x|z)\)</span> is represented with the neural network:
+We want to be able to generate a high-dimensional image from the simple low-dimension Gaussian distribution.</p>
+<p><strong>Intractability</strong> To train the model, we can learn model parameters to maximize likelihood of training data: <span class="arithmatex">\(p_{\theta}(x) = \int p_{\theta}(z)p_{\theta}(x|z)dz\)</span>. However, this likelihood expression is intractable to evaluate or to optimize because we cannot compute <span class="arithmatex">\(p(x|z)\)</span> for every z in the intergral. We may also try to estimate posterior density <span class="arithmatex">\(p_{\theta}(z|x) = p_{\theta}(x|z)p_{\theta}(z)/p_{\theta}(x)\)</span> but it's also intractable due to the <span class="arithmatex">\(p_{\theta}(x)\)</span> term. Alternatively, in the paper, the authors proposed that we can approximate the true posterior <span class="arithmatex">\(p_{\theta}(z|x)\)</span> with <span class="arithmatex">\(q_{\phi}(z|x)\)</span>, which is a lower bound on the data likelihood and can be optimized. </p>
+<p>The goal is to maximize the log-likelihood of <span class="arithmatex">\(p_{\theta} (x^{(i)})\)</span>. Since <span class="arithmatex">\(p_{\theta} (x^{(i)})\)</span> does not depend on z, we can re-write as the expectation of z w.r.t <span class="arithmatex">\(q_{\phi}(z|x^{(i)})\)</span> and further derive (from lecture 12 slide):
+$$
+\begin{aligned}
+\log p_{\theta} (x^{(i)}) &amp;= \mathbb{E}<em>{z \sim q</em>{\phi}(z|x^{(i)})} [\log p_{\theta}(x^{(i)})] \
+&amp;= \mathbb{E}<em>z [\log \frac{p</em>{\theta}(x^{(i)} | z)p_{\theta}(z)}{p_{\theta}(z | x^{(i)})}] \
+&amp;= \mathbb{E}<em>{z} [\log \frac{p</em>{\theta}(x^{(i)} | z)p_{\theta}(z) q_{\phi}(z | x^{(i)}) }{p_{\theta}(z | x^{(i)}) q_{\phi}(z | x^{(i)}) }] \
+&amp;= \mathbb{E}<em>z [\log p</em>{\theta} (x^{(i)} | z)] - \mathbb{E}<em>z [\log \frac{q</em>{\phi}(z | x^{(i)})}{p_{\theta}(z)}] + \mathbb{E}<em>z [\log \frac{q</em>{\phi}(z | x^{(i)})}{p_{\theta}(z | x_{(i)})}] \
+&amp;=  \mathbb{E}<em>z [\log p</em>{\theta} (x^{(i)} | z)] - D_{KL}(q_{\phi}(z | x^{(i)}) || p_{\theta}(z)) + D_{KL}(q_{\phi}(z | x^{(i)})|| p_{\theta}(z | x^{(i)}))
+\end{aligned}
+$$</p>
+<p>The estimate of <span class="arithmatex">\(\mathbb{E}_z [\log p_{\theta} (x^{(i)} | z)]\)</span> can be computed through sampling. <span class="arithmatex">\(D_{KL}(q_{\phi}(z | x^{(i)}) || p_{\theta}(z))\)</span> has closed-form solution. <span class="arithmatex">\(D_{KL}(q_{\phi}(z | x^{(i)})|| p_{\theta}(z | x^{(i)}))\)</span> would be always larger than or equal to zero. Thus, we have tractable lower bound. </p>
+<h3 id="vae-training-process">VAE training process<a class="headerlink" href="#vae-training-process" title="Permanent link">⚓︎</a></h3>
+<p><img alt="" src="https://i.imgur.com/IK8laIh.png" /></p>
+<p><span class="arithmatex">\(q_{\phi}(z | x^{(i)})\)</span> is the encoder network in this process. The goal of <span class="arithmatex">\(D_{KL}(q_{\phi}(z | x^{(i)}) || p_{\theta}(z))\)</span> is to estimate a posterior distribution close to prior distribution. On the other hand, <span class="arithmatex">\(p_{\theta} (x^{(i)} | z)\)</span> is the decoder network and reconstruct the input data. We compute them in the forward pass for every minibatch of input data and then perform back-propagation. </p>
+<h2 id="generative-adversarial-networks">Generative Adversarial Networks<a class="headerlink" href="#generative-adversarial-networks" title="Permanent link">⚓︎</a></h2>
+<h3 id="overview-of-generative-adversarial-networks">Overview of Generative Adversarial Networks<a class="headerlink" href="#overview-of-generative-adversarial-networks" title="Permanent link">⚓︎</a></h3>
+<p>While implicit modeling is proven useful in generating data, it has the drawback of needing to estimate a probability distribution. What if we give up on explicitly modeling density, and just want the ability to sample? For <strong>Generative Adversarial Networks</strong>, we don't model the likelihood function <span class="arithmatex">\(p(x)\)</span> at all but only care about generating high-quality pictures.</p>
+<p>From VAE, we learn that we can map a simple Gaussian distribution to a complex image distribution. We could leverage the same idea by mapping low dimensional noise to high dimensional image distribution. We can think of the decoder network as a generative network. The goal of Generative Adversarial Networks is to directly generate samples from a high-dimensional training distribution.</p>
+<h3 id="generative-adversarial-nets-2014-original-version">Generative Adversarial Nets - 2014 original version<a class="headerlink" href="#generative-adversarial-nets-2014-original-version" title="Permanent link">⚓︎</a></h3>
+<p>You may be curious: if we don't model z's distribution and don't know which sample z maps to which training image, how can we learn by reconstructing training images?</p>
+<p>The general objective is to <em>generate images that should look "real"</em>. To achieve that, Generative Adversarial Net trains another network that learns to tell the difference between real and fake images and whether the generated image from a generator network looks like the one coming from the real distribution.</p>
+<h4 id="discriminator-network">Discriminator network<a class="headerlink" href="#discriminator-network" title="Permanent link">⚓︎</a></h4>
+<p>The network that tells whether the image is real or fake is called the <strong>Discriminator network</strong>. We refer to images from the training distribution as real and the generated images from the generator network as fake. The discriminator network is essentially performing a supervised binary-class classification task. The discriminator uses the real/fake information to compute the gradient and backpropagate to the generation network, to make the generative examples more 'real'.</p>
+<p>In the beginning, the discriminator can tell whether an image is a real input image or a generated image easily. Over time, as the generator network improves, images become more and more realistic. The discriminator has to change the decision boundary gradually to fit the new distribution better and better.</p>
+<p>Python code example: 
+<div class="highlight"><pre><span></span><code><span class="n">logits_real</span> <span class="o">=</span> <span class="n">D</span><span class="p">(</span><span class="n">real_data</span><span class="p">)</span>
+
+<span class="n">random_noise</span> <span class="o">=</span> <span class="n">sample_noise</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">noise_size</span><span class="p">)</span>
+<span class="n">fake_images</span> <span class="o">=</span> <span class="n">G</span><span class="p">(</span><span class="n">random_noise</span><span class="p">)</span>
+<span class="n">logits_fake</span> <span class="o">=</span> <span class="n">D</span><span class="p">(</span><span class="n">fake_images</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="p">))</span>
+
+<span class="n">d_total_error</span> <span class="o">=</span> <span class="n">discriminator_loss</span><span class="p">(</span><span class="n">logits_real</span><span class="p">,</span> <span class="n">logits_fake</span><span class="p">)</span>
+</code></pre></div></p>
+<h4 id="generator-network">Generator network<a class="headerlink" href="#generator-network" title="Permanent link">⚓︎</a></h4>
+<p>On the other side, the network that maps low dimensional noise to high dimensional image distribution is called the <strong>Generator</strong>. The goal of the generator is to fool the discriminator by generating real-looking images. In the beginning, the generator will generate random tensors that don't look like real images at all. However, the signal from the discriminator would inform the generator how it should improve the generated image to look more real. Over time, the generator would learn to generate more and more realistic samples.</p>
+<p>python code example: 
+<div class="highlight"><pre><span></span><code><span class="n">random_noise</span> <span class="o">=</span> <span class="n">sample_noise</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">noise_size</span><span class="p">)</span>
+<span class="n">fake_images</span> <span class="o">=</span> <span class="n">G</span><span class="p">(</span><span class="n">random_noise</span><span class="p">)</span>
+
+<span class="n">gen_logits_fake</span> <span class="o">=</span> <span class="n">D</span><span class="p">(</span><span class="n">fake_images</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="p">))</span>
+<span class="n">g_error</span> <span class="o">=</span> <span class="n">generator_loss</span><span class="p">(</span><span class="n">gen_logits_fake</span><span class="p">)</span>
+</code></pre></div></p>
+<h4 id="gan-mathematical-explanation">GAN Mathematical explanation<a class="headerlink" href="#gan-mathematical-explanation" title="Permanent link">⚓︎</a></h4>
+<p>Due to the coexistence of two networks, GAN is a two-player/min-max game that balances the optimization between Generator and Discriminator network. </p>
+<p><strong>Objective function</strong>: 
+$$
+\begin{aligned}
+\min_{\theta_g} \max_{\theta_d} [\mathbb{E}<em>{x \sim p</em>{data}} \log D_{\theta_d} (x) + \mathbb{E}<em>{z \sim p(z)} \log(1 - D</em>{\theta_d}(G_{\theta_g}(z)))]
+\end{aligned}
+$$</p>
+<p><strong>Generator Objective</strong>: <span class="arithmatex">\(\min_{\theta_g}\)</span> find weights that minimize this objective. <span class="arithmatex">\(\mathbb{E}_{x \sim p_{data}} \log D_{\theta_d} (x)\)</span> is the expectation of score predicted by discriminator, given on the training set. The generator would try to maximize this term because the generator tries to fool the discriminator by generating more realistic images.</p>
+<p><strong>Discriminator Objective</strong>: <span class="arithmatex">\(\max_{\theta_d}\)</span> find weights that maximize this objective.</p>
+<p>During the training, generator transforms noise z to tensor and then the generated image is fed to the discriminator. Thus, <span class="arithmatex">\(D_{\theta_d}(G_{\theta_g}(z))\)</span> is the generated image score predicted by discriminator. Discriminator tries to tell the difference between real and fake images by moving this term to 0 and maximizing <span class="arithmatex">\(1 - D_{\theta_d}(G_{\theta_g}(z))\)</span>. </p>
+<p>The training process is to alternate between 
+1. Gradient ascent on discriminator 
+2. Gradient descent on generator</p>
+<p>Problem of 2 is the gradient dominated by the region sample is already good. Training is very slow and unstable at the beginning. One solution is to change to use gradient ascent on generator and modify the different objective.</p>
+<p><img alt="" src="https://i.imgur.com/zvAex6j.png" /> </p>
+<figcaption> Generative Adversaial Nets training flow </figcaption>
+
+<h3 id="evaluation">Evaluation<a class="headerlink" href="#evaluation" title="Permanent link">⚓︎</a></h3>
+<p>Recall that there are two objectives in Generative Modeling: 
+1. Learn <span class="arithmatex">\(p_{model} (x)\)</span> that approximates <span class="arithmatex">\(p_{data}(x)\)</span>
+2. Sampling new data <span class="arithmatex">\(x\)</span> from <span class="arithmatex">\(p_{model}(x)\)</span> </p>
+<p>When evaluating the GAN output, we want to make sure the two objectives are taken care of.</p>
+<h4 id="inception-scores">Inception Scores<a class="headerlink" href="#inception-scores" title="Permanent link">⚓︎</a></h4>
+<p>Inception score was a popular evaluation metric, which evaluates the quality of generated images. Inception Score uses the Inception V3 pre-trained model on ImageNet to observe the distribution of generated images. If the generated image is easily recognized by the discriminator, the classification score (i.e. <span class="arithmatex">\(p(y|x)\)</span>) would be large, which leads to <span class="arithmatex">\(p(y|x)\)</span> having low entropy. Meanwhile, we also want the marginal distribution <span class="arithmatex">\(p(y)\)</span> to have high entropy. The inception score can be calculated as follows:
+$$
+\begin{aligned}
+IS(x) &amp;= \exp(\mathbb{E}<em>{x \sim p_g}[D</em>{KL}[p(y|x) || p(y)]]) \
+&amp;= \exp(\mathbb{E}_{x \sim p_g, y \sim p(y | x)} [\log p(y | x) - \log p(y)]) \
+&amp;= \exp(H(y) - H(y | x))
+\end{aligned}
+$$
+where a high inception score indicates better-quality generated images. However, the inception score has some drawbacks and is fooled over the years. Thus, people started using measurements such as FID in recent years. </p>
+<h4 id="nearest-neighbours">Nearest Neighbours<a class="headerlink" href="#nearest-neighbours" title="Permanent link">⚓︎</a></h4>
+<p>A simpler evaluation method is to visualize a sample of generated images to tell how realistic the generated images are. We can also leverage Nearest Neighbours to compare real images and generated images. The idea is to sample some real images from the training set and calculate the distance between the sampled generated images. If the generated images are real-looking, the distances should be small.</p>
+<h4 id="hype-human-eye-perceptual-evaluation">HYPE - Human eye perceptual Evaluation<a class="headerlink" href="#hype-human-eye-perceptual-evaluation" title="Permanent link">⚓︎</a></h4>
+<p>HYPE is a new evaluation method introduced in 2019. It evaluates GAN by a social computing method: the website invites users to evaluate GAN and try to build metrics on top of it. The goal is to ensure the evaluation is consistent while evaluating different types of GANs.</p>
+<h3 id="challenges">Challenges<a class="headerlink" href="#challenges" title="Permanent link">⚓︎</a></h3>
+<h4 id="optimization">Optimization<a class="headerlink" href="#optimization" title="Permanent link">⚓︎</a></h4>
+<p>It's not easy to train GAN because the process has many challenges. Often times, the generator and discriminator loss keeps oscillating during GAN training. There is also no stopping criterion in practice. Also, when the discriminator is very confidently classifying fake samples, the generator training may fail due to vanishing gradients.  </p>
+<h4 id="mode-collapse">Mode collapse<a class="headerlink" href="#mode-collapse" title="Permanent link">⚓︎</a></h4>
+<p>Mode collapse happens when the generator learns to fool the discriminator by producing a single class from the whole training dataset. Often time the training dataset is multi-modal, which means the probability density distribution over features has multiple peaks. If data is imbalanced or some other problems happen during the training process, the generating image may collapse into one mode or few modes while other modes are disappearing. For example, the discriminator classifies a lot of generated images incorrectly. The generator takes the feedback and only generates images that are the same or similar to the ones that fool the discriminator. Eventually, the generated images collapse into single-mode or fewer modes.</p>
+<h3 id="case-studies">Case Studies<a class="headerlink" href="#case-studies" title="Permanent link">⚓︎</a></h3>
+<h4 id="dcgan">DCGAN<a class="headerlink" href="#dcgan" title="Permanent link">⚓︎</a></h4>
+<p>The idea of DCGAN is to use a convolutional neural network in GAN. Here are some architecture guidelines DCGAN gave in their paper:</p>
+<blockquote>
+<ol>
+<li>Replace any pooling layers with strided convolutions (discriminator) and fractional-strided convolutions (generator).</li>
+<li>Use batch norm in both the generator and the discriminator.</li>
+<li>Remove fully connected hidden layers for deeper architectures</li>
+<li>Use ReLU activation in generator for all layers except for the output, which uses Tanh.</li>
+<li>Use LeakyReLU activation in the discriminator for all layers.</li>
+</ol>
+</blockquote>
+<h4 id="cyclegan">CycleGAN<a class="headerlink" href="#cyclegan" title="Permanent link">⚓︎</a></h4>
+<p>Image-to-image translation is a class of problems where the goal is to map an image to another image within the same pair. For example, one may wish to map an image of a location during the Spring season to an image of the same location but during the Fall season. However, paired images are not always availabe. The goal of CycleGAN is then to learn a mapping <span class="arithmatex">\(G\)</span> such that the distribution <span class="arithmatex">\(G(X)\)</span> is as similar to the distribution of <span class="arithmatex">\(Y\)</span> as possible, where <span class="arithmatex">\(X\)</span> and <span class="arithmatex">\(Y\)</span> are the input and output images respectively. </p>
+<h4 id="stylegan">StyleGAN<a class="headerlink" href="#stylegan" title="Permanent link">⚓︎</a></h4>
+<p>StyleGAN is an extension of GAN that aims to improve the generator's ability to generate a wider variety of images. The main modifications to the architecture of GAN's generator is by having two sources of randomness (instead of one): a mapping network that controls the style of the output image, and an additional noise that adds variability to the image. Applications of StyleGAN include human-face generation, anime character generations, new fonts, etc. </p>
+<h3 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">⚓︎</a></h3>
+<p>Comparision between the methods</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Pixel RNN/CNN</th>
+<th>Variational AutoEncoders</th>
+<th>Generative Adversial Modeling</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pros</td>
+<td><ul><li>Can explicitly compute likelihood p(x) </li> <li> Easy to optimize </li> <li>Good samples </li></ul></td>
+<td><ul><li>principled approach to generative models </li> <li>interpretable latent space </li> <li> allows inference of q(z|x) </li> <li>can be useful feature representation for other tasks  </li></ul></td>
+<td>Beautiful, state-of-the-art samples!</td>
+</tr>
+<tr>
+<td>Cons</td>
+<td>slow sequential generation</td>
+<td><ul><li>Maximizes lower bound of likelihood which is not as good evaluation as PixelRNN/PixelCNN </li> <li> Samples blurrier and lower quality compared to state-of-the-art (GANs) </li></ul></td>
+<td><ul><li>Trickier/more unstable to train </li> <li> cannot solve inference queries such as p(x) p(z|x)  </li></ul></td>
+</tr>
+</tbody>
+</table>
+<h3 id="further-reading">Further Reading<a class="headerlink" href="#further-reading" title="Permanent link">⚓︎</a></h3>
+<p>These readings are optional and contain pointers of interest. </p>
+<blockquote>
+<p>PixelRNN/CNN: https://arxiv.org/pdf/1601.06759.pdf
+Variational Auto-Encoders: https://arxiv.org/pdf/1312.6114.pdf
+Generative Adversial Net: https://arxiv.org/pdf/1406.2661.pdf
+DCGAN: https://arxiv.org/pdf/1511.06434.pdf
+CycleGAN: https://arxiv.org/pdf/1703.10593.pdf
+StyleGAN: https://arxiv.org/pdf/1812.04948.pdf
+Mode collapse: https://www.coursera.org/lecture/build-basic-generative-adversarial-networks-gans/mode-collapse-Terkm
+HYPE: https://arxiv.org/pdf/1904.01121.pdf</p>
+</blockquote>
+
+  <hr>
+<div class="md-source-file">
+  <small>
+    
+      最后更新:
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 16, 2023</span>
+      
+        <br>
+        创建日期:
+        <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 16, 2023</span>
+      
+    
+  </small>
+</div>
+
+
+  
+
+
+
+  <form class="md-feedback" name="feedback" hidden>
+    <fieldset>
+      <legend class="md-feedback__title">
+        对当前页面有任何疑问吗？
+      </legend>
+      <div class="md-feedback__inner">
+        <div class="md-feedback__list">
+          
+            <button class="md-feedback__icon md-icon" type="submit" title="This page was helpful" data-md-value="1">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 9v12H1V9h4m4 12a2 2 0 0 1-2-2V9c0-.55.22-1.05.59-1.41L14.17 1l1.06 1.06c.27.27.44.64.44 1.05l-.03.32L14.69 8H21a2 2 0 0 1 2 2v2c0 .26-.05.5-.14.73l-3.02 7.05C19.54 20.5 18.83 21 18 21H9m0-2h9.03L21 12v-2h-8.79l1.13-5.32L9 9.03V19Z"/></svg>
+            </button>
+          
+            <button class="md-feedback__icon md-icon" type="submit" title="This page could be improved" data-md-value="0">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 15V3h4v12h-4M15 3a2 2 0 0 1 2 2v10c0 .55-.22 1.05-.59 1.41L9.83 23l-1.06-1.06c-.27-.27-.44-.64-.44-1.06l.03-.31.95-4.57H3a2 2 0 0 1-2-2v-2c0-.26.05-.5.14-.73l3.02-7.05C4.46 3.5 5.17 3 6 3h9m0 2H5.97L3 12v2h8.78l-1.13 5.32L15 14.97V5Z"/></svg>
+            </button>
+          
+        </div>
+        <div class="md-feedback__note">
+          
+            <div data-md-value="1" hidden>
+              
+              
+                
+              
+              感谢您的反馈！
+            </div>
+          
+            <div data-md-value="0" hidden>
+              
+              
+                
+              
+              感谢您的反馈！请点击这里<a href="https://github.com/EanYang7/cs231n/issues" target="_blank" rel="noopener">这里</a>提供问题反馈.
+            </div>
+          
+        </div>
+      </div>
+    </fieldset>
+  </form>
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            回到页面顶部
+          </button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/EanYang7/cs231n" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.top", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.path", "toc.follow", "content.action.edit", "content.action.view", "content.code.copy"], "search": "../assets/javascripts/workers/search.dfff1995.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.dff1b7c8.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,1565 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="CS231n: Deep Learning for Computer Vision">
+      
+      
+      
+        <link rel="canonical" href="https://eanyang7.github.io/cs231n/choose-project/">
+      
+      
+      
+      
+      <link rel="icon" href="../logo.jpg">
+      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.3.1">
+    
+    
+      
+        <title>Taking a Course Project to Publication - CS231n</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.046329b4.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.85d0ee34.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function n(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],n("js",new Date),n("config","G-5F8XNH7BCX"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){this.value&&n("event","search",{search_term:this.value})}),document$.subscribe(function(){var a=document.forms.feedback;if(void 0!==a)for(var e of a.querySelectorAll("[type=submit]"))e.addEventListener("click",function(e){e.preventDefault();var t=document.location.pathname,e=this.getAttribute("data-md-value");n("event","feedback",{page:t,data:e}),a.firstElementChild.disabled=!0;e=a.querySelector(".md-feedback__note [data-md-value='"+e+"']");e&&(e.hidden=!1)}),a.hidden=!1}),location$.subscribe(function(e){n("config","G-5F8XNH7BCX",{page_path:e.pathname})})});var e=document.createElement("script");e.async=!0,e.src="https://www.googletagmanager.com/gtag/js?id=G-5F8XNH7BCX",document.getElementById("__analytics").insertAdjacentElement("afterEnd",e)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#table-of-contents" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href=".." title="CS231n" class="md-header__button md-logo" aria-label="CS231n" data-md-component="logo">
+      
+  <img src="../logo.jpg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CS231n
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Taking a Course Project to Publication
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换为暗黑模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换为暗黑模式" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换为浅色模式"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="切换为浅色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="选择当前语言">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04M18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12m-2.62 7 1.62-4.33L19.12 17h-3.24Z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="/cs231n/" hreflang="zh" class="md-select__link">
+              中文
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="https://cs231n.github.io/" hreflang="en" class="md-select__link">
+              English(源网站)
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/EanYang7/cs231n" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    EanYang7/cs231n
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href=".." class="md-tabs__link">
+          
+  
+  首页
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../courses/preparation/setup/" class="md-tabs__link">
+          
+  
+  课程
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../assignments/2023/assignment1/" class="md-tabs__link">
+          
+  
+  任务
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="CS231n" class="md-nav__button md-logo" aria-label="CS231n" data-md-component="logo">
+      
+  <img src="../logo.jpg" alt="logo">
+
+    </a>
+    CS231n
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/EanYang7/cs231n" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    EanYang7/cs231n
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    首页
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            首页
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CS231n 卷积神经网络视觉识别
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    课程
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            课程
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" >
+        
+          <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    准备工作
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            准备工作
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/preparation/setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    软件设置
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/preparation/python-numpy-tutorial/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Python/Numpy教程
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+        
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    神经网络
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            神经网络
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/classification/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    图像分类
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/linear-classify/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    线性分类
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/optimization-1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    优化：随机梯度下降
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/optimization-2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    反向传播
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2_5" >
+        
+          <label class="md-nav__link" for="__nav_2_2_5" id="__nav_2_2_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    神经网络
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            神经网络
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/neural-networks-1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    创建结构
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/neural-networks-2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    创建数据和损失
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/neural-networks-3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    学习和评估
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/neural_network/neural-networks-case-study/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    最小神经网络案例研究
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    卷积神经网络
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            卷积神经网络
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/CNN/convolutional-networks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    结构、卷积/池化层
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/CNN/understanding-cnn/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    理解与可视化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/CNN/transfer-learning/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    迁移学习与微调
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    任务
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            任务
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../assignments/2023/assignment1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    任务1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../assignments/2023/assignment2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    任务2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../assignments/2023/assignment3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    任务2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    Table of Contents 📖
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#picking-your-team" class="md-nav__link">
+    Picking your Team 🤝
+  </a>
+  
+    <nav class="md-nav" aria-label="Picking your Team 🤝">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#picking-your-mentors" class="md-nav__link">
+    Picking your Mentors
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-we-did" class="md-nav__link">
+    What We Did
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#choosing-your-project" class="md-nav__link">
+    Choosing your Project 🎛
+  </a>
+  
+    <nav class="md-nav" aria-label="Choosing your Project 🎛">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sample-categories-of-cs231n-projects" class="md-nav__link">
+    Sample Categories of CS231n Projects
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#consider-smart-goals" class="md-nav__link">
+    Consider SMART Goals
+  </a>
+  
+    <nav class="md-nav" aria-label="Consider SMART Goals">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#specific" class="md-nav__link">
+    Specific
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#measurable" class="md-nav__link">
+    Measurable
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#attainable" class="md-nav__link">
+    Attainable
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relevant" class="md-nav__link">
+    Relevant
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#timely" class="md-nav__link">
+    Timely
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#advice-from-professor-fei-fei-li" class="md-nav__link">
+    Advice from Professor Fei-Fei Li
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-the-project" class="md-nav__link">
+    Building the Project 👷🏽
+  </a>
+  
+    <nav class="md-nav" aria-label="Building the Project 👷🏽">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#work-in-the-cloud" class="md-nav__link">
+    Work in the Cloud
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#work-collaboratively" class="md-nav__link">
+    Work Collaboratively
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#document-everything" class="md-nav__link">
+    Document Everything
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#be-organized" class="md-nav__link">
+    Be Organized
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#showcasing-your-work" class="md-nav__link">
+    Showcasing your Work 📽
+  </a>
+  
+    <nav class="md-nav" aria-label="Showcasing your Work 📽">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#our-challenges" class="md-nav__link">
+    Our Challenges
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-we-did_1" class="md-nav__link">
+    What We Did
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#refining-for-publication" class="md-nav__link">
+    Refining for Publication 📄
+  </a>
+  
+    <nav class="md-nav" aria-label="Refining for Publication 📄">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#our-challenges_1" class="md-nav__link">
+    Our Challenges
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-we-did_2" class="md-nav__link">
+    What We Did
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#differences-between-our-course-project-and-publication-paper" class="md-nav__link">
+    Differences Between our Course Project and Publication Paper
+  </a>
+  
+    <nav class="md-nav" aria-label="Differences Between our Course Project and Publication Paper">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#course-project" class="md-nav__link">
+    Course Project
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#publication-paper" class="md-nav__link">
+    Publication Paper
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#maximizing-your-impact" class="md-nav__link">
+    Maximizing your Impact 🙌
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    Conclusion
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+    <a href="https://github.com/EanYang7/cs231n/edit/dev/docs/choose-project.md" title="编辑此页" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/EanYang7/cs231n/raw/dev/docs/choose-project.md" title="查看本页的源代码" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5Z"/></svg>
+    </a>
+  
+
+
+  <h1>Taking a Course Project to Publication</h1>
+
+<p><em>This tutorial was originally contributed by <a href="http://leilaabdel.com/">Leila Abdelrahman</a>, <a href="https://www.linkedin.com/in/amilkhanzada">Amil Khanzada</a>, <a href="https://www.linkedin.com/in/cong-kevin-chen-11544186/">Cong Kevin Chen</a>, and <a href="https://www.linkedin.com/in/tomjinvancouver/">Tom Jin</a> with oversight and guidance from <a href="https://profiles.stanford.edu/fei-fei-li">Professor Fei-Fei Li</a> and <a href="http://www.ranjaykrishna.com/">Professor Ranjay Krishna</a>.</em></p>
+<p>Taking a course project to publication is a challenging but rewarding endeavor. Starting in CS231n in Spring 2020, our team spent hundreds of hours over seven months to publish our project at the <a href="http://icmi.acm.org/2020/">ACM 2020 International Conference on Multimodal Interaction</a>! We aim to share tips on creating a great project and how you can take it to the next level through publication.</p>
+<div class='fig figcenter fighighlight'>
+<a href="https://github.com/fusical/emotiw">
+<img alt="W3Schools" src="/assets/student-post-files/fusical.gif"> </a>
+</div>
+
+<p>Here is a link to <a href="https://dl.acm.org/doi/abs/10.1145/3382507.3417966">our paper 📄</a> and <a href="https://github.com/fusical/emotiw/blob/master/acm_fusical_paper.pdf">corresponding pdf</a> for the 2020 ACM ICMI!
+<br></p>
+<h2 id="table-of-contents">Table of Contents 📖<a class="headerlink" href="#table-of-contents" title="Permanent link">⚓︎</a></h2>
+<ul>
+<li><a href="#cs231n-taking-a-course-project-to-publication">CS231n: Taking a Course Project to Publication</a></li>
+<li><a href="#picking-your-team-">Picking your Team 🤝</a></li>
+<li><a href="#choosing-your-project-">Choosing your Project 🎛</a></li>
+<li><a href="#building-the-project-">Building the Project 👷🏽</a></li>
+<li><a href="#showcasing-your-work-">Showcasing your Work 📽</a></li>
+<li><a href="#refining-for-publication-">Refining for Publication 📄</a></li>
+<li><a href="#maximizing-your-impact-">Maximizing your Impact 🙌</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+<h2 id="picking-your-team">Picking your Team 🤝<a class="headerlink" href="#picking-your-team" title="Permanent link">⚓︎</a></h2>
+<p>Although working alone may seem faster and more comfortable, it is generally not recommended. One of the primary advantages of taking a course is building a "dense network" with classmates through spending hours together working on the project. Additionally, your talented classmates may actually be teachers in disguise! If done correctly, working with a team is a lot more fun and lends for greater creativity and impact through differing opinions.</p>
+<p>Investing good time to choose your teammates is CRITICAL, as they will shape your thinking, dictate your sanity, join your lifelong network, and ultimately determine the success of your project. Start your search as early as possible (e.g., before the course starts) so that you have enough time to consider different ideas and hit the ground running.</p>
+<p>Have a sense of what you want to do and who you want to work with. Post your interest on Piazza and evaluate others. Join a Slack channel for your area of interest (e.g., #bio_healthcare). Interview folks through project brainstorming video calls. Consider their experience in machine learning, motivation, and personality. Specifically, when evaluating your potential team members' deep learning background, consider factors such as prior work experience, projects/publications, and AI courses in topics related to your intended project. Ask questions such as what kind of networks they would use to tackle your intended project, how they would go about finding data sources, and what tooling they are comfortable with (e.g., Google Colab or AWS). A good list of deep learning interview questions can be found on <a href="https://workera.ai/resources/deep-learning-algorithms-interview/">Workera.ai</a>.</p>
+<p>Finally, be flexible and pick your group. Always keep in mind that plans can change, and some students do end up dropping the course. Be open in your communication and watch out for unexpected changes in your group before the course drop deadline.</p>
+<h3 id="picking-your-mentors">Picking your Mentors<a class="headerlink" href="#picking-your-mentors" title="Permanent link">⚓︎</a></h3>
+<p>Do note that mentorship and support are invaluable in ensuring your success. Find the TA, professor, and/or industry mentors best suited to guide you and meet with them often. Course staff and mentors are generally interested in helping YOU succeed and may even write you a recommendation letter in the future!</p>
+<div class='fig figcenter fighighlight'>
+  <img src='/assets/student-post-files/choose-project-team.png' width=500px>
+</div>
+
+<h3 id="what-we-did">What We Did<a class="headerlink" href="#what-we-did" title="Permanent link">⚓︎</a></h3>
+<p>We looked at the profiles of all the TAs and went to office hours. We were lucky to find Christina Yuan, who had done similar research work and soon became a kind mentor for us. Professor Ranjay Krishna was also very kind to guide us in taking our project to publication.</p>
+<h2 id="choosing-your-project">Choosing your Project 🎛<a class="headerlink" href="#choosing-your-project" title="Permanent link">⚓︎</a></h2>
+<p>What you do is very important, as it determines your enjoyment and builds your foundation for future research.</p>
+<h3 id="sample-categories-of-cs231n-projects">Sample Categories of CS231n Projects<a class="headerlink" href="#sample-categories-of-cs231n-projects" title="Permanent link">⚓︎</a></h3>
+<p>Past projects can be found here on the <a href="http://cs231n.stanford.edu/2020/project.html">the course website</a> and include categories such as:</p>
+<ol>
+<li>Image Classification</li>
+<li>Image Segmentation</li>
+<li>Video Processing</li>
+<li>3D Deep Learning</li>
+<li>Sentiment Analysis</li>
+<li>Object Detection</li>
+<li>Data Augmentation</li>
+<li>Audio Analysis with CNNs and Spectrogram Images</li>
+</ol>
+<h3 id="consider-smart-goals">Consider <a href="https://en.wikipedia.org/wiki/SMART_criteria">SMART Goals</a><a class="headerlink" href="#consider-smart-goals" title="Permanent link">⚓︎</a></h3>
+<h4 id="specific">Specific<a class="headerlink" href="#specific" title="Permanent link">⚓︎</a></h4>
+<p>What question are you exactly trying to answer, or what concept do you want to address in-depth? Specific projects are suitable for focus, but make sure it has some generalizability.</p>
+<p><em>Good Example:</em>
+Generate Deep Fakes</p>
+<p><em>Bad Example:</em>
+Generating Deep Fakes on lung CT scans to improve medical image segmentation.</p>
+<h4 id="measurable">Measurable<a class="headerlink" href="#measurable" title="Permanent link">⚓︎</a></h4>
+<p>Make sure there are performance metrics, qualitative assessments, and other benchmarks you can use to measure your work's success. Examples include accuracy on a test dataset and performance relative to a human.</p>
+<p><em>Bad Example:</em>
+Create high-fidelity image reconstructions.</p>
+<p><em>Good Example:</em>
+Create high-fidelity image reconstructions with low mean-squared error difference compared to original images.</p>
+<h4 id="attainable">Attainable<a class="headerlink" href="#attainable" title="Permanent link">⚓︎</a></h4>
+<p>Do you have the resources, tools, and background experience to accomplish the project's tasks? Choosing grandiose projects beyond reach can only bring disappointment, be realistic. Ask yourself if you have the computing power (GPUs, disk space), the data (is it open-access, private, do you have to curate it yourself), and the bandwidth (are you juggling a busy semester/quarter).</p>
+<p>If you are currently doing CV related research, you can incorporate that into your project, and your supervisor may be willing to lend you data or compute resources. If not, there is usually a short list of faculty-sponsored projects looking for students.</p>
+<p><em>Bad Example:</em>
+Detection of cancer from facial videos.<br> This is not attainable because there is unlikely to be a large enough dataset that is open-access.</p>
+<p><em>Good Example:</em>
+Projects that can leverage open-source repos and APIs or work with pre-trained or fine-tuned Deep Learning models.</p>
+<h4 id="relevant">Relevant<a class="headerlink" href="#relevant" title="Permanent link">⚓︎</a></h4>
+<p>CS231n requires you to process some form of 2D pixelated data with a CNN. <br> <br> Discussing your idea with the TAs is good to know how relevant the project is to the class. Make sure the project also aligns with your values and interests. Think long term, and ask yourself five years after the project ends if it enriched your interests and career direction.</p>
+<p><em>Bad Example:</em>
+Chirp classification with principal component analysis.</p>
+<p><em>Good Example:</em>
+Object recognition using CNNs. We incorporated feature detection tasks like scene analysis and image captioning for emotion recognition in videos in our project.</p>
+<h4 id="timely">Timely<a class="headerlink" href="#timely" title="Permanent link">⚓︎</a></h4>
+<p>CS231n only lasts for 8-10 weeks. Make sure you can deliver your objectives along the class's timeline. Roadmap your project to see what needs to get done--and when! This is perhaps the most critical. <br> <br> Allow yourself 2-3 weeks to find a team and formulate a proposal, 3-4 to collect/preprocess data and train your first model against an established baseline (milestone), and the rest to run additional models, tune hyperparameters, and format your report. <br> <br> It's helpful to log everything in Overleaf and repurpose your milestone for your final submission so that everything doesn't catch up to you in the last few days.</p>
+<p><em>Bad Example:</em>
+A project that requires two years to collect, clean, and organize raw data.</p>
+<p><em>Good Example:</em>
+A project where you can work with existing datasets or spend a few weeks collecting raw data. For our EmotiW project, an existing dataset was provided to us, so we were able to spend more time on algorithms.</p>
+<h3 id="advice-from-professor-fei-fei-li">Advice from Professor Fei-Fei Li<a class="headerlink" href="#advice-from-professor-fei-fei-li" title="Permanent link">⚓︎</a></h3>
+<ol>
+<li><strong>Maximize learning:</strong> Find a project that can enable your maximal learning.</li>
+<li><strong>Feasibility:</strong> Make sure it is executable within the short amount of time in this quarter, especially making sure that data, evaluation metric, and compute resources are adequate for what you want to do.</li>
+<li><strong>Think long term:</strong> Executing a good project regardless of the topic would benefit your job application. Companies look for people with a solid technical background and the ability to execute and work as a team. I don't think they will be very narrow-minded on the specific project topics.</li>
+</ol>
+<h2 id="building-the-project">Building the Project 👷🏽<a class="headerlink" href="#building-the-project" title="Permanent link">⚓︎</a></h2>
+<p>When working on the project, consider these tips to maximize the potential for impact.</p>
+<h3 id="work-in-the-cloud">Work in the Cloud<a class="headerlink" href="#work-in-the-cloud" title="Permanent link">⚓︎</a></h3>
+<p>Store documentation, code, datasets, and model files in services such as Google Drive, Dropbox, or GitHub.</p>
+<p>The course offers AWS and GCP credits for your projects. Consider taking advantage of these resources, especially when it comes to heavy computing.</p>
+<p>If you plan to use Colab, consider saving your model checkpoints directly to your Stanford Google Drive folder to avoid losing files. Colab is also great to parallelize your work as you can run multiple experiments simultaneously. Be careful not to let your work session time out, or you could lose your progress!</p>
+<h3 id="work-collaboratively">Work Collaboratively<a class="headerlink" href="#work-collaboratively" title="Permanent link">⚓︎</a></h3>
+<p>Brainstorm your projects on live-editors like Google Sheets and Google Docs so others can work in the same workspace. Overleaf is excellent for polishing the final report as a team.</p>
+<p>Set up regular weekly or semi-weekly meetings with your teammates. This establishes a cadence and helps keep everyone on track, even if no progress has been made.</p>
+<h3 id="document-everything">Document Everything<a class="headerlink" href="#document-everything" title="Permanent link">⚓︎</a></h3>
+<p>Write your code as if you will be showing it to someone who has no idea about your project. This is great for making your methods transparent and reproducible.</p>
+<p>Record all experiments you run (e.g., hyperparameter tuning) even if they don't work out, as you can write about them in your report.</p>
+<h3 id="be-organized">Be Organized<a class="headerlink" href="#be-organized" title="Permanent link">⚓︎</a></h3>
+<p>Create clean file structures. Give folders and scripts precise names. Organization saves your team hours, if not days, in the long run.</p>
+<p>Write your notebooks, so they are executable top-to-bottom. That way, if you suffer a catastrophic data loss or discover a mistake in your code, you can smoothly go back and replicate your entire setup.</p>
+<h2 id="showcasing-your-work">Showcasing your Work 📽<a class="headerlink" href="#showcasing-your-work" title="Permanent link">⚓︎</a></h2>
+<p>Communication makes the project memorable. Come up with a fun title, and make sure to present your work in multiple ways. Beyond the written report, create a slide deck, record a video, and practice talking about your work with TAs, professors, and industry experts. Articulation skills in oral and visual presentations ensure that the audience remembers your work!</p>
+<p>Before completing the project, take the time to clean up your GitHub repository, or make one if you have not done so already. Add a strong README.md file with a clear description of your project and a "how-to" guide complete with examples. Doing so makes your project accessible and encourages others to build upon your work.</p>
+<p>If you are submitting to a journal or conference, consider submitting a copy of your work to a preprint service like <a href="https://arxiv.org/">arXiv</a>. arXiv does not require peer-review and is commonly used by researchers within the CS field to disseminate their work. Publishing a preprint is a quick way to add to your list of publications on Google Scholar. You may also want to take 5 minutes to register and <a href="https://orcid.org/">ORCID</a>.</p>
+<h3 id="our-challenges">Our Challenges<a class="headerlink" href="#our-challenges" title="Permanent link">⚓︎</a></h3>
+<p>With four people working simultaneously, our Github repository had naturally become a little hard to navigate since everyone used a slightly different naming scheme. Multiple cloned notebooks were also leftover from other experiments. In our case, our goal had always been to submit a grand challenge paper based on our results, so organizing public-facing repository by project completion was critical.</p>
+<p>In 2020, many conferences were entirely virtual, which made it even more important to have a polished video presentation as this would end up as part of conference proceedings.</p>
+<h3 id="what-we-did_1">What We Did<a class="headerlink" href="#what-we-did_1" title="Permanent link">⚓︎</a></h3>
+<p>We made sure our Github repository reflected our results, and we took the opportunity to embed multiple figures into the README to make it visually appealing and easily understandable.</p>
+<p>We chose the playful title "Fusical" and created a one-figure visual that summarized our work at a high-level. This made it easy for people to reference our work during the conference, allowing us to talk about our project without confusing attendees with different slides.</p>
+<h2 id="refining-for-publication">Refining for Publication 📄<a class="headerlink" href="#refining-for-publication" title="Permanent link">⚓︎</a></h2>
+<p>When refining for publication, ask yourself: <em>What am I bringing to the conversations that is new?</em> This can come from novelty or exceeding state-of-the-art methods. Reinforcing this question throughout refinement is critical for successfully publishing.</p>
+<p>The next step is to find the right journal or conference to publish to. Unlike most science fields, CS and AI tend to value conference submissions over journal submissions due to the publication turnaround time and higher visibility within the field. Conferences are fun and allow you to network with other like-minded individuals.</p>
+<p>In Computer Vision, you'll find conferences of all sizes happening at different times throughout the year. Top conferences include <a href="http://cvpr2021.thecvf.com/">CVPR</a>, <a href="http://iccv2021.thecvf.com/home">ICCV</a>, and <a href="https://eccv2020.eu/">ECCV</a>, but due to their popularity, it might be challenging to get a successful submission. Because many students choose to do an application-based project, consider niche conferences depending on your project's topic. For instance, teams who developed a model to determine student engagement in the classroom might consider submitting to <a href="https://aied2020.nees.com.br/">AIED</a>. Talking to your mentors might also help narrow down the specific method or venue of publication. Keep in mind that Stanford does offer some <a href="https://undergrad.stanford.edu/opportunities/research/get-funded">travel grants</a>.</p>
+<p>Iterating over the work is essential for creating publication-quality work. Improving the writing, optimizing the code, and making quality figures are vital points to consider. Reference the work of experts and reach out for advice. <a href="http://www.niebles.net/publications/">Dr. Juan Carlos Niebles' publications page</a> is a good example.</p>
+<p>Publications are a lengthy process, partly due to peer review. Review your submission for possible ambiguous areas or claims that are unsubstantiated. Ensure you are clear with your experiment parameters and ask someone outside your team to review the paper.</p>
+<p>Writing for a peer-reviewed journal or conference proceedings is very different than preparing a project report, yet the project helps guide what goes into the final paper.</p>
+<h3 id="our-challenges_1">Our Challenges<a class="headerlink" href="#our-challenges_1" title="Permanent link">⚓︎</a></h3>
+<p>While we made advances during the CS231n course, we didn't believe our models were novel enough for publication just yet. Based on guidance from our mentors, we looked for opportunities to differentiate our work from others. Because our project was part of the <a href="https://sites.google.com/view/emotiw2020">EmotiW grand challenge</a>, one of the motivating factors was to continue exploring additional methods to improve our validation performance before the submission deadline.</p>
+<h3 id="what-we-did_2">What We Did<a class="headerlink" href="#what-we-did_2" title="Permanent link">⚓︎</a></h3>
+<p>Based on a literature search, we found common patterns in the modalities used by other groups for sentiment classification (e.g. audio, pose). As a result, we focused on exploring two novel modalities that we felt had value: image captioning (to look for certain objects or settings, such as protests, that are correlated with a specific degree of sentiment) and laughter detection (since the presence of laughter in an audio clip quite often indicates a positive sentiment). Using modified saliency maps and ablation studies, we tried to demonstrate the usefulness of all of these modalities for a more convincing argument.</p>
+<p>Overall, we attained a test accuracy of approximately 64%. Because there was no public leaderboard, there was initial uncertainty about how we fared compared to other groups, but we were confident in our approach as it beat the baseline by a large margin. Although we ultimately ranked below the top three winning scores, we were still able to publish our work at the conference due to our novel findings, demonstrating that the test data performance is only of many criteria stressed for publication.</p>
+<h3 id="differences-between-our-course-project-and-publication-paper">Differences Between our Course Project and Publication Paper<a class="headerlink" href="#differences-between-our-course-project-and-publication-paper" title="Permanent link">⚓︎</a></h3>
+<h4 id="course-project">Course Project<a class="headerlink" href="#course-project" title="Permanent link">⚓︎</a></h4>
+<ul>
+<li>More focus on error analysis and experiments that went wrong.</li>
+<li>Tendency towards experimental approaches, as the course timeframe was too short for pretraining and auxiliary data.</li>
+<li>Significant time spent on "invisible" setup work for the project's infrastructure (preprocessing, APIs, and overall backbone).</li>
+<li>Our original CS231n original project submission can be found <a href="https://github.com/fusical/emotiw/blob/master/cs231n_project_report.pdf">here</a>.</li>
+</ul>
+<h4 id="publication-paper">Publication Paper<a class="headerlink" href="#publication-paper" title="Permanent link">⚓︎</a></h4>
+<ul>
+<li>More focus on the novelty of our approach and emphasis on beating the competition baseline.</li>
+<li>The video presentation was longer and required more detail.</li>
+<li>Ran more experiments and hyperparameter tuning.</li>
+<li>Our official published paper can be found <a href="https://dl.acm.org/doi/abs/10.1145/3382507.3417966">here</a> and <a href="https://github.com/fusical/emotiw/blob/master/acm_fusical_paper.pdf">as a pdf</a>.</li>
+</ul>
+<p><em>If you don't get the results you were hoping for, don't be scared to submit it anyway - the worst reviewers can do is say no, and feedback from experts in the field is always valuable!</em></p>
+<h2 id="maximizing-your-impact">Maximizing your Impact 🙌<a class="headerlink" href="#maximizing-your-impact" title="Permanent link">⚓︎</a></h2>
+<p>Your project has worth and impact. Presenting at global conferences (we presented at the 2020 ICMI) is a great way to share your results and findings with other academic and industry experts, but there are other options. Do you think your idea can be deployed in practice? Stanford has resources and opportunities to help students continue to pursue their ideas, including the <a href="https://www.gsb.stanford.edu/experience/learning/entrepreneurship/courses/startup-garage">Startup Garage</a>, a hands-on project-based course to develop and test out new business concepts, and the <a href="http://vision.stanford.edu/people.html">Vision Lab</a>.</p>
+<p>If your idea is more research-focused, seek out professors who might work in the domain area and pitch them your thoughts. You might have opportunities to continue your project as an independent study project or apply your idea to more extensive and significant datasets or pivot to similar research areas.</p>
+<h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">⚓︎</a></h2>
+<p>It was hard work and fun because we had a good team! We hope you all enjoy these tips on the process of taking a project from brainstorming to impactful presentations and publications. These tips are scalable, and we hope you use them in other endeavors as well!</p>
+
+  <hr>
+<div class="md-source-file">
+  <small>
+    
+      最后更新:
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 16, 2023</span>
+      
+        <br>
+        创建日期:
+        <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 16, 2023</span>
+      
+    
+  </small>
+</div>
+
+
+  
+
+
+
+  <form class="md-feedback" name="feedback" hidden>
+    <fieldset>
+      <legend class="md-feedback__title">
+        对当前页面有任何疑问吗？
+      </legend>
+      <div class="md-feedback__inner">
+        <div class="md-feedback__list">
+          
+            <button class="md-feedback__icon md-icon" type="submit" title="This page was helpful" data-md-value="1">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 9v12H1V9h4m4 12a2 2 0 0 1-2-2V9c0-.55.22-1.05.59-1.41L14.17 1l1.06 1.06c.27.27.44.64.44 1.05l-.03.32L14.69 8H21a2 2 0 0 1 2 2v2c0 .26-.05.5-.14.73l-3.02 7.05C19.54 20.5 18.83 21 18 21H9m0-2h9.03L21 12v-2h-8.79l1.13-5.32L9 9.03V19Z"/></svg>
+            </button>
+          
+            <button class="md-feedback__icon md-icon" type="submit" title="This page could be improved" data-md-value="0">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 15V3h4v12h-4M15 3a2 2 0 0 1 2 2v10c0 .55-.22 1.05-.59 1.41L9.83 23l-1.06-1.06c-.27-.27-.44-.64-.44-1.06l.03-.31.95-4.57H3a2 2 0 0 1-2-2v-2c0-.26.05-.5.14-.73l3.02-7.05C4.46 3.5 5.17 3 6 3h9m0 2H5.97L3 12v2h8.78l-1.13 5.32L15 14.97V5Z"/></svg>
+            </button>
+          
+        </div>
+        <div class="md-feedback__note">
+          
+            <div data-md-value="1" hidden>
+              
+              
+                
+              
+              感谢您的反馈！
+            </div>
+          
+            <div data-md-value="0" hidden>
+              
+              
+                
+              
+              感谢您的反馈！请点击这里<a href="https://github.com/EanYang7/cs231n/issues" target="_blank" rel="noopener">这里</a>提供问题反馈.
+            </div>
+          
+        </div>
+      </div>
+    </fieldset>
+  </form>
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            回到页面顶部
+          </button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/EanYang7/cs231n" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.top", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.path", "toc.follow", "content.action.edit", "content.action.view", "content.code.copy"], "search": "../assets/javascripts/workers/search.dfff1995.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.dff1b7c8.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
