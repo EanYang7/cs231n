@@ -177,7 +177,7 @@ hide:
 <a href="./courses/neural_network/neural-networks-case-study">
 
 <div class="card">
-  <h2>将其组合起来：最小神经网络案例研究y</h2>
+  <h2>将其组合起来：最小神经网络案例研究</h2>
   <p>
 最小2D玩具数据示例
   </p>
